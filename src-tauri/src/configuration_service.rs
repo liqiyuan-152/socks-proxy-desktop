@@ -1,4 +1,5 @@
 use crate::{
+    china_rules::ChinaRuleSets,
     credentials::{apply_credential_update, CredentialStore, CredentialUpdate, ProxyCredential},
     error::{AppError, FieldError},
     models::{
@@ -12,8 +13,12 @@ use crate::{
     transfer::export_configuration_json,
 };
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
+use std::{path::PathBuf, sync::Mutex};
 use uuid::Uuid;
+
+#[path = "configuration_china.rs"]
+mod china;
+pub use china::ChinaDirectStatus;
 
 #[derive(Deserialize)]
 pub struct ProfileInput {
@@ -38,6 +43,12 @@ pub struct ProfileView {
     pub enabled: bool,
 }
 
+#[derive(Serialize)]
+pub struct ProfileCredentialView {
+    pub username: String,
+    pub password: String,
+}
+
 impl From<&ProxyProfile> for ProfileView {
     fn from(value: &ProxyProfile) -> Self {
         Self {
@@ -57,6 +68,7 @@ pub struct ConfigurationService {
     credentials: Box<dyn CredentialStore>,
     startup: Box<dyn StartupAdapter>,
     runtime: Box<dyn RuntimeCoordinator>,
+    china_rule_root: Option<PathBuf>,
     serial: Mutex<()>,
 }
 
@@ -72,6 +84,7 @@ impl ConfigurationService {
             credentials,
             startup,
             runtime,
+            china_rule_root: None,
             serial: Mutex::new(()),
         }
     }
@@ -106,11 +119,34 @@ impl ConfigurationService {
 
     pub fn request_mode(&self, mode: RuntimeMode) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.lock()?;
+        self.store.save_mode(mode)?;
         self.runtime.request_mode(mode)
+    }
+
+    pub fn profile_credential(&self, id: &str) -> Result<ProfileCredentialView, AppError> {
+        let _guard = self.lock()?;
+        let configuration = self.store.load()?;
+        let profile = configuration
+            .profiles
+            .iter()
+            .find(|profile| profile.id == id)
+            .ok_or_else(|| not_found("代理档案不存在"))?;
+        if !profile.authentication_enabled {
+            return Err(AppError::unavailable("此代理未启用认证"));
+        }
+        let credential = self
+            .credentials
+            .get(id)?
+            .ok_or_else(|| AppError::unavailable("认证凭据缺失，请重新配置"))?;
+        Ok(ProfileCredentialView {
+            username: credential.username,
+            password: credential.password,
+        })
     }
 
     pub fn stop_runtime(&self) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.lock()?;
+        self.store.save_mode(RuntimeMode::Direct)?;
         self.runtime.stop()
     }
 
@@ -196,10 +232,26 @@ impl ConfigurationService {
         else {
             return Err(not_found("代理档案不存在"));
         };
-        candidate.profiles.remove(index);
+        let mut references: Vec<FieldError> = candidate
+            .rules
+            .iter()
+            .enumerate()
+            .filter(|(_, rule)| rule.proxy_profile_id.as_deref() == Some(id))
+            .map(|(index, rule)| FieldError {
+                field: format!("rules[{index}].proxy_profile_id"),
+                message: format!("规则「{}」仍引用此代理", rule.name),
+            })
+            .collect();
         if candidate.active_profile_id.as_deref() == Some(id) {
-            candidate.active_profile_id = None;
+            references.push(FieldError {
+                field: "default_profile_id".into(),
+                message: "默认代理仍引用此档案".into(),
+            });
         }
+        if !references.is_empty() {
+            return Err(AppError::validation(references));
+        }
+        candidate.profiles.remove(index);
         candidate.validate()?;
         let previous_credential = self.credentials.get(id)?;
         self.credentials.delete(id)?;
@@ -223,6 +275,13 @@ impl ConfigurationService {
         let current = self.store.load()?;
         let mut candidate = current.clone();
         candidate.rules = rules;
+        candidate.legacy_unresolved_rule_ids.retain(|id| {
+            candidate.rules.iter().any(|rule| {
+                rule.id == *id
+                    && rule.action == crate::models::RuleAction::Proxy
+                    && rule.proxy_profile_id.is_none()
+            })
+        });
         CompiledRules::compile(&candidate)?;
         self.commit(&current, &candidate)
     }
@@ -283,6 +342,13 @@ impl ConfigurationService {
         rollback_side_effects: impl FnOnce() -> Result<(), AppError>,
     ) -> Result<(), AppError> {
         candidate.validate()?;
+        if candidate.china_direct_enabled {
+            let root = self
+                .china_rule_root
+                .as_deref()
+                .ok_or_else(|| AppError::unavailable("此平台未提供国内直连规则集"))?;
+            ChinaRuleSets::verify(root)?;
+        }
         let previous_snapshot = self.runtime.snapshot();
         if let Err(error) = self.runtime.apply_configuration(current, candidate) {
             rollback_side_effects()?;

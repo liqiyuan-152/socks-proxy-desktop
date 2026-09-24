@@ -167,6 +167,7 @@ mod tests {
     fn tray_never_checks_a_requested_mode_before_backend_commit_or_after_failure() {
         let mut snapshot = RuntimeSnapshot {
             revision: 1,
+            selected_mode: RuntimeMode::Rules,
             desired_mode: RuntimeMode::Rules,
             applied_mode: Some(RuntimeMode::Global),
             phase: RuntimePhase::Switching,

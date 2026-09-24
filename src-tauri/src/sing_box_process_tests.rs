@@ -1,5 +1,6 @@
 use super::*;
 use crate::models::{ProxyProfile, ProxyProtocol};
+use std::collections::HashMap;
 
 fn configuration() -> PersistedConfiguration {
     let mut configuration = PersistedConfiguration::default();
@@ -28,7 +29,7 @@ fn refuses_unverified_binary_without_launching_it() {
         directory.path(),
         &configuration(),
         RuntimeMode::Global,
-        None,
+        &HashMap::new(),
     )
     .err()
     .unwrap();
@@ -53,7 +54,7 @@ fn real_core_starts_with_private_config_and_cleans_up_when_available() {
         &runtime_dir,
         &configuration(),
         RuntimeMode::Global,
-        None,
+        &HashMap::new(),
     )
     .unwrap();
     assert!(process.is_running().unwrap());
@@ -111,7 +112,7 @@ fn fake_core_exit_and_cleanup_only_affect_the_owned_process() {
         directory.path(),
         &configuration(),
         RuntimeMode::Global,
-        None,
+        &HashMap::new(),
     )
     .unwrap();
     let owned_pid = process.process_id();

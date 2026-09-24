@@ -3,8 +3,9 @@ use crate::{
     credentials::{CredentialStore, ProxyCredential},
     models::{PersistedConfiguration, RuntimeMode},
     runtime::{BackendSession, ManagedRuntime, RuntimeBackend},
+    runtime_session::SessionLease,
     startup::StartupAdapter,
-    store::SqliteConfigurationStore,
+    store::{ConfigurationStore, SqliteConfigurationStore},
 };
 use serde_json::{json, Value};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -94,7 +95,13 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     let store = Arc::new(SqliteConfigurationStore::open_in_memory().unwrap());
     let initial = crate::models::PersistedConfiguration::default();
     let backend = Arc::new(Backend::default());
-    let runtime = ManagedRuntime::new(initial, Box::new(backend.clone())).unwrap();
+    let runtime = ManagedRuntime::from_lease(
+        initial,
+        Box::new(backend.clone()),
+        SessionLease::acquire(&uuid::Uuid::new_v4().to_string()).unwrap(),
+        RuntimeMode::Direct,
+    )
+    .unwrap();
     let startup = Arc::new(Startup(AtomicBool::new(false)));
     let service = Arc::new(ConfigurationService::new(
         Box::new(store.clone()),
@@ -107,6 +114,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
         .manage(store.clone())
         .invoke_handler(tauri::generate_handler![
             list_profiles,
+            get_profile_credential,
             save_profile,
             delete_profile,
             select_profile,
@@ -158,6 +166,10 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     let id = created["id"].as_str().unwrap();
     assert_eq!(created["name"], "Primary");
     assert!(created.get("password").is_none());
+    assert_eq!(
+        invoke("get_profile_credential", json!({ "id": id })).unwrap_err()["code"],
+        "unavailable"
+    );
     let invalid = invoke(
         "save_profile",
         json!({ "input": {
@@ -182,7 +194,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
         "action": "direct", "enabled": true });
     let second = json!({ "id": "second", "name": "Second", "matcher": "domain",
         "target": "api.example.com", "port_start": null, "port_end": null,
-        "action": "proxy", "enabled": true });
+        "action": "proxy", "proxy_profile_id": id, "enabled": true });
     invoke("replace_rules", json!({ "rules": [first, second] })).unwrap();
     invoke("reorder_rules", json!({ "ids": ["second", "first"] })).unwrap();
     assert_eq!(invoke("list_rules", json!({})).unwrap()[0]["id"], "second");
@@ -214,9 +226,23 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     let rolled_back = invoke("get_runtime_snapshot", json!({})).unwrap();
     assert_eq!(rolled_back["applied_mode"], "global");
     assert_eq!(rolled_back["desired_mode"], "rules");
+    assert_eq!(rolled_back["selected_mode"], "rules");
+    assert_eq!(store.load_mode().unwrap(), RuntimeMode::Rules);
+    let error_filter = json!({"from_ms": null, "until_ms": null, "severity": "error"});
+    let failure = invoke(
+        "get_runtime_diagnostics",
+        json!({"filter": error_filter, "offset": 0, "limit": 10}),
+    )
+    .unwrap();
+    assert_eq!(failure["total"], 1);
+    assert!(failure["items"][0]["summary"]
+        .as_str()
+        .unwrap()
+        .contains("切换至规则代理失败"));
     backend.reject_stop.store(true, Ordering::SeqCst);
     let failed = invoke("delete_profile", json!({ "id": id })).unwrap_err();
-    assert_eq!(failed["code"], "unavailable");
+    assert_eq!(failed["code"], "validation_error");
+    assert_eq!(failed["fields"][0]["field"], "rules[0].proxy_profile_id");
     assert_eq!(
         invoke("get_runtime_snapshot", json!({})).unwrap()["applied_mode"],
         "global"
@@ -230,6 +256,11 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
         1
     );
     backend.reject_stop.store(false, Ordering::SeqCst);
+    invoke("replace_rules", json!({ "rules": [] })).unwrap();
+    let no_default = invoke("select_profile", json!({ "id": null })).unwrap_err();
+    assert_eq!(no_default["fields"][0]["field"], "default_profile_id");
+    invoke("set_runtime_mode", json!({ "mode": "direct" })).unwrap();
+    invoke("select_profile", json!({ "id": null })).unwrap();
     invoke("delete_profile", json!({ "id": id })).unwrap();
     assert_eq!(
         invoke("get_runtime_snapshot", json!({})).unwrap()["applied_mode"],
@@ -265,7 +296,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "offset": 0, "limit": 10})
         )
         .unwrap()["total"],
-        1
+        2
     );
     assert_eq!(
         invoke(
@@ -292,7 +323,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "offset": 0, "limit": 10})
         )
         .unwrap()["total"],
-        2
+        3
     );
     assert_eq!(
         invoke(
@@ -300,7 +331,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "confirmed": true})
         )
         .unwrap(),
-        2
+        3
     );
 
     let replacement = invoke(

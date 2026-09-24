@@ -3,7 +3,13 @@
     "resources": {
       "resources/sing-box/windows-amd64/sing-box.exe": "sing-box/windows-amd64/sing-box.exe",
       "resources/sing-box/windows-amd64/libcronet.dll": "sing-box/windows-amd64/libcronet.dll",
-      "resources/sing-box/windows-amd64/LICENSE": "sing-box/windows-amd64/LICENSE"
+      "resources/sing-box/windows-amd64/LICENSE": "sing-box/windows-amd64/LICENSE",
+      "resources/china-rules/china-domains.srs": "china-rules/china-domains.srs",
+      "resources/china-rules/china-ipv4.srs": "china-rules/china-ipv4.srs",
+      "resources/china-rules/china-ipv6.srs": "china-rules/china-ipv6.srs",
+      "resources/china-rules/LICENSE.domain-list-community": "china-rules/LICENSE.domain-list-community",
+      "resources/china-rules/LICENSE.china-operator-ip": "china-rules/LICENSE.china-operator-ip",
+      "resources/china-rules/manifest.json": "china-rules/manifest.json"
     }
   }
 }

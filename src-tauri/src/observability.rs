@@ -157,7 +157,8 @@ fn parse_connection(value: &Value) -> Result<ActiveConnection, AppError> {
     let outbound_chain: Vec<String> = chain
         .iter()
         .map(|tag| match tag.as_str() {
-            Some("selected-proxy" | "direct") => Ok(tag.as_str().unwrap().to_owned()),
+            Some("direct") => Ok("direct".into()),
+            Some(tag) if valid_proxy_tag(tag) => Ok(tag.into()),
             _ => Err(unverified_fields()),
         })
         .collect::<Result<_, _>>()?;
@@ -171,6 +172,12 @@ fn parse_connection(value: &Value) -> Result<ActiveConnection, AppError> {
         target_port: port,
         matched_rule: (!rule.is_empty()).then(|| rule.into()),
         outbound_chain,
+    })
+}
+
+fn valid_proxy_tag(tag: &str) -> bool {
+    tag.strip_prefix("proxy-").is_some_and(|digest| {
+        digest.len() == 64 && digest.bytes().all(|byte| byte.is_ascii_hexdigit())
     })
 }
 

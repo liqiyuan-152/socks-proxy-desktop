@@ -7,6 +7,7 @@ fn coordinator_acquires_exclusive_session_before_a_second_instance_can_start() {
         configuration(),
         Box::new(Arc::new(FakeBackend::default())),
         SessionLease::acquire(&name).unwrap(),
+        RuntimeMode::Direct,
     )
     .unwrap();
     assert_eq!(

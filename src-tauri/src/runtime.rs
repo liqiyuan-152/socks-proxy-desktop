@@ -27,6 +27,7 @@ pub enum TrafficCoverage {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct RuntimeSnapshot {
     pub revision: u64,
+    pub selected_mode: RuntimeMode,
     pub desired_mode: RuntimeMode,
     pub applied_mode: Option<RuntimeMode>,
     pub phase: RuntimePhase,
@@ -87,6 +88,7 @@ struct PendingConfiguration {
 struct RuntimeState {
     configuration: PersistedConfiguration,
     revision: u64,
+    selected_mode: RuntimeMode,
     desired_mode: RuntimeMode,
     applied_mode: Option<RuntimeMode>,
     phase: RuntimePhase,
@@ -94,6 +96,7 @@ struct RuntimeState {
     started_at: Option<Instant>,
     last_error: Option<String>,
     pending: Option<PendingConfiguration>,
+    pending_settings: Option<PersistedConfiguration>,
 }
 
 impl RuntimeState {
@@ -104,6 +107,7 @@ impl RuntimeState {
             .is_some_and(|run| run.system_proxy_enabled);
         RuntimeSnapshot {
             revision: self.revision,
+            selected_mode: self.selected_mode,
             desired_mode: self.desired_mode,
             applied_mode: self.applied_mode,
             phase: self.phase,

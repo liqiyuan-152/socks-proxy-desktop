@@ -1,14 +1,12 @@
-#[cfg(any(windows, test))]
 use crate::models::RoutingRule;
 #[cfg(test)]
-use crate::models::{RuleAction, RuleMatcher};
+use crate::models::RuleAction;
+use crate::models::RuleMatcher;
 use crate::{error::AppError, models::PersistedConfiguration};
-#[cfg(test)]
 use std::net::IpAddr;
 
 #[derive(Debug)]
 pub struct CompiledRules {
-    #[cfg(any(windows, test))]
     rules: Vec<RoutingRule>,
 }
 
@@ -23,7 +21,6 @@ impl CompiledRules {
     pub fn compile(configuration: &PersistedConfiguration) -> Result<Self, AppError> {
         configuration.validate()?;
         Ok(Self {
-            #[cfg(any(windows, test))]
             rules: configuration
                 .rules
                 .iter()
@@ -35,27 +32,29 @@ impl CompiledRules {
 
     #[cfg(test)]
     pub fn decide(&self, host: &str, port: u16) -> RuleDecision {
-        for rule in &self.rules {
-            if matches_port(rule, port) && matches_target(rule, host) {
-                return RuleDecision {
-                    action: rule.action,
-                    matched_rule_id: Some(rule.id.clone()),
-                };
-            }
-        }
-        RuleDecision {
-            action: RuleAction::Direct,
-            matched_rule_id: None,
-        }
+        self.matching_rule(host, port).map_or(
+            RuleDecision {
+                action: RuleAction::Direct,
+                matched_rule_id: None,
+            },
+            |rule| RuleDecision {
+                action: rule.action,
+                matched_rule_id: Some(rule.id.clone()),
+            },
+        )
     }
 
-    #[cfg(any(windows, test))]
+    pub fn matching_rule(&self, host: &str, port: u16) -> Option<&RoutingRule> {
+        self.rules
+            .iter()
+            .find(|rule| matches_port(rule, port) && matches_target(rule, host))
+    }
+
     pub fn ordered_rules(&self) -> &[RoutingRule] {
         &self.rules
     }
 }
 
-#[cfg(test)]
 fn matches_port(rule: &RoutingRule, port: u16) -> bool {
     match (rule.port_start, rule.port_end) {
         (None, None) => true,
@@ -65,7 +64,6 @@ fn matches_port(rule: &RoutingRule, port: u16) -> bool {
     }
 }
 
-#[cfg(test)]
 fn matches_target(rule: &RoutingRule, host: &str) -> bool {
     match rule.matcher {
         RuleMatcher::Domain => host
@@ -80,7 +78,6 @@ fn matches_target(rule: &RoutingRule, host: &str) -> bool {
     }
 }
 
-#[cfg(test)]
 fn matches_cidr(cidr: &str, host: &str) -> bool {
     let Some((network, prefix)) = cidr.split_once('/') else {
         return false;
@@ -116,6 +113,21 @@ fn matches_cidr(cidr: &str, host: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::models::{ProxyProfile, ProxyProtocol};
+
+    fn with_profile(mut configuration: PersistedConfiguration) -> PersistedConfiguration {
+        configuration.profiles.push(ProxyProfile {
+            id: "proxy-1".into(),
+            name: "Primary".into(),
+            protocol: ProxyProtocol::Socks5,
+            host: "proxy.example.com".into(),
+            port: 1080,
+            authentication_enabled: false,
+            credential_ref: None,
+            enabled: true,
+        });
+        configuration
+    }
 
     fn rule(id: &str, matcher: RuleMatcher, target: &str, action: RuleAction) -> RoutingRule {
         RoutingRule {
@@ -126,6 +138,7 @@ mod tests {
             port_start: None,
             port_end: None,
             action,
+            proxy_profile_id: (action == RuleAction::Proxy).then(|| "proxy-1".into()),
             enabled: true,
         }
     }
@@ -149,7 +162,7 @@ mod tests {
             ],
             ..PersistedConfiguration::default()
         };
-        let compiled = CompiledRules::compile(&configuration).unwrap();
+        let compiled = CompiledRules::compile(&with_profile(configuration)).unwrap();
         assert_eq!(compiled.ordered_rules()[0].id, "first");
         assert_eq!(
             compiled.decide("api.example.com", 443),
@@ -179,7 +192,7 @@ mod tests {
         domain.port_start = Some(443);
         let cidr = rule("cidr", RuleMatcher::IpCidr, "10.0.0.0/8", RuleAction::Proxy);
         configuration.rules = vec![domain, cidr];
-        let compiled = CompiledRules::compile(&configuration).unwrap();
+        let compiled = CompiledRules::compile(&with_profile(configuration)).unwrap();
         assert_eq!(
             compiled
                 .decide("api.example.com", 443)

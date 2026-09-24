@@ -70,22 +70,18 @@ fn fixture() -> (OwnedSystemProxy, MemoryDevice, MemoryRecords, ProxySettings) {
 #[test]
 fn applying_switching_and_restoring_preserves_all_original_values() {
     let (adapter, device, records, original) = fixture();
-    let first = adapter.enable(18080).unwrap();
+    adapter.enable(18080).unwrap();
     assert_eq!(
         device.read().unwrap().server.as_deref(),
         Some("127.0.0.1:18080")
     );
+    let first = records.load_ownership().unwrap().unwrap();
     assert_ne!(first.owner_token, "");
-    assert_eq!(
-        serde_json::from_str::<ProxySettings>(&first.original_value).unwrap(),
-        original
-    );
-    assert_eq!(
-        serde_json::from_str::<ProxySettings>(&first.expected_value).unwrap(),
-        device.read().unwrap()
-    );
+    assert_eq!(first.original, original);
+    assert_eq!(first.expected, device.read().unwrap());
     assert!(device.read().unwrap().auto_config_url.is_none());
-    let second = adapter.enable(18081).unwrap();
+    adapter.enable(18081).unwrap();
+    let second = records.load_ownership().unwrap().unwrap();
     assert_eq!(first.owner_token, second.owner_token);
     assert_eq!(
         records.load_ownership().unwrap().unwrap().original,

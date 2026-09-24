@@ -1,6 +1,6 @@
 use crate::{
     error::AppError,
-    models::{PersistedConfiguration, RetentionPolicy},
+    models::{PersistedConfiguration, RetentionPolicy, RuntimeMode},
 };
 use rusqlite::{Connection, OptionalExtension};
 use std::{
@@ -8,7 +8,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const DATABASE_SCHEMA_VERSION: i64 = 2;
+const DATABASE_SCHEMA_VERSION: i64 = 3;
 use diagnostics::{now_ms, prune_diagnostics};
 pub use diagnostics::{DiagnosticFilter, DiagnosticPage, RuntimeDiagnostic};
 
@@ -19,6 +19,8 @@ pub fn diagnostic_now_ms() -> Result<i64, AppError> {
 pub trait ConfigurationStore: Send + Sync {
     fn load(&self) -> Result<PersistedConfiguration, AppError>;
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError>;
+    fn load_mode(&self) -> Result<RuntimeMode, AppError>;
+    fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError>;
 }
 
 pub struct SqliteConfigurationStore {
@@ -81,6 +83,46 @@ impl ConfigurationStore for SqliteConfigurationStore {
         transaction.commit().map_err(storage_error)?;
         Ok(())
     }
+
+    fn load_mode(&self) -> Result<RuntimeMode, AppError> {
+        let connection = self
+            .connection
+            .lock()
+            .map_err(|_| AppError::storage("配置存储锁不可用"))?;
+        let mode: Option<String> = connection
+            .query_row("SELECT mode FROM selected_mode WHERE id = 1", [], |row| {
+                row.get(0)
+            })
+            .optional()
+            .map_err(storage_error)?;
+        mode.map(|value| match value.as_str() {
+            "rules" => Ok(RuntimeMode::Rules),
+            "global" => Ok(RuntimeMode::Global),
+            "direct" => Ok(RuntimeMode::Direct),
+            _ => Err(AppError::storage("已保存的代理模式无效")),
+        })
+        .unwrap_or(Ok(RuntimeMode::Direct))
+    }
+
+    fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError> {
+        let value = match mode {
+            RuntimeMode::Rules => "rules",
+            RuntimeMode::Global => "global",
+            RuntimeMode::Direct => "direct",
+        };
+        let connection = self
+            .connection
+            .lock()
+            .map_err(|_| AppError::storage("配置存储锁不可用"))?;
+        connection
+            .execute(
+                "INSERT INTO selected_mode (id, mode) VALUES (1, ?1)
+                 ON CONFLICT(id) DO UPDATE SET mode = excluded.mode",
+                [value],
+            )
+            .map_err(storage_error)?;
+        Ok(())
+    }
 }
 
 impl ConfigurationStore for Arc<SqliteConfigurationStore> {
@@ -89,6 +131,12 @@ impl ConfigurationStore for Arc<SqliteConfigurationStore> {
     }
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError> {
         self.as_ref().save(configuration)
+    }
+    fn load_mode(&self) -> Result<RuntimeMode, AppError> {
+        self.as_ref().load_mode()
+    }
+    fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError> {
+        self.as_ref().save_mode(mode)
     }
 }
 
@@ -104,9 +152,9 @@ fn read_configuration(connection: &Connection) -> Result<PersistedConfiguration,
     let Some(json) = json else {
         return Ok(PersistedConfiguration::default());
     };
-    let configuration: PersistedConfiguration =
+    let mut configuration: PersistedConfiguration =
         serde_json::from_str(&json).map_err(|_| AppError::storage("已保存的配置无法读取"))?;
-    configuration.validate()?;
+    configuration.migrate_v1()?;
     Ok(configuration)
 }
 
@@ -148,6 +196,17 @@ fn migrate(connection: &Connection) -> Result<(), AppError> {
             )
             .map_err(storage_error)?;
     }
+    if version <= 2 {
+        connection
+            .execute_batch(
+                "CREATE TABLE selected_mode (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    mode TEXT NOT NULL CHECK (mode IN ('rules', 'global', 'direct'))
+                );
+                PRAGMA user_version = 3;",
+            )
+            .map_err(storage_error)?;
+    }
     Ok(())
 }
 
@@ -162,160 +221,5 @@ fn storage_error(_: rusqlite::Error) -> AppError {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::models::{AppSettings, ProxyProfile, ProxyProtocol, RoutingRule};
-    use rusqlite::params;
-
-    fn configuration() -> PersistedConfiguration {
-        PersistedConfiguration {
-            schema_version: crate::models::CONFIG_SCHEMA_VERSION,
-            profiles: vec![ProxyProfile {
-                id: "profile-stable-id".into(),
-                name: "Primary".into(),
-                protocol: ProxyProtocol::Socks5,
-                host: "127.0.0.1".into(),
-                port: 1080,
-                authentication_enabled: false,
-                credential_ref: None,
-                enabled: true,
-            }],
-            rules: vec![RoutingRule {
-                id: "rule-stable-id".into(),
-                name: "Internal".into(),
-                matcher: crate::models::RuleMatcher::DomainSuffix,
-                target: "example.com".into(),
-                port_start: None,
-                port_end: None,
-                action: crate::models::RuleAction::Direct,
-                enabled: true,
-            }],
-            active_profile_id: Some("profile-stable-id".into()),
-            settings: AppSettings {
-                launch_at_login: true,
-                diagnostic_retention: RetentionPolicy::Days90,
-            },
-        }
-    }
-
-    #[test]
-    fn migrates_empty_database_and_persists_configuration_across_reopen() {
-        let directory = tempfile::tempdir().unwrap();
-        let path = directory.path().join("config.sqlite3");
-        let expected = configuration();
-        {
-            let store = SqliteConfigurationStore::open(&path).unwrap();
-            store.save(&expected).unwrap();
-            assert_eq!(store.load().unwrap(), expected);
-        }
-        let reopened = SqliteConfigurationStore::open(&path).unwrap();
-        assert_eq!(reopened.load().unwrap(), expected);
-    }
-
-    #[test]
-    fn migration_sets_supported_schema_version_and_defaults_settings() {
-        let store = SqliteConfigurationStore::open_in_memory().unwrap();
-        let connection = store.connection.lock().unwrap();
-        let version: i64 = connection
-            .pragma_query_value(None, "user_version", |row| row.get(0))
-            .unwrap();
-        assert_eq!(version, DATABASE_SCHEMA_VERSION);
-        drop(connection);
-        assert_eq!(
-            store.load().unwrap().settings.diagnostic_retention,
-            RetentionPolicy::Days30
-        );
-    }
-
-    #[test]
-    fn retention_applies_time_windows_and_permanent_capacity() {
-        let store = SqliteConfigurationStore::open_in_memory().unwrap();
-        let now = now_ms().unwrap();
-        {
-            let connection = store.connection.lock().unwrap();
-            for (index, days_ago) in [0, 20, 60, 120].iter().enumerate() {
-                connection
-                    .execute(
-                        "INSERT INTO runtime_diagnostics VALUES (?1, ?2, 'info', 'runtime event')",
-                        params![
-                            format!("diag-{index}"),
-                            now - days_ago * 24 * 60 * 60 * 1000
-                        ],
-                    )
-                    .unwrap();
-            }
-        }
-        assert_eq!(
-            store
-                .apply_diagnostic_retention(RetentionPolicy::Days90, now)
-                .unwrap(),
-            1
-        );
-        assert_eq!(
-            store
-                .apply_diagnostic_retention(RetentionPolicy::Days30, now)
-                .unwrap(),
-            1
-        );
-        assert_eq!(
-            store
-                .apply_diagnostic_retention(RetentionPolicy::Days7, now)
-                .unwrap(),
-            1
-        );
-        assert_eq!(store.diagnostic_count().unwrap(), 1);
-    }
-
-    #[test]
-    fn permanent_retention_caps_records_during_insert() {
-        let store = SqliteConfigurationStore::open_in_memory().unwrap();
-        let mut config = configuration();
-        config.settings.diagnostic_retention = RetentionPolicy::Permanent;
-        store.save(&config).unwrap();
-        let now = now_ms().unwrap();
-        {
-            let connection = store.connection.lock().unwrap();
-            connection
-                .execute(
-                    "WITH RECURSIVE seq(n) AS (
-                    SELECT 0 UNION ALL SELECT n + 1 FROM seq WHERE n < 99999
-                ) INSERT INTO runtime_diagnostics (id, created_at_ms, severity, summary)
-                  SELECT 'diag-' || n, ?1, 'info', 'runtime event' FROM seq",
-                    [now - 1],
-                )
-                .unwrap();
-        }
-        store
-            .record_diagnostic(&RuntimeDiagnostic {
-                id: "newest".into(),
-                created_at_ms: now,
-                severity: "info".into(),
-                summary: "runtime event".into(),
-            })
-            .unwrap();
-        assert_eq!(store.diagnostic_count().unwrap(), 100_000);
-        let connection = store.connection.lock().unwrap();
-        let newest: i64 = connection
-            .query_row(
-                "SELECT COUNT(*) FROM runtime_diagnostics WHERE id = 'newest'",
-                [],
-                |row| row.get(0),
-            )
-            .unwrap();
-        assert_eq!(newest, 1);
-    }
-
-    #[test]
-    fn invalid_save_preserves_existing_configuration() {
-        let store = SqliteConfigurationStore::open_in_memory().unwrap();
-        let expected = configuration();
-        store.save(&expected).unwrap();
-        let mut invalid = expected.clone();
-        invalid.profiles[0].port = 0;
-        assert_eq!(
-            store.save(&invalid).unwrap_err().fields[0].field,
-            "profiles[0].port"
-        );
-        assert_eq!(store.load().unwrap(), expected);
-    }
-}
+#[path = "store_tests.rs"]
+mod tests;

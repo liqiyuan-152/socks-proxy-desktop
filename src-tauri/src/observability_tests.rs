@@ -2,12 +2,13 @@ use super::*;
 use serde_json::json;
 
 fn connection() -> Value {
+    let tag = crate::sing_box_config::proxy_tag("test-proxy");
     json!({
         "id": "8d4f3431-3912-4d4f-a715-553cfc213ecc",
         "start": "2026-09-23T10:23:12.001Z",
         "metadata": { "host": "example.com", "destinationPort": "443" },
-        "rule": "domain=example.com port=443 => route(selected-proxy)",
-        "chains": ["selected-proxy"],
+        "rule": format!("domain=example.com port=443 => route({tag})"),
+        "chains": [tag],
         "upload": 100, "download": 200,
         "headers": { "Authorization": "Bearer never-expose" },
         "url": "https://example.com/?password=never-expose",
@@ -25,7 +26,10 @@ fn parses_only_verified_active_fields_and_copies_without_secrets() {
         .copy_detail("8d4f3431-3912-4d4f-a715-553cfc213ecc")
         .unwrap();
     assert!(details.contains("example.com:443"));
-    assert!(details.contains("route(selected-proxy)"));
+    assert!(details.contains(&format!(
+        "route({})",
+        crate::sing_box_config::proxy_tag("test-proxy")
+    )));
     assert!(!details.contains("never-expose"));
     assert!(!serde_json::to_string(&snapshot)
         .unwrap()

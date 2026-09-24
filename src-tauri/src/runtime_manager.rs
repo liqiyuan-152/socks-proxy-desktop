@@ -1,6 +1,4 @@
 use super::*;
-#[cfg(test)]
-use crate::runtime_session::RUNTIME_SESSION_KEY;
 use crate::{error::FieldError, runtime_session::SessionLease};
 use std::{sync::Mutex, time::Duration};
 
@@ -13,25 +11,18 @@ pub struct ManagedRuntime {
 }
 
 impl ManagedRuntime {
-    #[cfg(test)]
-    pub fn new(
-        configuration: PersistedConfiguration,
-        backend: Box<dyn RuntimeBackend>,
-    ) -> Result<Self, AppError> {
-        let ownership = SessionLease::acquire(RUNTIME_SESSION_KEY)?;
-        Self::from_lease(configuration, backend, ownership)
-    }
-
     pub(crate) fn from_lease(
         configuration: PersistedConfiguration,
         backend: Box<dyn RuntimeBackend>,
         ownership: SessionLease,
+        selected_mode: RuntimeMode,
     ) -> Result<Self, AppError> {
         configuration.validate()?;
         Ok(Self {
             state: Mutex::new(RuntimeState {
                 configuration,
                 revision: 0,
+                selected_mode,
                 desired_mode: RuntimeMode::Direct,
                 applied_mode: None,
                 phase: RuntimePhase::Stopped,
@@ -39,6 +30,7 @@ impl ManagedRuntime {
                 started_at: None,
                 last_error: None,
                 pending: None,
+                pending_settings: None,
             }),
             operation: Mutex::new(()),
             events: Mutex::new(None),
@@ -84,14 +76,17 @@ impl ManagedRuntime {
         staged: bool,
     ) -> Result<RuntimeSnapshot, AppError> {
         candidate.validate()?;
-        if mode != RuntimeMode::Direct && candidate.active_profile_id.is_none() {
+        if mode == RuntimeMode::Global && candidate.active_profile_id.is_none() {
             return Err(AppError::validation(vec![FieldError {
-                field: "active_profile_id".into(),
-                message: "代理模式需要选择活动档案".into(),
+                field: "default_profile_id".into(),
+                message: "全局代理需要默认代理".into(),
             }]));
         }
+        if mode == RuntimeMode::Rules {
+            candidate.validate_runtime_rules()?;
+        }
         let before = self.state.lock().map_err(|_| runtime_error())?.clone();
-        if before.pending.is_some() {
+        if before.pending.is_some() || before.pending_settings.is_some() {
             return Err(AppError::storage("上一候选修订仍在提交中"));
         }
         {
@@ -255,23 +250,21 @@ impl RuntimeCoordinator for ManagedRuntime {
 
     fn request_mode(&self, mode: RuntimeMode) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.serialize_operation()?;
-        let configuration = self
-            .state
-            .lock()
-            .map_err(|_| runtime_error())?
-            .configuration
-            .clone();
+        let configuration = {
+            let mut state = self.state.lock().map_err(|_| runtime_error())?;
+            state.selected_mode = mode;
+            state.configuration.clone()
+        };
         self.transition(configuration, mode, false, false)
     }
 
     fn stop(&self) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.serialize_operation()?;
-        let configuration = self
-            .state
-            .lock()
-            .map_err(|_| runtime_error())?
-            .configuration
-            .clone();
+        let configuration = {
+            let mut state = self.state.lock().map_err(|_| runtime_error())?;
+            state.selected_mode = RuntimeMode::Direct;
+            state.configuration.clone()
+        };
         self.transition(configuration, RuntimeMode::Direct, true, false)
     }
 
@@ -288,15 +281,18 @@ impl RuntimeCoordinator for ManagedRuntime {
         if previous == candidate {
             return Ok(state.snapshot());
         }
-        let mode = match state.applied_mode {
-            Some(RuntimeMode::Rules | RuntimeMode::Global)
-                if candidate.active_profile_id.is_none() =>
-            {
-                RuntimeMode::Direct
-            }
-            Some(mode) => mode,
-            None => RuntimeMode::Direct,
-        };
+        if previous.profiles == candidate.profiles
+            && previous.rules == candidate.rules
+            && previous.active_profile_id == candidate.active_profile_id
+            && previous.china_direct_enabled == candidate.china_direct_enabled
+        {
+            self.state
+                .lock()
+                .map_err(|_| runtime_error())?
+                .pending_settings = Some(candidate.clone());
+            return Ok(state.snapshot());
+        }
+        let mode = state.applied_mode.unwrap_or(RuntimeMode::Direct);
         self.transition(candidate.clone(), mode, state.applied_mode.is_none(), true)
     }
 
@@ -309,6 +305,11 @@ impl RuntimeCoordinator for ManagedRuntime {
             .state
             .lock()
             .unwrap_or_else(|poison| poison.into_inner());
+        if let Some(configuration) = state.pending_settings.take() {
+            state.configuration = configuration;
+            state.revision += 1;
+            self.publish(state.snapshot());
+        }
         if let Some(pending) = state.pending.take() {
             self.backend.confirm_transition(state.session.as_ref());
             state.configuration = pending.configuration;
@@ -339,6 +340,11 @@ impl RuntimeCoordinator for ManagedRuntime {
     ) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.serialize_operation()?;
         let before = self.state.lock().map_err(|_| runtime_error())?.clone();
+        if before.pending_settings.is_some() {
+            let mut state = self.state.lock().map_err(|_| runtime_error())?;
+            state.pending_settings = None;
+            return Ok(state.snapshot());
+        }
         if let Some(pending) = before.pending {
             if before.configuration != *previous || before.revision != snapshot.revision {
                 return Err(AppError::storage("待回滚的配置修订不一致"));

@@ -1,13 +1,20 @@
+mod china_rules;
+#[cfg(test)]
+mod china_rules_tests;
 mod configuration_service;
 mod credentials;
 mod error;
 mod ipc;
+#[cfg(any(windows, test))]
+mod latency;
 mod models;
 mod observability;
+mod route_test;
 mod routing;
 mod runtime;
 mod runtime_events;
 mod runtime_session;
+#[cfg(not(windows))]
 mod runtime_unavailable;
 #[cfg(any(windows, test))]
 mod sing_box_backend;
@@ -82,6 +89,8 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             ipc::list_profiles,
+            ipc::get_profile_credential,
+            ipc::test_proxy_latency,
             ipc::save_profile,
             ipc::delete_profile,
             ipc::select_profile,
@@ -89,6 +98,9 @@ pub fn run() {
             ipc::replace_rules,
             ipc::reorder_rules,
             ipc::get_settings,
+            ipc::get_china_direct_status,
+            ipc::set_china_direct_enabled,
+            ipc::test_route,
             ipc::update_settings,
             ipc::export_configuration,
             ipc::import_configuration,
@@ -119,23 +131,46 @@ pub fn run() {
                 app_data.join("config.sqlite3"),
             )?);
             let initial = store.load()?;
+            let selected_mode = store.load_mode()?;
             #[cfg(windows)]
             let (backend, recovery_issue) = windows_backend(app, store.clone(), &app_data)?;
             #[cfg(not(windows))]
             let backend: Box<dyn RuntimeBackend> = Box::new(UnavailableRuntimeBackend);
-            let runtime = ManagedRuntime::from_lease(initial, backend, ownership)?;
+            let runtime = ManagedRuntime::from_lease(initial, backend, ownership, selected_mode)?;
             #[cfg(windows)]
             if let Some(message) = recovery_issue {
                 runtime.report_startup_recovery_issue(message);
             }
             let runtime_updates = runtime.subscribe();
-            app.manage(Arc::new(ConfigurationService::new(
+            let service = ConfigurationService::new(
                 Box::new(store.clone()),
                 Box::new(OsCredentialStore),
                 Box::new(SystemStartupAdapter),
                 Box::new(runtime),
-            )));
+            );
+            #[cfg(windows)]
+            let service = service.with_china_rule_root(
+                app.path()
+                    .resolve("china-rules", tauri::path::BaseDirectory::Resource)?,
+            );
+            app.manage(Arc::new(service));
             app.manage(store.clone());
+
+            #[cfg(windows)]
+            {
+                use tauri::path::BaseDirectory;
+                let binary = app.path().resolve(
+                    "sing-box/windows-amd64/sing-box.exe",
+                    BaseDirectory::Resource,
+                )?;
+                app.manage(Arc::new(latency::LatencyTester::new(
+                    store.clone(),
+                    Arc::new(OsCredentialStore),
+                    binary,
+                    sing_box_process::WINDOWS_AMD64_EXE_SHA256.into(),
+                    app_data.join("runtime"),
+                )));
+            }
 
             tray::install(app)?;
             runtime_events::start(app.handle().clone(), store, runtime_updates);

@@ -1,0 +1,38 @@
+{
+  "data_date": "2026-09-23",
+  "core_version": "1.14.1",
+  "sources": {
+    "domain": {
+      "repository": "v2fly/domain-list-community",
+      "commit": "c1c2cf0d252871e8739747714df06e8d2671f72f",
+      "license": "MIT",
+      "license_sha256": "b9d84a22870d3f21c91a4c6e410c9cc51d00902f5233ad0c84011479244bf7d2",
+      "url": "https://github.com/v2fly/domain-list-community/archive/c1c2cf0d252871e8739747714df06e8d2671f72f.zip",
+      "sha256": "b43a766bef9fff982bd3ed822f7f9d876ed61d9d3bb8650d09639f38cda7b2f6"
+    },
+    "ip": {
+      "repository": "gaoyifan/china-operator-ip",
+      "commit": "8046f18143a4ad0ced43fe5d7e72e0c68ba73ac8",
+      "license": "MIT",
+      "license_commit": "b2b8edc0ddd9cf2bc638ec77587301bbf84b8db9",
+      "license_sha256": "8f4d03a581484143945a9fac471c3b669d5aada68361fd1f25886c3ddbdd786a",
+      "url": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/8046f18143a4ad0ced43fe5d7e72e0c68ba73ac8/china46.txt",
+      "sha256": "3c321e1afb24dee357dd77eade0ed2d91f411547386d759550ace084505dfcaf"
+    }
+  },
+  "hashes": {
+    "china-domains.srs": "c60ec8261ed3e7375e4add4c93c7f2bee9ab8ab7d70421712c2c4c799d3d4442",
+    "china-ipv4.srs": "1155c3f5d6f0a4d0617fb036d046f266faa9c9006aa7bffff26d5e922c0c9ab1",
+    "china-ipv6.srs": "2239b50d69b204cbd1028a8e68946af6db1fe177e9b737e9bb989f64b3978b9f"
+  },
+  "counts": {
+    "domain_suffix": 8293,
+    "domain": 67,
+    "domain_keyword": 0,
+    "domain_regex": 3
+  },
+  "ip_counts": {
+    "ipv4": 6205,
+    "ipv6": 3407
+  }
+}

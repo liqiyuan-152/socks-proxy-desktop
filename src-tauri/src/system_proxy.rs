@@ -86,19 +86,13 @@ impl OwnedSystemProxy {
     }
 }
 
-pub struct SystemProxyRecord {
-    pub original_value: String,
-    pub expected_value: String,
-    pub owner_token: String,
-}
-
 pub trait SystemProxyAdapter: Send + Sync {
-    fn enable(&self, localhost_port: u16) -> Result<SystemProxyRecord, AppError>;
+    fn enable(&self, localhost_port: u16) -> Result<(), AppError>;
     fn restore_if_owned(&self) -> Result<(), AppError>;
 }
 
 impl SystemProxyAdapter for OwnedSystemProxy {
-    fn enable(&self, localhost_port: u16) -> Result<SystemProxyRecord, AppError> {
+    fn enable(&self, localhost_port: u16) -> Result<(), AppError> {
         if localhost_port == 0 {
             return Err(AppError::unavailable("系统代理监听端口无效"));
         }
@@ -151,11 +145,7 @@ impl SystemProxyAdapter for OwnedSystemProxy {
             self.rollback_enable(existing.as_ref(), &current, &expected)?;
             return Err(error);
         }
-        Ok(SystemProxyRecord {
-            original_value: serde_json::to_string(&original).unwrap_or_default(),
-            expected_value: serde_json::to_string(&expected).unwrap_or_default(),
-            owner_token,
-        })
+        Ok(())
     }
 
     fn restore_if_owned(&self) -> Result<(), AppError> {

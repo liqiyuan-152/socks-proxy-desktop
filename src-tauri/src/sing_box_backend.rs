@@ -1,5 +1,6 @@
 use crate::{
     credentials::CredentialStore,
+    credentials::ProxyCredential,
     error::AppError,
     models::{PersistedConfiguration, RuntimeMode},
     runtime::{BackendSession, RuntimeBackend},
@@ -7,6 +8,7 @@ use crate::{
     system_proxy::SystemProxyAdapter,
 };
 use std::{
+    collections::HashMap,
     path::PathBuf,
     sync::{Arc, Mutex},
 };
@@ -88,23 +90,25 @@ impl RuntimeBackend for SingBoxRuntimeBackend {
             slots.pending_direct = true;
             return Ok(None);
         }
-        let profile = candidate
-            .profiles
-            .iter()
-            .find(|profile| Some(&profile.id) == candidate.active_profile_id.as_ref())
-            .ok_or_else(backend_error)?;
-        let credential = if profile.authentication_enabled {
-            self.credentials.get(&profile.id)?
-        } else {
-            None
-        };
+        let mut credentials: HashMap<String, ProxyCredential> = HashMap::new();
+        for (index, profile) in candidate.profiles.iter().enumerate() {
+            if profile.enabled && profile.authentication_enabled {
+                let credential = self.credentials.get(&profile.id)?.ok_or_else(|| {
+                    AppError::validation(vec![crate::error::FieldError {
+                        field: format!("profiles[{index}].credential"),
+                        message: "代理认证凭据缺失".into(),
+                    }])
+                })?;
+                credentials.insert(profile.id.clone(), credential);
+            }
+        }
         let process = SingBoxProcess::start(
             &self.binary,
             &self.expected_sha256,
             &self.runtime_root,
             candidate,
             mode,
-            credential.as_ref(),
+            &credentials,
         )?;
         // The adapter must leave the old setting intact on failure, including a
         // previous app-owned setting during a hot switch.

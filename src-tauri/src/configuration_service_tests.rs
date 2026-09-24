@@ -8,10 +8,20 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-#[derive(Default)]
 struct MemoryStore {
     value: Mutex<PersistedConfiguration>,
+    mode: Mutex<RuntimeMode>,
     fail_save: Mutex<bool>,
+}
+
+impl Default for MemoryStore {
+    fn default() -> Self {
+        Self {
+            value: Mutex::new(PersistedConfiguration::default()),
+            mode: Mutex::new(RuntimeMode::Direct),
+            fail_save: Mutex::new(false),
+        }
+    }
 }
 
 impl ConfigurationStore for Arc<MemoryStore> {
@@ -24,6 +34,16 @@ impl ConfigurationStore for Arc<MemoryStore> {
             return Err(AppError::storage("测试写入失败"));
         }
         *self.value.lock().unwrap() = candidate.clone();
+        Ok(())
+    }
+    fn load_mode(&self) -> Result<RuntimeMode, AppError> {
+        Ok(*self.mode.lock().unwrap())
+    }
+    fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError> {
+        if *self.fail_save.lock().unwrap() {
+            return Err(AppError::storage("测试写入失败"));
+        }
+        *self.mode.lock().unwrap() = mode;
         Ok(())
     }
 }
@@ -77,6 +97,7 @@ impl RuntimeCoordinator for Arc<FakeRuntime> {
     fn snapshot(&self) -> RuntimeSnapshot {
         RuntimeSnapshot {
             revision: 0,
+            selected_mode: RuntimeMode::Direct,
             desired_mode: RuntimeMode::Direct,
             applied_mode: Some(RuntimeMode::Direct),
             phase: RuntimePhase::Stopped,
@@ -167,6 +188,42 @@ fn profile_input() -> ProfileInput {
     }
 }
 
+#[test]
+fn china_preset_requires_default_and_valid_bundled_rules_before_commit() {
+    let mut fixture = Fixture::new();
+    assert!(!fixture.service.china_direct_status().unwrap().available);
+    assert!(fixture.service.set_china_direct_enabled(true).is_err());
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/china-rules");
+    fixture.service = fixture.service.with_china_rule_root(root);
+    assert!(fixture.service.china_direct_status().unwrap().available);
+    assert_eq!(
+        fixture
+            .service
+            .set_china_direct_enabled(true)
+            .unwrap_err()
+            .fields[0]
+            .field,
+        "default_profile_id"
+    );
+    let profile = fixture.service.save_profile(profile_input()).unwrap();
+    fixture.service.select_profile(Some(profile.id)).unwrap();
+    let status = fixture.service.set_china_direct_enabled(true).unwrap();
+    assert!(status.enabled && status.available && status.data_date.is_some());
+    assert!(fixture.store.load().unwrap().china_direct_enabled);
+}
+
+#[test]
+fn invalid_china_rules_reject_revision_without_changing_stored_configuration() {
+    let mut fixture = Fixture::new();
+    let profile = fixture.service.save_profile(profile_input()).unwrap();
+    fixture.service.select_profile(Some(profile.id)).unwrap();
+    let missing = tempfile::tempdir().unwrap();
+    fixture.service = fixture.service.with_china_rule_root(missing.path().into());
+    let error = fixture.service.set_china_direct_enabled(true).unwrap_err();
+    assert!(error.message.contains("规则集"));
+    assert!(!fixture.store.load().unwrap().china_direct_enabled);
+}
+
 fn rule(id: &str, target: &str) -> RoutingRule {
     RoutingRule {
         id: id.into(),
@@ -176,8 +233,57 @@ fn rule(id: &str, target: &str) -> RoutingRule {
         port_start: None,
         port_end: None,
         action: RuleAction::Proxy,
+        proxy_profile_id: None,
         enabled: true,
     }
+}
+
+#[test]
+fn credentials_are_read_only_for_existing_authenticated_profiles() {
+    let fixture = Fixture::new();
+    let mut input = profile_input();
+    input.authentication_enabled = true;
+    input.credential = Some(CredentialUpdate::Replace {
+        username: "alice".into(),
+        password: "secret".into(),
+    });
+    let created = fixture.service.save_profile(input).unwrap();
+    let credential = fixture.service.profile_credential(&created.id).unwrap();
+    assert_eq!(credential.username, "alice");
+    assert_eq!(credential.password, "secret");
+    assert_eq!(fixture.service.list_profiles().unwrap()[0].name, "Primary");
+    assert_eq!(
+        fixture
+            .service
+            .profile_credential("missing")
+            .err()
+            .unwrap()
+            .code,
+        "not_found"
+    );
+
+    let mut plain = profile_input();
+    plain.name = "Plain".into();
+    let plain = fixture.service.save_profile(plain).unwrap();
+    assert_eq!(
+        fixture
+            .service
+            .profile_credential(&plain.id)
+            .err()
+            .unwrap()
+            .code,
+        "unavailable"
+    );
+    fixture.credentials.delete(&created.id).unwrap();
+    assert_eq!(
+        fixture
+            .service
+            .profile_credential(&created.id)
+            .err()
+            .unwrap()
+            .code,
+        "unavailable"
+    );
 }
 
 #[test]
@@ -215,12 +321,19 @@ fn deleting_active_profile_waits_for_runtime_and_rolls_back_secret_on_failure() 
         .service
         .select_profile(Some(created.id.clone()))
         .unwrap();
+    assert_eq!(
+        fixture
+            .service
+            .delete_profile(&created.id)
+            .unwrap_err()
+            .fields[0]
+            .field,
+        "default_profile_id"
+    );
+    fixture.service.select_profile(None).unwrap();
     *fixture.runtime.reject_next.lock().unwrap() = true;
     assert!(fixture.service.delete_profile(&created.id).is_err());
-    assert_eq!(
-        fixture.store.load().unwrap().active_profile_id.as_deref(),
-        Some(created.id.as_str())
-    );
+    assert_eq!(fixture.store.load().unwrap().active_profile_id, None);
     assert_eq!(
         fixture
             .credentials
@@ -237,6 +350,41 @@ fn deleting_active_profile_waits_for_runtime_and_rolls_back_secret_on_failure() 
         fixture.runtime.committed_active_ids.lock().unwrap().last(),
         Some(&None)
     );
+}
+
+#[test]
+fn referenced_rule_blocks_disable_and_delete_without_changing_configuration() {
+    let fixture = Fixture::new();
+    let created = fixture.service.save_profile(profile_input()).unwrap();
+    let mut proxy_rule = rule("site", "example.com");
+    proxy_rule.proxy_profile_id = Some(created.id.clone());
+    fixture.service.replace_rules(vec![proxy_rule]).unwrap();
+    let original = fixture.store.load().unwrap();
+
+    let mut disabled = profile_input();
+    disabled.id = Some(created.id.clone());
+    disabled.enabled = false;
+    assert_eq!(
+        fixture.service.save_profile(disabled).unwrap_err().fields[0].field,
+        "rules[0].proxy_profile_id"
+    );
+    let error = fixture.service.delete_profile(&created.id).unwrap_err();
+    assert_eq!(error.fields[0].field, "rules[0].proxy_profile_id");
+    assert!(error.fields[0].message.contains("site"));
+    assert_eq!(fixture.store.load().unwrap(), original);
+
+    let mut invalid = rule("new", "other.net");
+    invalid.proxy_profile_id = None;
+    assert_eq!(
+        fixture
+            .service
+            .replace_rules(vec![invalid])
+            .unwrap_err()
+            .fields[0]
+            .field,
+        "rules[0].proxy_profile_id"
+    );
+    assert_eq!(fixture.store.load().unwrap(), original);
 }
 
 #[test]
@@ -280,13 +428,12 @@ fn storage_failure_restores_old_credentials_and_runtime_revision() {
 #[test]
 fn rule_reorder_and_settings_reflect_applied_state() {
     let fixture = Fixture::new();
-    fixture
-        .service
-        .replace_rules(vec![
-            rule("first", "example.com"),
-            rule("second", "other.net"),
-        ])
-        .unwrap();
+    let profile = fixture.service.save_profile(profile_input()).unwrap();
+    let mut first = rule("first", "example.com");
+    first.proxy_profile_id = Some(profile.id.clone());
+    let mut second = rule("second", "other.net");
+    second.proxy_profile_id = Some(profile.id);
+    fixture.service.replace_rules(vec![first, second]).unwrap();
     fixture
         .service
         .reorder_rules(&["second".into(), "first".into()])
@@ -307,6 +454,7 @@ fn rule_reorder_and_settings_reflect_applied_state() {
         .update_settings(AppSettings {
             launch_at_login: true,
             diagnostic_retention: RetentionPolicy::Days7,
+            latency_test_url: crate::models::default_latency_test_url(),
         })
         .unwrap();
     assert!(settings.launch_at_login);

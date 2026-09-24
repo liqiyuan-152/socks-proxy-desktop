@@ -95,6 +95,7 @@ mod tests {
         let mut tracker = SnapshotTracker::default();
         let mut snapshot = RuntimeSnapshot {
             revision: 1,
+            selected_mode: RuntimeMode::Global,
             desired_mode: RuntimeMode::Global,
             applied_mode: Some(RuntimeMode::Global),
             phase: RuntimePhase::Running,

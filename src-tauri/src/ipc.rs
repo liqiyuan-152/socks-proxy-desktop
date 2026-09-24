@@ -1,9 +1,12 @@
 use crate::{
-    configuration_service::{ConfigurationService, ProfileInput, ProfileView},
+    configuration_service::{
+        ChinaDirectStatus, ConfigurationService, ProfileCredentialView, ProfileInput, ProfileView,
+    },
     credentials::CredentialUpdate,
     error::AppError,
     models::{AppSettings, RoutingRule, RuntimeMode},
     observability::ActiveConnectionsSnapshot,
+    route_test::RouteTestResult,
     runtime::RuntimeSnapshot,
     store::{DiagnosticFilter, DiagnosticPage, RuntimeDiagnostic, SqliteConfigurationStore},
 };
@@ -90,6 +93,33 @@ pub async fn get_settings(service: ServiceState<'_>) -> CommandResult<AppSetting
 }
 
 #[tauri::command]
+pub async fn get_china_direct_status(
+    service: ServiceState<'_>,
+) -> CommandResult<ChinaDirectStatus> {
+    let service = Arc::clone(&service);
+    run_blocking(move || service.china_direct_status()).await
+}
+
+#[tauri::command]
+pub async fn set_china_direct_enabled(
+    service: ServiceState<'_>,
+    enabled: bool,
+) -> CommandResult<ChinaDirectStatus> {
+    let service = Arc::clone(&service);
+    run_blocking(move || service.set_china_direct_enabled(enabled)).await
+}
+
+#[tauri::command]
+pub async fn test_route(
+    service: ServiceState<'_>,
+    target: String,
+    port: u16,
+) -> CommandResult<RouteTestResult> {
+    let service = Arc::clone(&service);
+    run_blocking(move || service.test_route(&target, port)).await
+}
+
+#[tauri::command]
 pub async fn update_settings(
     service: ServiceState<'_>,
     settings: AppSettings,
@@ -123,10 +153,56 @@ pub async fn get_runtime_snapshot(service: ServiceState<'_>) -> CommandResult<Ru
 #[tauri::command]
 pub async fn set_runtime_mode(
     service: ServiceState<'_>,
+    store: StoreState<'_>,
     mode: RuntimeMode,
 ) -> CommandResult<RuntimeSnapshot> {
     let service = Arc::clone(&service);
-    run_blocking(move || service.request_mode(mode)).await
+    let store = Arc::clone(&store);
+    run_blocking(move || {
+        let result = service.request_mode(mode);
+        if let Err(error) = &result {
+            let label = match mode {
+                RuntimeMode::Rules => "规则代理",
+                RuntimeMode::Global => "全局代理",
+                RuntimeMode::Direct => "全局直连",
+            };
+            if let Ok(created_at_ms) = crate::store::diagnostic_now_ms() {
+                let _ = store.record_diagnostic(&RuntimeDiagnostic {
+                    id: uuid::Uuid::new_v4().to_string(),
+                    created_at_ms,
+                    severity: "error".into(),
+                    summary: format!("切换至{label}失败（错误类别：{}）", error.code),
+                });
+            }
+        }
+        result
+    })
+    .await
+}
+
+#[tauri::command]
+pub async fn get_profile_credential(
+    service: ServiceState<'_>,
+    id: String,
+) -> CommandResult<ProfileCredentialView> {
+    let service = Arc::clone(&service);
+    run_blocking(move || service.profile_credential(&id)).await
+}
+
+#[cfg(windows)]
+#[tauri::command]
+pub async fn test_proxy_latency(
+    tester: State<'_, Arc<crate::latency::LatencyTester>>,
+    id: String,
+) -> CommandResult<crate::latency::LatencyResult> {
+    let tester = Arc::clone(&tester);
+    run_blocking(move || tester.test(&id)).await
+}
+
+#[cfg(not(windows))]
+#[tauri::command]
+pub async fn test_proxy_latency(_id: String) -> CommandResult<serde_json::Value> {
+    Err(AppError::unavailable("当前平台不支持代理延迟测试"))
 }
 
 #[tauri::command]

@@ -1,12 +1,14 @@
 use crate::{
+    china_rules::{resource_root, ChinaRuleSets},
     credentials::ProxyCredential,
     error::AppError,
     models::{PersistedConfiguration, RuntimeMode},
-    sing_box_config::{render, SingBoxPorts},
+    sing_box_config::{render_with_rules, SingBoxPorts},
 };
 use rand::RngCore;
 use sha2::{Digest, Sha256};
 use std::{
+    collections::HashMap,
     fs::File,
     io::{Read, Write},
     net::{TcpListener, TcpStream},
@@ -36,6 +38,8 @@ struct PrivateRuntimeDir(PathBuf);
 
 impl Drop for PrivateRuntimeDir {
     fn drop(&mut self) {
+        #[cfg(windows)]
+        let _ = std::fs::remove_file(self.0.join("job-owned"));
         let _ = std::fs::remove_dir(&self.0);
     }
 }
@@ -47,7 +51,7 @@ impl SingBoxProcess {
         runtime_root: &Path,
         configuration: &PersistedConfiguration,
         mode: RuntimeMode,
-        credential: Option<&ProxyCredential>,
+        credentials: &HashMap<String, ProxyCredential>,
     ) -> Result<Self, AppError> {
         verify_binary(binary, expected_sha256)?;
         #[cfg(windows)]
@@ -64,7 +68,12 @@ impl SingBoxProcess {
         let mut random = [0u8; 32];
         rand::rngs::OsRng.fill_bytes(&mut random);
         let control_secret = hex::encode(random);
-        let config_json = render(
+        let china_rules = if mode == RuntimeMode::Rules && configuration.china_direct_enabled {
+            Some(ChinaRuleSets::verify(&resource_root(binary)?)?)
+        } else {
+            None
+        };
+        let config_json = render_with_rules(
             configuration,
             mode,
             SingBoxPorts {
@@ -72,7 +81,8 @@ impl SingBoxProcess {
                 control: control_port,
             },
             &control_secret,
-            credential,
+            credentials,
+            china_rules.as_ref(),
         )?;
         let mut config = tempfile::Builder::new()
             .prefix("sing-box-")

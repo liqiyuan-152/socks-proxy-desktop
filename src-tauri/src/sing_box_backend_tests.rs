@@ -2,7 +2,6 @@ use super::*;
 use crate::{
     credentials::ProxyCredential,
     models::{ProxyProfile, ProxyProtocol},
-    system_proxy::SystemProxyRecord,
 };
 use sha2::{Digest, Sha256};
 use std::{
@@ -29,16 +28,12 @@ struct ProxyState {
     reject_next: AtomicBool,
 }
 impl SystemProxyAdapter for Arc<ProxyState> {
-    fn enable(&self, port: u16) -> Result<SystemProxyRecord, AppError> {
+    fn enable(&self, port: u16) -> Result<(), AppError> {
         if self.reject_next.swap(false, Ordering::SeqCst) {
             return Err(AppError::unavailable("模拟系统代理切换失败"));
         }
         *self.port.lock().unwrap() = Some(port);
-        Ok(SystemProxyRecord {
-            original_value: "none".into(),
-            expected_value: port.to_string(),
-            owner_token: "test-owner".into(),
-        })
+        Ok(())
     }
     fn restore_if_owned(&self) -> Result<(), AppError> {
         *self.port.lock().unwrap() = None;

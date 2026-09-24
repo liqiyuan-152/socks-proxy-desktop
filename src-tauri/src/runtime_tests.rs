@@ -89,7 +89,61 @@ fn configuration() -> PersistedConfiguration {
 
 fn manager(backend: Arc<FakeBackend>, configuration: PersistedConfiguration) -> ManagedRuntime {
     let ownership = SessionLease::acquire(&uuid::Uuid::new_v4().to_string()).unwrap();
-    ManagedRuntime::from_lease(configuration, Box::new(backend), ownership).unwrap()
+    ManagedRuntime::from_lease(
+        configuration,
+        Box::new(backend),
+        ownership,
+        RuntimeMode::Direct,
+    )
+    .unwrap()
+}
+
+#[test]
+fn selected_mode_is_restored_without_starting_proxy_and_survives_configuration_changes() {
+    let backend = Arc::new(FakeBackend::default());
+    let ownership = SessionLease::acquire(&uuid::Uuid::new_v4().to_string()).unwrap();
+    let configuration = configuration();
+    let runtime = ManagedRuntime::from_lease(
+        configuration.clone(),
+        Box::new(backend.clone()),
+        ownership,
+        RuntimeMode::Rules,
+    )
+    .unwrap();
+    assert_eq!(runtime.snapshot().selected_mode, RuntimeMode::Rules);
+    assert_eq!(runtime.snapshot().applied_mode, None);
+    assert!(backend.modes.lock().unwrap().is_empty());
+
+    let mut candidate = configuration.clone();
+    candidate.settings.launch_at_login = true;
+    runtime
+        .apply_configuration(&configuration, &candidate)
+        .unwrap();
+    runtime.confirm_configuration();
+    assert_eq!(runtime.snapshot().selected_mode, RuntimeMode::Rules);
+}
+
+#[test]
+fn settings_only_update_keeps_running_core_and_can_roll_back() {
+    let backend = Arc::new(FakeBackend::default());
+    let original = configuration();
+    let runtime = manager(backend.clone(), original.clone());
+    let running = runtime.request_mode(RuntimeMode::Global).unwrap();
+    let mut next = original.clone();
+    next.settings.latency_test_url = "https://example.org/check".into();
+    runtime.apply_configuration(&original, &next).unwrap();
+    assert_eq!(runtime.snapshot().revision, running.revision);
+    runtime.restore_configuration(&original, &running).unwrap();
+    assert_eq!(backend.modes.lock().unwrap().len(), 1);
+    runtime.apply_configuration(&original, &next).unwrap();
+    let committed = runtime.confirm_configuration();
+    assert_eq!(committed.revision, running.revision + 1);
+    assert_eq!(committed.applied_mode, running.applied_mode);
+    assert_eq!(committed.phase, running.phase);
+    assert_eq!(backend.modes.lock().unwrap().len(), 1);
+    runtime.apply_configuration(&next, &original).unwrap();
+    runtime.confirm_configuration();
+    assert_eq!(backend.modes.lock().unwrap().len(), 1);
 }
 #[test]
 fn startup_failure_keeps_mode_unapplied_and_clears_uptime() {
@@ -161,7 +215,7 @@ fn direct_and_stop_clear_running_session_and_uptime() {
 }
 
 #[test]
-fn deleting_active_profile_and_restoring_snapshot_recovers_mode() {
+fn removing_default_while_global_is_running_is_rejected() {
     let backend = Arc::new(FakeBackend::default());
     let config = configuration();
     let runtime = manager(backend, config.clone());
@@ -169,22 +223,54 @@ fn deleting_active_profile_and_restoring_snapshot_recovers_mode() {
     let mut candidate = config.clone();
     candidate.profiles.clear();
     candidate.active_profile_id = None;
-    let staged = runtime.apply_configuration(&config, &candidate).unwrap();
-    assert_eq!(staged.applied_mode, Some(RuntimeMode::Global));
-    assert_eq!(staged.active_profile_id, Some("stable-profile".into()));
-    assert_eq!(staged.revision, before.revision);
-    assert_eq!(staged.phase, RuntimePhase::Recovering);
-    let restored = runtime.restore_configuration(&config, &before).unwrap();
-    assert_eq!(restored.applied_mode, Some(RuntimeMode::Global));
-    assert_eq!(restored.active_profile_id, Some("stable-profile".into()));
-    assert_eq!(restored.revision, before.revision);
-    assert!(restored.runtime_uptime_ms.is_some());
-
+    assert_eq!(
+        runtime
+            .apply_configuration(&config, &candidate)
+            .unwrap_err()
+            .fields[0]
+            .field,
+        "default_profile_id"
+    );
+    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Global));
+    assert_eq!(runtime.snapshot().revision, before.revision);
+    runtime.request_mode(RuntimeMode::Direct).unwrap();
     runtime.apply_configuration(&config, &candidate).unwrap();
     let direct = runtime.confirm_configuration();
     assert_eq!(direct.applied_mode, Some(RuntimeMode::Direct));
     assert_eq!(direct.active_profile_id, None);
-    assert_eq!(direct.revision, before.revision + 1);
+    assert_eq!(direct.revision, before.revision + 2);
+}
+
+#[test]
+fn rules_without_default_start_and_china_preset_change_restarts_candidate() {
+    let backend = Arc::new(FakeBackend::default());
+    let mut config = configuration();
+    config.active_profile_id = None;
+    let runtime = manager(backend.clone(), config.clone());
+    assert_eq!(
+        runtime
+            .request_mode(RuntimeMode::Global)
+            .unwrap_err()
+            .fields[0]
+            .field,
+        "default_profile_id"
+    );
+    assert!(backend.modes.lock().unwrap().is_empty());
+    runtime.request_mode(RuntimeMode::Rules).unwrap();
+    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Rules));
+    let mut candidate = config.clone();
+    candidate.active_profile_id = Some("stable-profile".into());
+    runtime.apply_configuration(&config, &candidate).unwrap();
+    runtime.confirm_configuration();
+    let count = backend.modes.lock().unwrap().len();
+    let mut preset = candidate.clone();
+    preset.china_direct_enabled = true;
+    runtime.apply_configuration(&candidate, &preset).unwrap();
+    assert_eq!(backend.modes.lock().unwrap().len(), count + 1);
+    runtime
+        .restore_configuration(&candidate, &runtime.snapshot())
+        .unwrap();
+    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Rules));
 }
 
 #[test]
@@ -202,6 +288,7 @@ fn candidate_failure_keeps_previous_configuration_and_mode() {
         port_start: None,
         port_end: None,
         action: crate::models::RuleAction::Direct,
+        proxy_profile_id: None,
         enabled: true,
     });
     backend.fail_next.store(true, Ordering::SeqCst);
@@ -235,6 +322,12 @@ fn persistence_failure_restores_runtime_revision_and_previous_rules() {
                 *self.configuration.lock().unwrap() = value.clone();
                 Ok(())
             }
+        }
+        fn load_mode(&self) -> Result<RuntimeMode, AppError> {
+            Ok(RuntimeMode::Direct)
+        }
+        fn save_mode(&self, _: RuntimeMode) -> Result<(), AppError> {
+            Ok(())
         }
     }
     struct Credentials;
@@ -280,6 +373,7 @@ fn persistence_failure_restores_runtime_revision_and_previous_rules() {
         port_start: None,
         port_end: None,
         action: crate::models::RuleAction::Proxy,
+        proxy_profile_id: Some("stable-profile".into()),
         enabled: true,
     };
     store.reject.store(true, Ordering::SeqCst);
@@ -346,6 +440,7 @@ fn in_flight_switch_exposes_stage_without_prematurely_committing_mode() {
                 resume: Mutex::new(resume_rx),
             }),
             lease,
+            RuntimeMode::Direct,
         )
         .unwrap(),
     );
