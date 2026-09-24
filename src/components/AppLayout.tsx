@@ -117,7 +117,7 @@ export function AppLayout() {
           <Outlet />
           <footer className="hidden items-center gap-4 px-6 py-3 text-xs text-muted-foreground lg:flex">
             <span>
-              当前模式：<strong className="font-semibold text-blue-400">{activeModeLabel}</strong>
+              当前模式：<strong className="font-semibold text-primary">{activeModeLabel}</strong>
             </span>
             <Separator orientation="vertical" className="h-4" />
             <span>

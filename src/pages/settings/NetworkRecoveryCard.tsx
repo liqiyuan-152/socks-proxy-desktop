@@ -12,13 +12,13 @@ export function NetworkRecoveryCard({
   onRestore: () => void;
 }) {
   return (
-    <Card className="gap-0 border-white/10 bg-card py-0 shadow-none">
+    <Card className="gap-0 border-border bg-card py-0 shadow-none">
       <CardHeader className="py-5">
         <CardTitle role="heading" aria-level={2}>
           网络恢复
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 border-t border-white/10 py-5">
+      <CardContent className="space-y-4 border-t border-border py-5">
         <Button
           variant="secondary"
           disabled={!available || busy}

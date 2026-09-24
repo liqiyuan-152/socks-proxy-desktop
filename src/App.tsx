@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BackendProvider } from "@/lib/backend-context";
 import ConnectionLogsPage from "@/pages/connection-history";
@@ -13,6 +14,7 @@ export default function App() {
     <TooltipProvider>
       <BackendProvider>
         <BrowserRouter>
+          <Toaster />
           <Routes>
             <Route element={<AppLayout />}>
               <Route index element={<StatusPage />} />

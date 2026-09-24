@@ -41,7 +41,7 @@ function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          "relative z-50 max-h-72 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border border-white/15 bg-card p-1 text-card-foreground shadow-xl shadow-black/30 data-[state=closed]:animate-out data-[state=open]:animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          "relative z-50 max-h-72 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border border-border bg-card p-1 text-card-foreground shadow-xl data-[state=closed]:animate-out data-[state=open]:animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           position === "popper" &&
             "w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width) translate-y-1",
           className,

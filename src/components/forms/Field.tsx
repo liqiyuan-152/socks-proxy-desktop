@@ -13,7 +13,7 @@ export function Field({ label, required = false, htmlFor, children }: FieldProps
     <div className="grid gap-2">
       <Label htmlFor={htmlFor}>
         {label}
-        {required && <span className="text-rose-400">*</span>}
+        {required && <span className="text-destructive">*</span>}
       </Label>
       {children}
     </div>

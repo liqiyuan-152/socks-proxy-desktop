@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -23,6 +24,7 @@ type BackendState = {
   connections: ActiveConnectionsSnapshot | null;
   loading: boolean;
   pending: boolean;
+  selectedMode: ProxyMode | null;
   error: string | null;
   refresh: () => Promise<void>;
   switchMode: (mode: ProxyMode) => Promise<void>;
@@ -36,7 +38,11 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   const [connections, setConnections] = useState<ActiveConnectionsSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<ProxyMode | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const queuedMode = useRef<ProxyMode | null>(null);
+  const switching = useRef(false);
+  const selectedModeRef = useRef<ProxyMode | null>(null);
 
   const refreshConnections = useCallback(async () => {
     try {
@@ -75,6 +81,14 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     let disposed = false;
     void onRuntimeSnapshot((next) => {
       setSnapshot(next);
+      if (
+        !switching.current &&
+        selectedModeRef.current !== null &&
+        next.desired_mode !== selectedModeRef.current
+      ) {
+        selectedModeRef.current = null;
+        setSelectedMode(null);
+      }
       void refreshConnections();
     }).then((stop) => {
       if (disposed) stop();
@@ -88,31 +102,59 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   }, [refresh, refreshConnections]);
 
   const switchMode = useCallback(
-    async (mode: ProxyMode) => {
-      if (pending) return;
+    async (mode: ProxyMode): Promise<void> => {
+      selectedModeRef.current = mode;
+      setSelectedMode(mode);
+      queuedMode.current = mode;
+      if (switching.current) return;
+      switching.current = true;
       setPending(true);
-      setError(null);
-      try {
-        const next = await command<RuntimeSnapshot>("set_runtime_mode", { mode });
-        setSnapshot(next);
-        await refreshConnections();
-      } catch (reason) {
-        setError(errorMessage(reason));
+
+      async function applyNext(): Promise<boolean> {
+        const target = queuedMode.current;
+        if (target === null) return false;
+        queuedMode.current = null;
+        let succeeded = false;
         try {
-          setSnapshot(await command<RuntimeSnapshot>("get_runtime_snapshot"));
+          setSnapshot(await command<RuntimeSnapshot>("set_runtime_mode", { mode: target }));
+          succeeded = true;
         } catch {
-          /* Preserve last known state. */
+          try {
+            setSnapshot(await command<RuntimeSnapshot>("get_runtime_snapshot"));
+          } catch {
+            /* Preserve last known runtime state; the backend logs the failure. */
+          }
+        }
+        return queuedMode.current === null ? succeeded : applyNext();
+      }
+
+      try {
+        if (await applyNext()) {
+          selectedModeRef.current = null;
+          setSelectedMode(null);
         }
       } finally {
+        switching.current = false;
         setPending(false);
       }
+      await refreshConnections();
     },
-    [pending, refreshConnections],
+    [refreshConnections],
   );
 
   const value = useMemo(
-    () => ({ snapshot, profiles, connections, loading, pending, error, refresh, switchMode }),
-    [snapshot, profiles, connections, loading, pending, error, refresh, switchMode],
+    () => ({
+      snapshot,
+      profiles,
+      connections,
+      loading,
+      pending,
+      selectedMode,
+      error,
+      refresh,
+      switchMode,
+    }),
+    [snapshot, profiles, connections, loading, pending, selectedMode, error, refresh, switchMode],
   );
   return <BackendContext.Provider value={value}>{children}</BackendContext.Provider>;
 }

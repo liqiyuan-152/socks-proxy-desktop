@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { ChevronRight, CircleDot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,11 +25,42 @@ const phaseLabels = {
   recovering: "恢复中",
   failed: "异常",
 } as const;
+const modeSwitchToastId = "proxy-mode-switch";
 
 export default function StatusDashboard() {
-  const { snapshot, profiles, connections, loading, pending, error, switchMode } = useBackend();
+  const { snapshot, profiles, connections, loading, pending, selectedMode, error, switchMode } =
+    useBackend();
   const navigate = useNavigate();
   const profile = profiles.find((item) => item.id === snapshot?.active_profile_id);
+
+  useEffect(() => {
+    if (!pending) return;
+    toast.loading("正在切换代理模式…", { id: modeSwitchToastId });
+    return () => {
+      toast.dismiss(modeSwitchToastId);
+    };
+  }, [pending]);
+
+  function selectMode(mode: ProxyMode) {
+    if (mode === "global" && !profile) {
+      const noProfiles = profiles.length === 0;
+      toast.error(
+        noProfiles
+          ? "尚未添加代理，请先添加代理后再切换代理模式。"
+          : "尚未设置默认代理，请先在代理列表中设置。",
+        {
+          id: "missing-active-proxy",
+          action: {
+            label: noProfiles ? "去添加" : "去选择",
+            onClick: () => navigate("/proxies"),
+          },
+        },
+      );
+      return;
+    }
+    toast.dismiss("missing-active-proxy");
+    void switchMode(mode);
+  }
 
   return (
     <>
@@ -43,35 +76,33 @@ export default function StatusDashboard() {
               {error}
             </p>
           )}
-          {snapshot?.last_error && (
-            <p role="alert" className="text-destructive">
-              {snapshot.last_error}
-            </p>
-          )}
-
           <Tabs
-            value={snapshot?.applied_mode ?? ""}
-            onValueChange={(mode) => void switchMode(mode as ProxyMode)}
+            value={selectedMode ?? snapshot?.selected_mode ?? ""}
+            onValueChange={(mode) => selectMode(mode as ProxyMode)}
           >
-            <TabsList className="grid h-11 w-full grid-cols-3 sm:mx-auto sm:max-w-2xl">
+            <TabsList className="grid h-11 w-full grid-cols-3 overflow-hidden rounded-lg border border-border bg-muted/50 p-0 sm:mx-auto sm:max-w-2xl">
               {(Object.keys(proxyModes) as ProxyMode[]).map((mode) => (
                 <TabsTrigger
                   key={mode}
                   value={mode}
-                  disabled={loading || pending || !snapshot || (mode !== "direct" && !profile)}
+                  className="h-full rounded-none border-0 border-r border-border bg-transparent text-xs text-muted-foreground last:border-r-0 hover:bg-muted hover:text-foreground data-[state=active]:!border-transparent data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.18)] sm:text-sm"
+                  disabled={loading || !snapshot}
+                  onClick={() => {
+                    if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
+                      selectMode(mode);
+                    }
+                  }}
                 >
                   {proxyModes[mode].label}
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
-          {pending && <p role="status">正在提交模式，当前已应用模式保持不变…</p>}
-
           <div className="grid gap-5 lg:grid-cols-2">
             <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="border-b border-border py-5">
                 <CardTitle role="heading" aria-level={2}>
-                  当前代理信息
+                  默认代理
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-y-4 py-5 text-sm sm:grid-cols-[132px_1fr]">
