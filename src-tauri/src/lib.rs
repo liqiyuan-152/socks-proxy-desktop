@@ -1,81 +1,107 @@
-use std::sync::Mutex;
+mod configuration_service;
+mod credentials;
+mod error;
+mod ipc;
+mod models;
+mod observability;
+mod routing;
+mod runtime;
+mod runtime_events;
+mod runtime_session;
+mod runtime_unavailable;
+#[cfg(any(windows, test))]
+mod sing_box_backend;
+#[cfg(any(windows, test))]
+mod sing_box_config;
+#[cfg(any(windows, test))]
+mod sing_box_process;
+#[cfg(windows)]
+mod sing_box_windows_acl;
+#[cfg(windows)]
+mod sing_box_windows_job;
+mod startup;
+mod store;
+#[cfg(any(windows, test))]
+mod system_proxy;
+#[cfg(windows)]
+mod system_proxy_windows;
+mod transfer;
+mod tray;
 
-use tauri::{
-    menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu},
-    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager,
-};
+use configuration_service::ConfigurationService;
+use credentials::OsCredentialStore;
+use runtime::{ManagedRuntime, RuntimeBackend};
+use runtime_session::{SessionLease, RUNTIME_SESSION_KEY};
+#[cfg(not(windows))]
+use runtime_unavailable::UnavailableRuntimeBackend;
+use startup::SystemStartupAdapter;
+use std::sync::Arc;
+use store::{ConfigurationStore, SqliteConfigurationStore};
+use tauri::Manager;
 
-const MAIN_WINDOW_LABEL: &str = "main";
-const COMPANY_PROXY_NAME: &str = "公司代理";
+#[cfg(windows)]
+type WindowsBackendResult =
+    Result<(Box<dyn RuntimeBackend>, Option<String>), Box<dyn std::error::Error>>;
 
-#[derive(Clone, Copy)]
-enum ProxyMode {
-    Rules,
-    Global,
-    Direct,
-}
+#[cfg(windows)]
+fn windows_backend<R: tauri::Runtime>(
+    app: &tauri::App<R>,
+    store: Arc<SqliteConfigurationStore>,
+    app_data: &std::path::Path,
+) -> WindowsBackendResult {
+    use sing_box_backend::SingBoxRuntimeBackend;
+    use sing_box_process::WINDOWS_AMD64_EXE_SHA256;
+    use system_proxy::OwnedSystemProxy;
+    use system_proxy_windows::WindowsProxyDevice;
+    use tauri::path::BaseDirectory;
 
-impl ProxyMode {
-    fn label(self) -> &'static str {
-        match self {
-            Self::Rules => "规则代理",
-            Self::Global => "全局代理",
-            Self::Direct => "全局直连",
-        }
-    }
-
-    fn short_label(self) -> &'static str {
-        match self {
-            Self::Rules => "规则",
-            Self::Global => "全局",
-            Self::Direct => "直连",
-        }
-    }
-}
-
-struct TrayMenuState {
-    title: MenuItem<tauri::Wry>,
-    rules_mode: CheckMenuItem<tauri::Wry>,
-    global_mode: CheckMenuItem<tauri::Wry>,
-    direct_mode: CheckMenuItem<tauri::Wry>,
-}
-
-fn show_main_window(app: &AppHandle<tauri::Wry>) {
-    if let Some(window) = app.get_webview_window(MAIN_WINDOW_LABEL) {
-        let _ = window.show();
-        let _ = window.set_focus();
-    }
-}
-
-fn tray_title(mode: ProxyMode) -> String {
-    format!(
-        "Socks Proxy · {} · {COMPANY_PROXY_NAME}",
-        mode.short_label()
-    )
-}
-
-fn update_proxy_mode(app: &AppHandle<tauri::Wry>, mode: ProxyMode) {
-    let tray_menu_state = app.state::<Mutex<TrayMenuState>>();
-    let Ok(menu_state) = tray_menu_state.lock() else {
-        return;
-    };
-
-    let _ = menu_state.title.set_text(tray_title(mode));
-    let _ = menu_state
-        .rules_mode
-        .set_checked(matches!(mode, ProxyMode::Rules));
-    let _ = menu_state
-        .global_mode
-        .set_checked(matches!(mode, ProxyMode::Global));
-    let _ = menu_state
-        .direct_mode
-        .set_checked(matches!(mode, ProxyMode::Direct));
+    let proxy = OwnedSystemProxy::new(Box::<WindowsProxyDevice>::default(), Box::new(store));
+    // Recovery precedes any new core or proxy mutation. An unresolved journal
+    // must never be silently overwritten by a new runtime session.
+    let recovery_issue = proxy.recover_on_startup().err().map(|error| error.message);
+    // No other instance can own these runs: the session lease was acquired first.
+    sing_box_process::cleanup_stale_runtime_dirs(&app_data.join("runtime"))?;
+    let binary = app.path().resolve(
+        "sing-box/windows-amd64/sing-box.exe",
+        BaseDirectory::Resource,
+    )?;
+    Ok((
+        Box::new(SingBoxRuntimeBackend::new(
+            binary,
+            WINDOWS_AMD64_EXE_SHA256.into(),
+            app_data.join("runtime"),
+            Arc::new(OsCredentialStore),
+            Box::new(proxy),
+        )),
+        recovery_issue,
+    ))
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![
+            ipc::list_profiles,
+            ipc::save_profile,
+            ipc::delete_profile,
+            ipc::select_profile,
+            ipc::list_rules,
+            ipc::replace_rules,
+            ipc::reorder_rules,
+            ipc::get_settings,
+            ipc::update_settings,
+            ipc::export_configuration,
+            ipc::import_configuration,
+            ipc::get_runtime_snapshot,
+            ipc::set_runtime_mode,
+            ipc::stop_runtime,
+            ipc::recover_network,
+            ipc::get_active_connections,
+            ipc::copy_active_connection_detail,
+            ipc::get_runtime_diagnostics,
+            ipc::clear_runtime_diagnostics,
+            ipc::get_connection_history,
+        ])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -85,129 +111,34 @@ pub fn run() {
                 )?;
             }
 
-            let title = MenuItem::with_id(
-                app,
-                "tray-title",
-                tray_title(ProxyMode::Rules),
-                false,
-                None::<&str>,
-            )?;
-            let rules_mode = CheckMenuItem::with_id(
-                app,
-                "mode-rules",
-                ProxyMode::Rules.label(),
-                true,
-                true,
-                None::<&str>,
-            )?;
-            let global_mode = CheckMenuItem::with_id(
-                app,
-                "mode-global",
-                ProxyMode::Global.label(),
-                true,
-                false,
-                None::<&str>,
-            )?;
-            let direct_mode = CheckMenuItem::with_id(
-                app,
-                "mode-direct",
-                ProxyMode::Direct.label(),
-                true,
-                false,
-                None::<&str>,
-            )?;
-            let proxy_mode_menu = Submenu::with_id_and_items(
-                app,
-                "proxy-mode",
-                "代理模式",
-                true,
-                &[&rules_mode, &global_mode, &direct_mode],
-            )?;
+            // Claim the per-session runtime before opening or migrating any state.
+            let ownership = SessionLease::acquire(RUNTIME_SESSION_KEY)?;
+            let app_data = app.path().app_data_dir()?;
+            std::fs::create_dir_all(&app_data)?;
+            let store = Arc::new(SqliteConfigurationStore::open(
+                app_data.join("config.sqlite3"),
+            )?);
+            let initial = store.load()?;
+            #[cfg(windows)]
+            let (backend, recovery_issue) = windows_backend(app, store.clone(), &app_data)?;
+            #[cfg(not(windows))]
+            let backend: Box<dyn RuntimeBackend> = Box::new(UnavailableRuntimeBackend);
+            let runtime = ManagedRuntime::from_lease(initial, backend, ownership)?;
+            #[cfg(windows)]
+            if let Some(message) = recovery_issue {
+                runtime.report_startup_recovery_issue(message);
+            }
+            let runtime_updates = runtime.subscribe();
+            app.manage(Arc::new(ConfigurationService::new(
+                Box::new(store.clone()),
+                Box::new(OsCredentialStore),
+                Box::new(SystemStartupAdapter),
+                Box::new(runtime),
+            )));
+            app.manage(store.clone());
 
-            let company_proxy = CheckMenuItem::with_id(
-                app,
-                "proxy-company",
-                COMPANY_PROXY_NAME,
-                true,
-                true,
-                None::<&str>,
-            )?;
-            let proxy_switch_menu = Submenu::with_id_and_items(
-                app,
-                "proxy-switch",
-                "切换代理",
-                true,
-                &[&company_proxy],
-            )?;
-
-            let status = MenuItem::with_id(app, "status", "状态", true, None::<&str>)?;
-            let proxy_management =
-                MenuItem::with_id(app, "proxy-management", "代理管理...", false, None::<&str>)?;
-            let rule_management =
-                MenuItem::with_id(app, "rule-management", "规则管理...", false, None::<&str>)?;
-            let connection_log = MenuItem::with_id(
-                app,
-                "connection-log",
-                "查看连接日志...",
-                false,
-                None::<&str>,
-            )?;
-            let settings = MenuItem::with_id(app, "settings", "设置...", false, None::<&str>)?;
-            let separator = PredefinedMenuItem::separator(app)?;
-            let exit_separator = PredefinedMenuItem::separator(app)?;
-            let exit = MenuItem::with_id(app, "exit", "退出", true, None::<&str>)?;
-            let menu = Menu::with_items(
-                app,
-                &[
-                    &title,
-                    &proxy_mode_menu,
-                    &proxy_switch_menu,
-                    &separator,
-                    &status,
-                    &proxy_management,
-                    &rule_management,
-                    &connection_log,
-                    &settings,
-                    &exit_separator,
-                    &exit,
-                ],
-            )?;
-
-            app.manage(Mutex::new(TrayMenuState {
-                title,
-                rules_mode,
-                global_mode,
-                direct_mode,
-            }));
-
-            TrayIconBuilder::with_id("main-tray")
-                .icon(
-                    app.default_window_icon()
-                        .expect("application icon is missing")
-                        .clone(),
-                )
-                .tooltip("Socks Proxy")
-                .menu(&menu)
-                .show_menu_on_left_click(false)
-                .on_menu_event(|app, event| match event.id().as_ref() {
-                    "mode-rules" => update_proxy_mode(app, ProxyMode::Rules),
-                    "mode-global" => update_proxy_mode(app, ProxyMode::Global),
-                    "mode-direct" => update_proxy_mode(app, ProxyMode::Direct),
-                    "status" => show_main_window(app),
-                    "exit" => app.exit(0),
-                    _ => {}
-                })
-                .on_tray_icon_event(|tray, event| {
-                    if let TrayIconEvent::Click {
-                        button: MouseButton::Left,
-                        button_state: MouseButtonState::Up,
-                        ..
-                    } = event
-                    {
-                        show_main_window(tray.app_handle());
-                    }
-                })
-                .build(app)?;
+            tray::install(app)?;
+            runtime_events::start(app.handle().clone(), store, runtime_updates);
 
             Ok(())
         })

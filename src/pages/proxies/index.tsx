@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Circle, CircleDot, Edit3, Eye, EyeOff, Plus, Search, Trash2, X } from "lucide-react";
+import { Circle, CircleDot, Edit3, Plus, Search, Trash2, X } from "lucide-react";
 import { Field } from "@/components/forms/Field";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -29,90 +27,93 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-const proxies = [
-  {
-    name: "公司代理",
-    protocol: "SOCKS5",
-    server: "proxy.example.com",
-    port: "1080",
-    authentication: "已启用",
-    status: "当前使用",
-    active: true,
-  },
-  {
-    name: "测试代理",
-    protocol: "HTTP",
-    server: "198.51.100.10",
-    port: "8080",
-    authentication: "未启用",
-    status: "可用",
-  },
-  {
-    name: "备用代理",
-    protocol: "SOCKS5",
-    server: "203.0.113.5",
-    port: "1080",
-    authentication: "已启用",
-    status: "可用",
-  },
-  {
-    name: "海外代理",
-    protocol: "HTTP",
-    server: "us.example.com",
-    port: "3128",
-    authentication: "未启用",
-    status: "连接失败",
-  },
-  {
-    name: "临时代理",
-    protocol: "SOCKS5",
-    server: "192.0.2.1",
-    port: "1080",
-    authentication: "已启用",
-    status: "可用",
-  },
-];
+import { command, errorMessage, type BackendError, type ProxyProfile } from "@/lib/backend";
+import { useBackend } from "@/lib/backend-context";
+import { ProxyAuthenticationFields, type ProxyDraft } from "./ProxyAuthenticationFields";
 
-type Proxy = (typeof proxies)[number];
-
-type ProxyDraft = {
-  name: string;
-  protocol: string;
-  server: string;
-  port: string;
-  authentication: boolean;
-  username: string;
-  password: string;
-};
-
-function createProxyDraft(proxy?: Proxy): ProxyDraft {
-  const authentication = proxy?.authentication === "已启用";
+function createProxyDraft(proxy?: ProxyProfile): ProxyDraft {
+  const authentication = proxy?.authentication_enabled ?? false;
 
   return {
     name: proxy?.name ?? "",
-    protocol: proxy?.protocol ?? "SOCKS5",
-    server: proxy?.server ?? "",
-    port: proxy?.port ?? "",
+    protocol: proxy?.protocol ?? "socks5",
+    server: proxy?.host ?? "",
+    port: proxy?.port?.toString() ?? "",
     authentication,
-    username: authentication ? "user123" : "",
-    password: authentication ? "password123" : "",
+    username: "",
+    password: "",
   };
 }
 
 export default function ProxyList() {
+  const { profiles, snapshot, refresh, loading } = useBackend();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProxy, setEditingProxy] = useState<Proxy | null>(null);
+  const [editingProxy, setEditingProxy] = useState<ProxyProfile | null>(null);
   const [draft, setDraft] = useState<ProxyDraft>(() => createProxyDraft());
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [search, setSearch] = useState("");
+  const [protocolFilter, setProtocolFilter] = useState("all");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const openDialog = (proxy?: Proxy) => {
+  const filtered = profiles.filter(
+    (profile) =>
+      (protocolFilter === "all" || profile.protocol === protocolFilter) &&
+      `${profile.name} ${profile.host}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+  );
+
+  async function saveProfile() {
+    setBusy(true);
+    setError(null);
+    try {
+      const credential = !draft.authentication
+        ? { action: "delete" }
+        : draft.password
+          ? { action: "replace", username: draft.username, password: draft.password }
+          : { action: "preserve" };
+      await command("save_profile", {
+        input: {
+          id: editingProxy?.id ?? null,
+          name: draft.name,
+          protocol: draft.protocol,
+          host: draft.server,
+          port: Number(draft.port),
+          authentication_enabled: draft.authentication,
+          enabled: editingProxy?.enabled ?? true,
+          credential,
+        },
+      });
+      setDialogOpen(false);
+      await refresh();
+    } catch (reason) {
+      const typed = reason as Partial<BackendError>;
+      setError(
+        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
+          errorMessage(reason),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function changeProfile(commandName: "select_profile" | "delete_profile", id: string) {
+    setBusy(true);
+    setError(null);
+    try {
+      await command(commandName, { id });
+      await refresh();
+    } catch (reason) {
+      setError(errorMessage(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const openDialog = (proxy?: ProxyProfile) => {
     setEditingProxy(proxy ?? null);
     setDraft(createProxyDraft(proxy));
-    setPasswordVisible(false);
     setDialogOpen(true);
   };
 
-  const closeDialog = () => setDialogOpen(false);
   const isEditing = editingProxy !== null;
 
   return (
@@ -132,9 +133,14 @@ export default function ProxyList() {
                 className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
-              <Input className="h-11 bg-card pl-10" placeholder="搜索代理名称、服务器地址..." />
+              <Input
+                className="h-11 bg-card pl-10"
+                placeholder="搜索代理名称、服务器地址..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
             </div>
-            <Select defaultValue="all">
+            <Select value={protocolFilter} onValueChange={setProtocolFilter}>
               <SelectTrigger aria-label="按协议筛选" className="h-11 bg-card sm:w-44">
                 <SelectValue />
               </SelectTrigger>
@@ -144,11 +150,21 @@ export default function ProxyList() {
                 <SelectItem value="http">HTTP</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="h-11 sm:min-w-36" onClick={() => openDialog()}>
+            <Button
+              className="h-11 sm:min-w-36"
+              onClick={() => openDialog()}
+              disabled={loading || busy}
+            >
               <Plus className="size-5" aria-hidden="true" />
               添加代理
             </Button>
           </div>
+          {error && (
+            <p role="alert" className="text-destructive">
+              {error}
+            </p>
+          )}
+          {loading && <p role="status">正在加载代理档案…</p>}
 
           <Card className="gap-0 overflow-hidden border-white/10 bg-card py-0 shadow-none">
             <Table className="table-fixed text-sm">
@@ -164,49 +180,58 @@ export default function ProxyList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {proxies.map((proxy) => {
-                  const SelectionIcon = proxy.active ? CircleDot : Circle;
+                {filtered.map((proxy) => {
+                  const active = snapshot?.active_profile_id === proxy.id;
+                  const SelectionIcon = active ? CircleDot : Circle;
 
                   return (
-                    <TableRow key={proxy.name} className="border-white/10 hover:bg-white/[0.035]">
+                    <TableRow key={proxy.id} className="border-white/10 hover:bg-white/[0.035]">
                       <TableCell className="px-3 py-4 font-medium sm:px-4">
                         <span className="flex items-center gap-3 truncate">
                           <SelectionIcon
                             className={
-                              proxy.active
+                              active
                                 ? "size-5 shrink-0 text-blue-500"
                                 : "size-5 shrink-0 text-muted-foreground"
                             }
-                            aria-label={proxy.active ? "当前使用的代理" : "未选中的代理"}
+                            aria-label={active ? "当前使用的代理" : "未选中的代理"}
                           />
                           <span className="truncate">{proxy.name}</span>
                         </span>
                       </TableCell>
                       <TableCell className="px-3 py-4 font-medium sm:px-4">
-                        {proxy.protocol}
+                        {proxy.protocol.toUpperCase()}
                       </TableCell>
                       <TableCell className="truncate px-3 py-4 text-muted-foreground sm:px-4">
-                        {proxy.server}
+                        {proxy.host}
                       </TableCell>
                       <TableCell className="px-3 py-4 text-muted-foreground sm:px-4">
                         {proxy.port}
                       </TableCell>
                       <TableCell className="hidden px-4 py-4 lg:table-cell">
-                        {proxy.authentication}
+                        {proxy.authentication_enabled ? "已配置" : "未启用"}
                       </TableCell>
-                      <TableCell
-                        className={`hidden px-4 py-4 font-medium lg:table-cell ${
-                          proxy.status === "连接失败" ? "text-rose-400" : "text-emerald-400"
-                        }`}
-                      >
-                        {proxy.status}
+                      <TableCell className="hidden px-4 py-4 font-medium lg:table-cell">
+                        {active ? "当前选择" : proxy.enabled ? "已启用" : "已停用"}
                       </TableCell>
                       <TableCell className="hidden px-4 py-4 lg:table-cell">
                         <div className="flex justify-end gap-1">
+                          {!active && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              disabled={busy}
+                              aria-label={`选择${proxy.name}`}
+                              onClick={() => void changeProfile("select_profile", proxy.id)}
+                            >
+                              <CircleDot className="size-4" aria-hidden="true" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon-sm"
                             aria-label={`编辑${proxy.name}`}
+                            disabled={busy}
                             onClick={() => openDialog(proxy)}
                           >
                             <Edit3 className="size-4" aria-hidden="true" />
@@ -216,6 +241,12 @@ export default function ProxyList() {
                             size="icon-sm"
                             className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
                             aria-label={`删除${proxy.name}`}
+                            disabled={busy}
+                            onClick={() => {
+                              if (window.confirm(`确认删除代理「${proxy.name}」？`)) {
+                                void changeProfile("delete_profile", proxy.id);
+                              }
+                            }}
                           >
                             <Trash2 className="size-4" aria-hidden="true" />
                           </Button>
@@ -224,6 +255,13 @@ export default function ProxyList() {
                     </TableRow>
                   );
                 })}
+                {!loading && filtered.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
+                      暂无匹配的代理档案
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Card>
@@ -235,7 +273,7 @@ export default function ProxyList() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              closeDialog();
+              void saveProfile();
             }}
           >
             <DialogHeader className="relative border-b border-white/10 px-6 py-5 sm:px-7">
@@ -273,8 +311,8 @@ export default function ProxyList() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SOCKS5">SOCKS5</SelectItem>
-                      <SelectItem value="HTTP">HTTP</SelectItem>
+                      <SelectItem value="socks5">SOCKS5</SelectItem>
+                      <SelectItem value="http">HTTP</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -304,61 +342,7 @@ export default function ProxyList() {
                 </Field>
               </div>
 
-              <div className="border-t border-white/10 pt-5">
-                <div className="flex items-center gap-4">
-                  <Label htmlFor="proxy-authentication">启用认证</Label>
-                  <Switch
-                    id="proxy-authentication"
-                    checked={draft.authentication}
-                    onCheckedChange={(authentication) =>
-                      setDraft((current) => ({ ...current, authentication }))
-                    }
-                  />
-                </div>
-
-                {draft.authentication && (
-                  <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                    <Field label="用户名" htmlFor="proxy-username">
-                      <Input
-                        id="proxy-username"
-                        placeholder="请输入用户名"
-                        value={draft.username}
-                        onChange={(event) =>
-                          setDraft((current) => ({ ...current, username: event.target.value }))
-                        }
-                      />
-                    </Field>
-                    <Field label="密码" htmlFor="proxy-password">
-                      <div className="relative">
-                        <Input
-                          id="proxy-password"
-                          type={passwordVisible ? "text" : "password"}
-                          className="pr-10"
-                          placeholder="请输入密码"
-                          value={draft.password}
-                          onChange={(event) =>
-                            setDraft((current) => ({ ...current, password: event.target.value }))
-                          }
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          className="absolute top-1/2 right-1 -translate-y-1/2 text-muted-foreground"
-                          aria-label={passwordVisible ? "隐藏密码" : "显示密码"}
-                          onClick={() => setPasswordVisible((visible) => !visible)}
-                        >
-                          {passwordVisible ? (
-                            <EyeOff className="size-4" aria-hidden="true" />
-                          ) : (
-                            <Eye className="size-4" aria-hidden="true" />
-                          )}
-                        </Button>
-                      </div>
-                    </Field>
-                  </div>
-                )}
-              </div>
+              <ProxyAuthenticationFields draft={draft} setDraft={setDraft} />
             </div>
 
             <DialogFooter className="border-t border-white/10 px-6 py-5 sm:px-7">
@@ -367,7 +351,7 @@ export default function ProxyList() {
                   取消
                 </Button>
               </DialogClose>
-              <Button type="submit" className="min-w-28">
+              <Button type="submit" className="min-w-28" disabled={busy}>
                 保存
               </Button>
             </DialogFooter>

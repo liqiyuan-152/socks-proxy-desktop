@@ -1,25 +1,9 @@
-import { useState } from "react";
-import { Edit3, GitBranch, Plus, Search, Trash2, X } from "lucide-react";
-import { Field } from "@/components/forms/Field";
+import { useCallback, useEffect, useState } from "react";
+import { Edit3, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -29,44 +13,113 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-const routingRules = [
-  { name: "公司内网", targetType: "CIDR", target: "173.30.0.0/16", port: "任意", action: "代理" },
-  { name: "常用站点", targetType: "域名", target: "example.com", port: "443", action: "代理" },
-  { name: "局域网", targetType: "CIDR", target: "192.168.0.0/16", port: "任意", action: "直连" },
-  { name: "国内直连", targetType: "域名", target: "cn", port: "任意", action: "直连" },
-];
+import { command, errorMessage, type BackendError } from "@/lib/backend";
+import { RuleForm, type RuleDraft } from "./RuleForm";
 
-type RoutingRule = (typeof routingRules)[number];
-
-type RuleDraft = {
+type RoutingRule = {
+  id: string;
   name: string;
-  targetType: string;
+  matcher: "domain" | "domain_suffix" | "ip_cidr";
   target: string;
-  port: string;
-  action: "代理" | "直连";
-  remark: string;
+  port_start: number | null;
+  port_end: number | null;
+  action: "proxy" | "direct";
+  enabled: boolean;
 };
 
 function createRuleDraft(rule?: RoutingRule): RuleDraft {
-  const action = rule?.action === "直连" ? "直连" : "代理";
+  const action = rule?.action === "direct" ? "直连" : "代理";
 
   return {
-    name: rule?.name ?? "常用站点",
-    targetType: rule?.targetType ?? "域名",
-    target: rule?.target ?? "example.com",
-    port: rule?.port === "任意" || !rule ? "443" : rule.port,
+    name: rule?.name ?? "",
+    targetType: rule?.matcher ?? "domain",
+    target: rule?.target ?? "",
+    port: rule?.port_start?.toString() ?? "",
     action,
-    remark: rule ? `${rule.name}${action === "代理" ? "走代理" : "直连"}` : "常用站点走代理",
   };
 }
 
 export default function RoutingRuleList() {
+  const [routingRules, setRoutingRules] = useState<RoutingRule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<RoutingRule | null>(null);
   const [draft, setDraft] = useState<RuleDraft>(() => createRuleDraft());
   const isEditing = editingRule !== null;
+
+  const refresh = useCallback(async () => {
+    try {
+      setRoutingRules(await command<RoutingRule[]>("list_rules"));
+      setError(null);
+    } catch (reason) {
+      setError(errorMessage(reason));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
+
+  async function replace(next: RoutingRule[]): Promise<boolean> {
+    setBusy(true);
+    setError(null);
+    try {
+      await command("replace_rules", { rules: next });
+      await refresh();
+      return true;
+    } catch (reason) {
+      const typed = reason as Partial<BackendError>;
+      setError(
+        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
+          errorMessage(reason),
+      );
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveRule() {
+    const rule: RoutingRule = {
+      id: editingRule?.id ?? crypto.randomUUID(),
+      name: draft.name,
+      matcher: draft.targetType as RoutingRule["matcher"],
+      target: draft.target,
+      port_start: draft.port ? Number(draft.port) : null,
+      port_end: null,
+      action: draft.action === "代理" ? "proxy" : "direct",
+      enabled: editingRule?.enabled ?? true,
+    };
+    const saved = await replace(
+      editingRule
+        ? routingRules.map((item) => (item.id === rule.id ? rule : item))
+        : [...routingRules, rule],
+    );
+    if (saved) closeDialog();
+  }
+
+  async function moveRule(index: number, delta: number) {
+    const next = [...routingRules];
+    const target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    setBusy(true);
+    setError(null);
+    try {
+      await command("reorder_rules", { ids: next.map((rule) => rule.id) });
+      await refresh();
+    } catch (reason) {
+      setError(errorMessage(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   function openDialog(rule?: RoutingRule) {
     setEditingRule(rule ?? null);
@@ -96,14 +149,31 @@ export default function RoutingRuleList() {
                 className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
-              <Input readOnly className="h-11 bg-card pl-10" placeholder="搜索规则名称或目标..." />
+              <Input
+                className="h-11 bg-card pl-10"
+                placeholder="搜索规则名称或目标..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
             </div>
-            <span className="shrink-0 text-sm font-medium text-muted-foreground">共 4 条规则</span>
-            <Button className="h-11 sm:ml-auto sm:min-w-36" onClick={() => openDialog()}>
+            <span className="shrink-0 text-sm font-medium text-muted-foreground">
+              共 {routingRules.length} 条规则
+            </span>
+            <Button
+              className="h-11 sm:ml-auto sm:min-w-36"
+              onClick={() => openDialog()}
+              disabled={busy || loading}
+            >
               <Plus className="size-5" aria-hidden="true" />
               添加规则
             </Button>
           </div>
+          {error && (
+            <p role="alert" className="text-destructive">
+              {error}
+            </p>
+          )}
+          {loading && <p role="status">正在加载分流规则…</p>}
 
           <Card className="gap-0 overflow-hidden border-white/10 bg-card py-0 shadow-none">
             <Table className="min-w-[760px] text-sm">
@@ -119,60 +189,113 @@ export default function RoutingRuleList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {routingRules.map((rule) => (
-                  <TableRow key={rule.name} className="border-white/10 hover:bg-white/[0.035]">
-                    <TableCell className="px-4 py-4 font-medium">{rule.name}</TableCell>
-                    <TableCell className="px-4 py-4 text-muted-foreground">
-                      {rule.targetType}
-                    </TableCell>
-                    <TableCell className="px-4 py-4 font-medium">{rule.target}</TableCell>
-                    <TableCell className="px-4 py-4 text-muted-foreground">{rule.port}</TableCell>
-                    <TableCell className="px-4 py-4">
-                      <span
-                        className={rule.action === "代理" ? "text-blue-400" : "text-foreground"}
-                      >
-                        {rule.action}
-                      </span>
-                    </TableCell>
-                    <TableCell className="px-4 py-4">
-                      <Switch
-                        checked
-                        onCheckedChange={() => undefined}
-                        aria-label={`${rule.name}已启用`}
-                      />
-                    </TableCell>
-                    <TableCell className="px-4 py-4">
-                      <div className="flex justify-end gap-1">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              aria-label={`编辑${rule.name}`}
-                              onClick={() => openDialog(rule)}
-                            >
-                              <Edit3 className="size-4" aria-hidden="true" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>编辑规则</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
-                              aria-label={`删除${rule.name}`}
-                            >
-                              <Trash2 className="size-4" aria-hidden="true" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>删除规则</TooltipContent>
-                        </Tooltip>
-                      </div>
+                {routingRules
+                  .filter((rule) =>
+                    `${rule.name} ${rule.target}`.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((rule) => (
+                    <TableRow key={rule.id} className="border-white/10 hover:bg-white/[0.035]">
+                      <TableCell className="px-4 py-4 font-medium">{rule.name}</TableCell>
+                      <TableCell className="px-4 py-4 text-muted-foreground">
+                        {rule.matcher === "ip_cidr"
+                          ? "CIDR"
+                          : rule.matcher === "domain_suffix"
+                            ? "域名后缀"
+                            : "域名"}
+                      </TableCell>
+                      <TableCell className="px-4 py-4 font-medium">{rule.target}</TableCell>
+                      <TableCell className="px-4 py-4 text-muted-foreground">
+                        {rule.port_start ?? "任意"}
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
+                        <span
+                          className={rule.action === "proxy" ? "text-blue-400" : "text-foreground"}
+                        >
+                          {rule.action === "proxy" ? "代理" : "直连"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
+                        <Switch
+                          checked={rule.enabled}
+                          disabled={busy}
+                          onCheckedChange={(enabled) =>
+                            void replace(
+                              routingRules.map((item) =>
+                                item.id === rule.id ? { ...item, enabled } : item,
+                              ),
+                            )
+                          }
+                          aria-label={`${rule.name}${rule.enabled ? "已启用" : "已停用"}`}
+                        />
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            disabled={busy || routingRules.indexOf(rule) === 0}
+                            aria-label={`上移${rule.name}`}
+                            onClick={() => void moveRule(routingRules.indexOf(rule), -1)}
+                          >
+                            ↑
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            disabled={
+                              busy || routingRules.indexOf(rule) === routingRules.length - 1
+                            }
+                            aria-label={`下移${rule.name}`}
+                            onClick={() => void moveRule(routingRules.indexOf(rule), 1)}
+                          >
+                            ↓
+                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                aria-label={`编辑${rule.name}`}
+                                disabled={busy}
+                                onClick={() => openDialog(rule)}
+                              >
+                                <Edit3 className="size-4" aria-hidden="true" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>编辑规则</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+                                aria-label={`删除${rule.name}`}
+                                disabled={busy}
+                                onClick={() => {
+                                  if (window.confirm(`确认删除规则「${rule.name}」？`)) {
+                                    void replace(
+                                      routingRules.filter((item) => item.id !== rule.id),
+                                    );
+                                  }
+                                }}
+                              >
+                                <Trash2 className="size-4" aria-hidden="true" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>删除规则</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                {!loading && routingRules.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
+                      暂无分流规则
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </Card>
@@ -187,142 +310,13 @@ export default function RoutingRuleList() {
         }}
       >
         <DialogContent className="max-h-[calc(100vh-2rem)] p-0 sm:max-h-[680px]">
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              closeDialog();
-            }}
-          >
-            <DialogHeader className="relative border-b border-white/10 px-6 py-5 sm:px-7">
-              <DialogTitle>{isEditing ? "编辑规则" : "添加规则"}</DialogTitle>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  className="absolute top-3 right-4 text-muted-foreground hover:text-foreground"
-                  aria-label="关闭规则表单"
-                >
-                  <X className="size-5" aria-hidden="true" />
-                </Button>
-              </DialogClose>
-            </DialogHeader>
-
-            <div className="space-y-5 px-6 py-6 sm:px-7">
-              <div className="grid gap-5 sm:grid-cols-[1.1fr_0.9fr]">
-                <Field label="规则名称" required htmlFor="rule-name">
-                  <Input
-                    id="rule-name"
-                    aria-label="规则名称"
-                    placeholder="请输入规则名称"
-                    value={draft.name}
-                    onChange={(event) =>
-                      setDraft((current) => ({ ...current, name: event.target.value }))
-                    }
-                  />
-                </Field>
-                <Field label="匹配类型" required htmlFor="rule-target-type">
-                  <Select
-                    value={draft.targetType}
-                    onValueChange={(targetType) =>
-                      setDraft((current) => ({ ...current, targetType }))
-                    }
-                  >
-                    <SelectTrigger id="rule-target-type" aria-label="匹配类型">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="域名">域名</SelectItem>
-                      <SelectItem value="CIDR">CIDR</SelectItem>
-                      <SelectItem value="IP">IP</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-              </div>
-
-              <div className="grid gap-5 sm:grid-cols-[1.7fr_0.8fr]">
-                <Field label="目标值" required htmlFor="rule-target">
-                  <Input
-                    id="rule-target"
-                    aria-label="目标值"
-                    placeholder="请输入目标值，如 example.com"
-                    value={draft.target}
-                    onChange={(event) =>
-                      setDraft((current) => ({ ...current, target: event.target.value }))
-                    }
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    支持单个域名或通配符，如 *.example.com
-                  </p>
-                </Field>
-                <Field label="端口" htmlFor="rule-port">
-                  <Input
-                    id="rule-port"
-                    aria-label="端口"
-                    inputMode="numeric"
-                    placeholder="请输入端口，如 443"
-                    value={draft.port}
-                    onChange={(event) =>
-                      setDraft((current) => ({ ...current, port: event.target.value }))
-                    }
-                  />
-                  <p className="text-xs text-muted-foreground">留空表示任意端口</p>
-                </Field>
-              </div>
-
-              <div className="grid gap-2">
-                <Label>
-                  动作 <span className="text-rose-400">*</span>
-                </Label>
-                <div className="grid h-12 max-w-sm grid-cols-2 overflow-hidden rounded-md border border-input">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`h-full rounded-none ${draft.action === "代理" ? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white dark:hover:!bg-blue-600 dark:hover:!text-white" : "text-muted-foreground"}`}
-                    onClick={() => setDraft((current) => ({ ...current, action: "代理" }))}
-                    aria-pressed={draft.action === "代理"}
-                  >
-                    <GitBranch className="size-4" aria-hidden="true" />
-                    代理
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`h-full rounded-none border-l border-input ${draft.action === "直连" ? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white dark:hover:!bg-blue-600 dark:hover:!text-white" : "text-muted-foreground"}`}
-                    onClick={() => setDraft((current) => ({ ...current, action: "直连" }))}
-                    aria-pressed={draft.action === "直连"}
-                  >
-                    直连
-                  </Button>
-                </div>
-              </div>
-
-              <Field label="备注" htmlFor="rule-remark">
-                <Textarea
-                  id="rule-remark"
-                  aria-label="备注"
-                  rows={3}
-                  placeholder="请输入备注（可选）"
-                  className="min-h-24 resize-y"
-                  value={draft.remark}
-                  onChange={(event) =>
-                    setDraft((current) => ({ ...current, remark: event.target.value }))
-                  }
-                />
-              </Field>
-            </div>
-
-            <DialogFooter className="border-t border-white/10 px-6 py-5 sm:px-7">
-              <DialogClose asChild>
-                <Button type="button" variant="secondary" className="min-w-28">
-                  取消
-                </Button>
-              </DialogClose>
-              <Button type="submit" className="min-w-28">
-                保存
-              </Button>
-            </DialogFooter>
-          </form>
+          <RuleForm
+            draft={draft}
+            setDraft={setDraft}
+            isEditing={isEditing}
+            busy={busy}
+            onSave={() => void saveRule()}
+          />
         </DialogContent>
       </Dialog>
     </>

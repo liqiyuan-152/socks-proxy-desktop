@@ -1,0 +1,9 @@
+{
+  "bundle": {
+    "resources": {
+      "resources/sing-box/windows-amd64/sing-box.exe": "sing-box/windows-amd64/sing-box.exe",
+      "resources/sing-box/windows-amd64/libcronet.dll": "sing-box/windows-amd64/libcronet.dll",
+      "resources/sing-box/windows-amd64/LICENSE": "sing-box/windows-amd64/LICENSE"
+    }
+  }
+}

@@ -8,6 +8,8 @@ import {
   Settings,
   ShieldCheck,
 } from "lucide-react";
+import { useBackend } from "@/lib/backend-context";
+import { proxyModes } from "@/lib/proxy-mode";
 import { NavLink, Outlet, useMatch } from "react-router-dom";
 import {
   Sidebar,
@@ -25,10 +27,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
-type AppLayoutProps = {
-  activeModeLabel: string;
-};
-
 const navigationItems = [
   { label: "状态", icon: Home, to: "/" },
   { label: "代理", icon: Server, to: "/proxies" },
@@ -39,8 +37,13 @@ const navigationItems = [
 
 type NavigationItem = (typeof navigationItems)[number];
 
-function StatusDot() {
-  return <span aria-hidden="true" className="size-2.5 rounded-full bg-emerald-500" />;
+function StatusDot({ running }: { running: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`size-2.5 rounded-full ${running ? "bg-emerald-500" : "bg-muted-foreground"}`}
+    />
+  );
 }
 
 function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
@@ -63,7 +66,14 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
   );
 }
 
-export function AppLayout({ activeModeLabel }: AppLayoutProps) {
+export function AppLayout() {
+  const { snapshot, profiles } = useBackend();
+  const running = snapshot?.phase === "running";
+  const activeModeLabel = snapshot?.applied_mode
+    ? proxyModes[snapshot.applied_mode].label
+    : "未应用";
+  const profileName =
+    profiles.find((profile) => profile.id === snapshot?.active_profile_id)?.name ?? "未选择";
   return (
     <SidebarProvider className="h-svh overflow-hidden bg-background text-foreground">
       <Sidebar collapsible="icon" className="border-sidebar-border">
@@ -91,11 +101,13 @@ export function AppLayout({ activeModeLabel }: AppLayoutProps) {
         </SidebarContent>
 
         <SidebarFooter className="p-3 text-xs text-sidebar-foreground/70">
-          <div className="flex items-center gap-2 font-medium text-emerald-400 group-data-[collapsible=icon]:justify-center">
-            <StatusDot />
-            <span className="group-data-[collapsible=icon]:hidden">内核运行中</span>
+          <div className="flex items-center gap-2 font-medium group-data-[collapsible=icon]:justify-center">
+            <StatusDot running={running} />
+            <span className="group-data-[collapsible=icon]:hidden">
+              内核{running ? "运行中" : "未运行"}
+            </span>
           </div>
-          <p className="mt-3 group-data-[collapsible=icon]:hidden">v1.3.2</p>
+          <p className="mt-3 group-data-[collapsible=icon]:hidden">v0.1.0</p>
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
@@ -109,16 +121,16 @@ export function AppLayout({ activeModeLabel }: AppLayoutProps) {
             </span>
             <Separator orientation="vertical" className="h-4" />
             <span>
-              当前代理名称：<strong className="font-semibold text-foreground">公司代理</strong>
+              当前代理名称：<strong className="font-semibold text-foreground">{profileName}</strong>
             </span>
             <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-2">
-              <Activity className="size-3.5 text-emerald-600" aria-hidden="true" />
-              内核运行状态：运行中
+              <Activity className="size-3.5" aria-hidden="true" />
+              内核运行状态：{snapshot?.phase ?? "不可用"}
             </span>
             <span className="ml-auto flex items-center gap-2">
               <Globe2 className="size-3.5" aria-hidden="true" />
-              2024-11-15 09:42
+              {snapshot?.coverage === "system_proxy_apps" ? "系统代理应用流量" : "未接管系统代理"}
             </span>
           </footer>
         </section>
