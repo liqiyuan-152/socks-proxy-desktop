@@ -4,7 +4,7 @@ Private desktop SOCKS proxy manager built with Tauri, React, Tailwind CSS, shadc
 
 ## Prerequisites
 
-- Node.js 22.22.0 and pnpm 10.33.0
+- Node.js >=22.22.0 and pnpm >=10.33.0
 - Rust stable with the Windows MSVC toolchain
 - WebView2 Runtime on Windows
 

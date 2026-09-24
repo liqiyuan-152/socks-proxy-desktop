@@ -6,8 +6,8 @@
 
 - 前端：React 19、TypeScript、Vite、Tailwind CSS 和 shadcn/ui。
 - 后端：`src-tauri/` 中的 Rust 2021。
-- 包管理器：pnpm `>=10.33.0 <11`（当前固定版本见 `packageManager`）。
-- Node.js：`>=22.22.0 <23`；`.node-version` 固定为 `22.22.0`。
+- 包管理器：pnpm `>=10.33.0`（推荐版本见 `packageManager`）。
+- Node.js：`>=22.22.0`；`.node-version` 指定推荐版本 `22.22.0`。
 
 ## 仓库开发规范
 
@@ -22,7 +22,7 @@
 
 ## 环境预检
 
-- 执行 `pnpm` 命令前，确认 `node --version` 落在 `>=22.22.0 <23`、`pnpm --version` 落在 `>=10.33.0 <11`。
+- 执行 `pnpm` 命令前，确认 `node --version` 满足 `>=22.22.0`、`pnpm --version` 满足 `>=10.33.0`。
 - 当前 shell 版本不符合要求时，先通过已配置的版本管理器切换；不要绕过 `package.json` 的 engines 约束。
 
 ## 常用命令
