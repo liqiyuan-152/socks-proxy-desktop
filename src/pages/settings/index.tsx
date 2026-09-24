@@ -18,17 +18,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { command, errorMessage } from "@/lib/backend";
+import { command, errorMessage, type BackendError } from "@/lib/backend";
 import { useBackend } from "@/lib/backend-context";
 import { AboutCard } from "./AboutCard";
+import { LatencyTestCard } from "./LatencyTestCard";
+import { parseImportProfiles, type ImportProfile } from "./parseImportProfiles";
 import { NetworkRecoveryCard } from "./NetworkRecoveryCard";
 import { StartupCard } from "./StartupCard";
+import type { Retention, Settings } from "./settingsTypes";
 
-type Retention = "days7" | "days30" | "days90" | "permanent";
-type Settings = { launch_at_login: boolean; diagnostic_retention: Retention };
 type SettingsAction = "clear" | "import" | "restore" | null;
 type NetworkRecoveryResult = { completed_at_ms: number };
-type ImportProfile = { id: string; name: string; authentication_enabled: boolean };
 
 export default function SettingsPage() {
   const { refresh } = useBackend();
@@ -64,7 +64,8 @@ export default function SettingsPage() {
     try {
       setSettings(await command<Settings>("update_settings", { settings: next }));
     } catch (reason) {
-      setError(errorMessage(reason));
+      const typed = reason as Partial<BackendError>;
+      setError(typed.fields?.map((field) => field.message).join("；") || errorMessage(reason));
     } finally {
       setBusy(false);
     }
@@ -93,23 +94,7 @@ export default function SettingsPage() {
     try {
       const json = await file.text();
       const data: unknown = JSON.parse(json);
-      const profiles =
-        typeof data === "object" &&
-        data !== null &&
-        "profiles" in data &&
-        Array.isArray(data.profiles)
-          ? data.profiles.filter(
-              (item: unknown): item is ImportProfile =>
-                typeof item === "object" &&
-                item !== null &&
-                "id" in item &&
-                typeof item.id === "string" &&
-                "name" in item &&
-                typeof item.name === "string" &&
-                "authentication_enabled" in item &&
-                typeof item.authentication_enabled === "boolean",
-            )
-          : [];
+      const profiles = parseImportProfiles(data);
       setImportJson(json);
       setImportProfiles(profiles);
       setNewCredentials({});
@@ -230,6 +215,14 @@ export default function SettingsPage() {
           )}
           {!settings && !error && <p role="status">正在加载设置…</p>}
           <div className="grid gap-5 lg:grid-cols-2">
+            {settings && (
+              <LatencyTestCard
+                key={settings.latency_test_url}
+                url={settings.latency_test_url}
+                busy={busy}
+                onSave={(url) => void updateSettings({ ...settings, latency_test_url: url })}
+              />
+            )}
             <StartupCard
               enabled={settings?.launch_at_login ?? false}
               loaded={!!settings}
@@ -239,13 +232,13 @@ export default function SettingsPage() {
               }
             />
 
-            <Card className="gap-0 border-white/10 bg-card py-0 shadow-none">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   配置备份
                 </CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-3 border-t border-white/10 py-5">
+              <CardContent className="grid grid-cols-2 gap-3 border-t border-border py-5">
                 <Button
                   variant="secondary"
                   onClick={() => void exportConfig()}
@@ -257,7 +250,7 @@ export default function SettingsPage() {
                 <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
                   <Upload className="size-4" aria-hidden="true" />
                   导入配置
-                  <Input
+                  <input
                     className="sr-only"
                     type="file"
                     accept="application/json,.json"
@@ -272,13 +265,13 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-0 border-white/10 bg-card py-0 shadow-none">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   日志
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 border-t border-white/10 py-5">
+              <CardContent className="space-y-4 border-t border-border py-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <Button
                     variant="secondary"
@@ -332,11 +325,11 @@ export default function SettingsPage() {
         <DialogContent className="max-w-md p-0">
           {activeAction && (
             <>
-              <DialogHeader className="border-b border-white/10 px-6 py-5">
+              <DialogHeader className="border-b border-border px-6 py-5">
                 <DialogTitle>{activeAction.title}</DialogTitle>
               </DialogHeader>
               <div className="flex gap-3 px-6 py-5 text-sm text-muted-foreground">
-                <Info className="mt-0.5 size-4 shrink-0 text-blue-400" aria-hidden="true" />
+                <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                 <p>{activeAction.description}</p>
               </div>
               {error && (
@@ -381,7 +374,7 @@ export default function SettingsPage() {
                       />
                     </div>
                   ))}
-              <DialogFooter className="border-t border-white/10 px-6 py-4">
+              <DialogFooter className="border-t border-border px-6 py-4">
                 {activeAction.destructive && (
                   <Button variant="secondary" onClick={() => setPendingAction(null)}>
                     取消

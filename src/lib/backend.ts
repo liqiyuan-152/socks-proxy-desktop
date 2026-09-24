@@ -11,6 +11,7 @@ export type RuntimePhase =
   | "failed";
 export type RuntimeSnapshot = {
   revision: number;
+  selected_mode: ProxyMode;
   desired_mode: ProxyMode;
   applied_mode: ProxyMode | null;
   phase: RuntimePhase;
@@ -30,6 +31,11 @@ export type ProxyProfile = {
   port: number;
   authentication_enabled: boolean;
   enabled: boolean;
+};
+
+export type ProfileCredential = {
+  username: string;
+  password: string;
 };
 
 export type ActiveConnection = {

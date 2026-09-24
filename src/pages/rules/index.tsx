@@ -15,7 +15,10 @@ import {
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { command, errorMessage, type BackendError } from "@/lib/backend";
+import { useBackend } from "@/lib/backend-context";
 import { RuleForm, type RuleDraft } from "./RuleForm";
+import { ChinaDirectPreset } from "./ChinaDirectPreset";
+import { RouteTest } from "./RouteTest";
 
 type RoutingRule = {
   id: string;
@@ -25,10 +28,11 @@ type RoutingRule = {
   port_start: number | null;
   port_end: number | null;
   action: "proxy" | "direct";
+  proxy_profile_id: string | null;
   enabled: boolean;
 };
 
-function createRuleDraft(rule?: RoutingRule): RuleDraft {
+function createRuleDraft(rule?: RoutingRule, defaultProfileId = ""): RuleDraft {
   const action = rule?.action === "direct" ? "直连" : "代理";
 
   return {
@@ -36,11 +40,14 @@ function createRuleDraft(rule?: RoutingRule): RuleDraft {
     targetType: rule?.matcher ?? "domain",
     target: rule?.target ?? "",
     port: rule?.port_start?.toString() ?? "",
+    portEnd: rule?.port_end && rule.port_end !== rule.port_start ? String(rule.port_end) : "",
     action,
+    proxyProfileId: rule?.proxy_profile_id ?? defaultProfileId,
   };
 }
 
 export default function RoutingRuleList() {
+  const { profiles, snapshot } = useBackend();
   const [routingRules, setRoutingRules] = useState<RoutingRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -86,14 +93,24 @@ export default function RoutingRuleList() {
   }
 
   async function saveRule() {
+    const start = draft.port ? Number(draft.port) : null;
+    const end = draft.portEnd ? Number(draft.portEnd) : null;
+    if (
+      (start !== null && (!Number.isInteger(start) || start < 1 || start > 65535)) ||
+      (end !== null && (start === null || !Number.isInteger(end) || end < start || end > 65535))
+    ) {
+      setError("端口范围必须在 1 到 65535 之间，且结束端口不小于起始端口。");
+      return;
+    }
     const rule: RoutingRule = {
       id: editingRule?.id ?? crypto.randomUUID(),
       name: draft.name,
       matcher: draft.targetType as RoutingRule["matcher"],
       target: draft.target,
-      port_start: draft.port ? Number(draft.port) : null,
-      port_end: null,
+      port_start: start,
+      port_end: end,
       action: draft.action === "代理" ? "proxy" : "direct",
+      proxy_profile_id: draft.action === "代理" ? draft.proxyProfileId : null,
       enabled: editingRule?.enabled ?? true,
     };
     const saved = await replace(
@@ -123,7 +140,12 @@ export default function RoutingRuleList() {
 
   function openDialog(rule?: RoutingRule) {
     setEditingRule(rule ?? null);
-    setDraft(createRuleDraft(rule));
+    setDraft(
+      createRuleDraft(
+        rule,
+        snapshot?.active_profile_id ?? profiles.find((profile) => profile.enabled)?.id,
+      ),
+    );
     setDialogOpen(true);
   }
 
@@ -143,6 +165,8 @@ export default function RoutingRuleList() {
 
       <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
+          <ChinaDirectPreset />
+          <RouteTest />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative w-full sm:max-w-md">
               <Search
@@ -175,10 +199,10 @@ export default function RoutingRuleList() {
           )}
           {loading && <p role="status">正在加载分流规则…</p>}
 
-          <Card className="gap-0 overflow-hidden border-white/10 bg-card py-0 shadow-none">
+          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
             <Table className="min-w-[760px] text-sm">
-              <TableHeader className="border-white/10 bg-white/[0.04] [&_th]:h-12 [&_th]:px-4 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground">
-                <TableRow className="border-white/10 hover:bg-transparent">
+              <TableHeader className="bg-muted/50 [&_th]:h-12 [&_th]:px-4 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground">
+                <TableRow className="hover:bg-transparent">
                   <TableHead>规则名称</TableHead>
                   <TableHead>匹配目标</TableHead>
                   <TableHead>目标值</TableHead>
@@ -194,7 +218,7 @@ export default function RoutingRuleList() {
                     `${rule.name} ${rule.target}`.toLowerCase().includes(search.toLowerCase()),
                   )
                   .map((rule) => (
-                    <TableRow key={rule.id} className="border-white/10 hover:bg-white/[0.035]">
+                    <TableRow key={rule.id}>
                       <TableCell className="px-4 py-4 font-medium">{rule.name}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">
                         {rule.matcher === "ip_cidr"
@@ -205,13 +229,20 @@ export default function RoutingRuleList() {
                       </TableCell>
                       <TableCell className="px-4 py-4 font-medium">{rule.target}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">
-                        {rule.port_start ?? "任意"}
+                        {rule.port_start == null
+                          ? "任意"
+                          : rule.port_end && rule.port_end !== rule.port_start
+                            ? `${rule.port_start}–${rule.port_end}`
+                            : rule.port_start}
                       </TableCell>
                       <TableCell className="px-4 py-4">
                         <span
-                          className={rule.action === "proxy" ? "text-blue-400" : "text-foreground"}
+                          className={rule.action === "proxy" ? "text-primary" : "text-foreground"}
                         >
-                          {rule.action === "proxy" ? "代理" : "直连"}
+                          {rule.action === "proxy"
+                            ? (profiles.find((profile) => profile.id === rule.proxy_profile_id)
+                                ?.name ?? "待修复出口")
+                            : "直连"}
                         </span>
                       </TableCell>
                       <TableCell className="px-4 py-4">
@@ -269,7 +300,7 @@ export default function RoutingRuleList() {
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
-                                className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                                 aria-label={`删除${rule.name}`}
                                 disabled={busy}
                                 onClick={() => {
@@ -315,6 +346,7 @@ export default function RoutingRuleList() {
             setDraft={setDraft}
             isEditing={isEditing}
             busy={busy}
+            profiles={profiles}
             onSave={() => void saveRule()}
           />
         </DialogContent>

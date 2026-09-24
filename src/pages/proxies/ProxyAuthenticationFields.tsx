@@ -19,18 +19,21 @@ export type ProxyDraft = {
 export function ProxyAuthenticationFields({
   draft,
   setDraft,
+  disabled = false,
 }: {
   draft: ProxyDraft;
   setDraft: Dispatch<SetStateAction<ProxyDraft>>;
+  disabled?: boolean;
 }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   return (
-    <div className="border-t border-white/10 pt-5">
+    <div className="border-t border-border pt-5">
       <div className="flex items-center gap-4">
         <Label htmlFor="proxy-authentication">启用认证</Label>
         <Switch
           id="proxy-authentication"
           checked={draft.authentication}
+          disabled={disabled}
           onCheckedChange={(authentication) =>
             setDraft((current) => ({ ...current, authentication }))
           }
@@ -43,6 +46,7 @@ export function ProxyAuthenticationFields({
               id="proxy-username"
               placeholder="请输入用户名"
               value={draft.username}
+              disabled={disabled}
               onChange={(event) =>
                 setDraft((current) => ({ ...current, username: event.target.value }))
               }
@@ -56,6 +60,7 @@ export function ProxyAuthenticationFields({
                 className="pr-10"
                 placeholder="请输入密码"
                 value={draft.password}
+                disabled={disabled}
                 onChange={(event) =>
                   setDraft((current) => ({ ...current, password: event.target.value }))
                 }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { ProxyProfile } from "@/lib/backend";
 import {
   Select,
   SelectContent,
@@ -18,7 +19,9 @@ export type RuleDraft = {
   targetType: string;
   target: string;
   port: string;
+  portEnd: string;
   action: "代理" | "直连";
+  proxyProfileId: string;
 };
 
 export function RuleForm({
@@ -26,12 +29,14 @@ export function RuleForm({
   setDraft,
   isEditing,
   busy,
+  profiles,
   onSave,
 }: {
   draft: RuleDraft;
   setDraft: Dispatch<SetStateAction<RuleDraft>>;
   isEditing: boolean;
   busy: boolean;
+  profiles: ProxyProfile[];
   onSave: () => void;
 }) {
   return (
@@ -41,7 +46,7 @@ export function RuleForm({
         onSave();
       }}
     >
-      <DialogHeader className="relative border-b border-white/10 px-6 py-5 sm:px-7">
+      <DialogHeader className="relative border-b border-border px-6 py-5 sm:px-7">
         <DialogTitle>{isEditing ? "编辑规则" : "添加规则"}</DialogTitle>
         <DialogClose asChild>
           <Button
@@ -84,7 +89,7 @@ export function RuleForm({
             </Select>
           </Field>
         </div>
-        <div className="grid gap-5 sm:grid-cols-[1.7fr_0.8fr]">
+        <div className="grid gap-5 sm:grid-cols-[1.7fr_0.8fr_0.8fr]">
           <Field label="目标值" required htmlFor="rule-target">
             <Input
               id="rule-target"
@@ -99,7 +104,7 @@ export function RuleForm({
               域名输入 example.com；域名后缀输入 example.com；CIDR 输入 192.168.0.0/16。
             </p>
           </Field>
-          <Field label="端口" htmlFor="rule-port">
+          <Field label="起始端口" htmlFor="rule-port">
             <Input
               id="rule-port"
               aria-label="端口"
@@ -112,10 +117,23 @@ export function RuleForm({
             />
             <p className="text-xs text-muted-foreground">留空表示任意端口</p>
           </Field>
+          <Field label="结束端口" htmlFor="rule-port-end">
+            <Input
+              id="rule-port-end"
+              aria-label="结束端口"
+              inputMode="numeric"
+              placeholder="可选"
+              value={draft.portEnd}
+              disabled={!draft.port}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, portEnd: event.target.value }))
+              }
+            />
+          </Field>
         </div>
         <div className="grid gap-2">
           <Label>
-            动作 <span className="text-rose-400">*</span>
+            动作 <span className="text-destructive">*</span>
           </Label>
           <div className="grid h-12 max-w-sm grid-cols-2 overflow-hidden rounded-md border border-input">
             <Button
@@ -139,14 +157,48 @@ export function RuleForm({
             </Button>
           </div>
         </div>
+        {draft.action === "代理" && (
+          <Field label="代理出口" required htmlFor="rule-proxy-profile">
+            <Select
+              value={draft.proxyProfileId || undefined}
+              onValueChange={(proxyProfileId) =>
+                setDraft((current) => ({ ...current, proxyProfileId }))
+              }
+            >
+              <SelectTrigger id="rule-proxy-profile" aria-label="代理出口" className="max-w-sm">
+                <SelectValue placeholder="选择已启用的代理" />
+              </SelectTrigger>
+              <SelectContent>
+                {profiles
+                  .filter((profile) => profile.enabled)
+                  .map((profile) => (
+                    <SelectItem key={profile.id} value={profile.id}>
+                      {profile.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            {!profiles.some((profile) => profile.enabled) && (
+              <p className="text-xs text-destructive">请先启用一个代理。</p>
+            )}
+          </Field>
+        )}
       </div>
-      <DialogFooter className="border-t border-white/10 px-6 py-5 sm:px-7">
+      <DialogFooter className="border-t border-border px-6 py-5 sm:px-7">
         <DialogClose asChild>
           <Button type="button" variant="secondary" className="min-w-28">
             取消
           </Button>
         </DialogClose>
-        <Button type="submit" className="min-w-28" disabled={busy}>
+        <Button
+          type="submit"
+          className="min-w-28"
+          disabled={
+            busy ||
+            (draft.action === "代理" &&
+              !profiles.some((profile) => profile.enabled && profile.id === draft.proxyProfileId))
+          }
+        >
           保存
         </Button>
       </DialogFooter>
