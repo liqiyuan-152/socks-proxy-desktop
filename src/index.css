@@ -181,3 +181,50 @@ button:not(:disabled),
   --primary-active: oklch(0.5 0.2 255);
   --gradient-primary: linear-gradient(135deg, oklch(0.54 0.18 255), oklch(0.5 0.2 265));
 }
+
+/* A bounded table container owns both axes so sticky headers remain usable. */
+.table-modern thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, var(--muted), var(--card));
+  border-bottom: 2px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.table-modern tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 150ms ease;
+}
+
+.table-modern tbody tr:last-child {
+  border-bottom: 0;
+}
+
+.table-striped tbody tr:nth-child(even) {
+  background: color-mix(in oklch, var(--muted) 30%, var(--card));
+}
+
+.table-modern tbody tr:hover {
+  background: color-mix(in oklch, var(--accent) 65%, var(--card));
+}
+
+.table-modern tbody tr[data-selected="true"],
+.table-modern tbody tr[data-state="selected"] {
+  background: color-mix(in oklch, var(--primary) 12%, var(--card));
+}
+
+.table-modern td {
+  padding: 0.75rem 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-modern tbody tr {
+    transition: none;
+  }
+}

@@ -162,8 +162,11 @@ export default function ProxyList() {
           {error && !dialogOpen && !deletingProxy && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载代理档案…</p>}
 
-          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
-            <Table className="table-fixed text-sm">
+          <Card variant="elevated" className="gap-0 overflow-hidden py-0">
+            <Table
+              className="table-modern table-fixed text-sm"
+              containerClassName="max-h-[60vh] overflow-auto"
+            >
               <TableHeader className="bg-muted/50 [&_th]:h-12 [&_th]:px-3 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground sm:[&_th]:px-4">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-[45%] sm:w-[22%]">名称</TableHead>
@@ -182,7 +185,7 @@ export default function ProxyList() {
                   const SelectionIcon = active ? CircleDot : Circle;
 
                   return (
-                    <TableRow key={proxy.id}>
+                    <TableRow key={proxy.id} data-selected={active}>
                       <TableCell className="min-w-0 px-3 py-4 font-medium sm:px-4">
                         <span className="flex items-center gap-3 truncate">
                           <SelectionIcon
