@@ -8,8 +8,11 @@ const mocks = vi.hoisted(() => ({
   defaultId: "primary" as string | null,
 }));
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke: mocks.invoke }));
-vi.mock("@/lib/backend-state", () => ({
-  useBackend: () => ({ snapshot: { active_profile_id: mocks.defaultId }, refresh: mocks.refresh }),
+vi.mock("@/store/backend-store", () => ({
+  useBackendStore: () => ({
+    snapshot: { active_profile_id: mocks.defaultId },
+    refresh: mocks.refresh,
+  }),
 }));
 
 beforeEach(() => {

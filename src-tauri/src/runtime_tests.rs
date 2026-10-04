@@ -307,3 +307,6 @@ mod commit_tests;
 
 #[path = "runtime_revision_tests.rs"]
 mod revision_tests;
+
+#[path = "runtime_node_integration_tests.rs"]
+mod node_integration;

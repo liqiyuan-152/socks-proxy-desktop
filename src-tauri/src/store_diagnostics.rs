@@ -13,6 +13,14 @@ pub struct RuntimeDiagnostic {
     pub created_at_ms: i64,
     pub severity: String,
     pub summary: String,
+    /// 稳定的领域及错误变体；普通事件和旧记录可以没有类型。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(test, ts(optional))]
+    pub error_type: Option<String>,
+    /// 发生错误的应用操作，聚合时不依赖消息内容。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(test, ts(optional))]
+    pub operation: Option<String>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -21,6 +29,10 @@ pub struct DiagnosticFilter {
     pub from_ms: Option<i64>,
     pub until_ms: Option<i64>,
     pub severity: Option<String>,
+    /// 对编号、摘要、类型和操作进行不区分 ASCII 大小写的字面搜索。
+    #[serde(default)]
+    #[cfg_attr(test, ts(optional))]
+    pub search: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -32,7 +44,7 @@ pub struct DiagnosticPage {
 }
 
 impl DiagnosticFilter {
-    fn validate(&self) -> Result<(), AppError> {
+    pub(super) fn validate(&self) -> Result<(), AppError> {
         if self
             .from_ms
             .zip(self.until_ms)
@@ -47,26 +59,44 @@ impl DiagnosticFilter {
         {
             return Err(AppError::unavailable("诊断级别无效"));
         }
+        if self
+            .search
+            .as_ref()
+            .is_some_and(|query| query.chars().count() > 128)
+        {
+            return Err(AppError::unavailable("诊断搜索最多输入 128 个字符"));
+        }
         Ok(())
     }
 
-    fn sql_params(&self) -> Vec<SqlValue> {
+    pub(super) fn sql_params(&self) -> Vec<SqlValue> {
         vec![
             self.from_ms.map_or(SqlValue::Null, SqlValue::Integer),
             self.until_ms.map_or(SqlValue::Null, SqlValue::Integer),
             self.severity
                 .as_ref()
                 .map_or(SqlValue::Null, |s| SqlValue::Text(s.clone())),
+            self.search
+                .as_ref()
+                .filter(|query| !query.is_empty())
+                .map_or(SqlValue::Null, |query| SqlValue::Text(query.clone())),
         ]
     }
 }
 
-const FILTER_SQL: &str = "WHERE (?1 IS NULL OR created_at_ms >= ?1)
+pub(super) const FILTER_SQL: &str = "WHERE (?1 IS NULL OR created_at_ms >= ?1)
     AND (?2 IS NULL OR created_at_ms < ?2)
-    AND (?3 IS NULL OR severity = ?3)";
+    AND (?3 IS NULL OR severity = ?3)
+    AND (?4 IS NULL OR instr(lower(id), lower(?4)) > 0
+      OR instr(lower(summary), lower(?4)) > 0
+      OR instr(lower(coalesce(error_type, '')), lower(?4)) > 0
+      OR instr(lower(coalesce(operation, '')), lower(?4)) > 0)";
 
 impl SqliteConfigurationStore {
     pub fn record_diagnostic(&self, diagnostic: &RuntimeDiagnostic) -> Result<(), AppError> {
+        if !matches!(diagnostic.severity.as_str(), "info" | "warning" | "error") {
+            return Err(AppError::unavailable("诊断级别无效"));
+        }
         let mut connection = self
             .connection
             .lock()
@@ -76,8 +106,8 @@ impl SqliteConfigurationStore {
             .settings
             .diagnostic_retention;
         transaction.execute(
-            "INSERT INTO runtime_diagnostics (id, created_at_ms, severity, summary) VALUES (?1, ?2, ?3, ?4)",
-            params![diagnostic.id, diagnostic.created_at_ms, diagnostic.severity, diagnostic.summary],
+            "INSERT INTO runtime_diagnostics (id, created_at_ms, severity, summary, error_type, operation) VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT(id) DO NOTHING",
+            params![diagnostic.id, diagnostic.created_at_ms, diagnostic.severity, diagnostic.summary, diagnostic.error_type, diagnostic.operation],
         ).map_err(storage_error)?;
         prune_diagnostics(&transaction, policy, now_ms()?)?;
         transaction.commit().map_err(storage_error)?;
@@ -104,8 +134,8 @@ impl SqliteConfigurationStore {
             .query_row(&count_sql, params_from_iter(&params), |row| row.get(0))
             .map_err(storage_error)?;
         let page_sql = format!(
-            "SELECT id, created_at_ms, severity, summary FROM runtime_diagnostics {FILTER_SQL}
-            ORDER BY created_at_ms DESC, rowid DESC LIMIT ?4 OFFSET ?5"
+            "SELECT id, created_at_ms, severity, summary, error_type, operation FROM runtime_diagnostics {FILTER_SQL}
+            ORDER BY created_at_ms DESC, rowid DESC LIMIT ?5 OFFSET ?6"
         );
         let mut page_params = params;
         page_params.push(SqlValue::Integer(limit as i64));
@@ -118,6 +148,8 @@ impl SqliteConfigurationStore {
                     created_at_ms: row.get(1)?,
                     severity: row.get(2)?,
                     summary: row.get(3)?,
+                    error_type: row.get(4)?,
+                    operation: row.get(5)?,
                 })
             })
             .map_err(storage_error)?

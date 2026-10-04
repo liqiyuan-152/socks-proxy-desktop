@@ -8,8 +8,11 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const DATABASE_SCHEMA_VERSION: i64 = 4;
+const DATABASE_SCHEMA_VERSION: i64 = 5;
 use diagnostics::{now_ms, prune_diagnostics};
+#[path = "store_diagnostic_report.rs"]
+mod diagnostic_report;
+pub use diagnostic_report::DiagnosticGroup;
 pub use diagnostics::{DiagnosticFilter, DiagnosticPage, RuntimeDiagnostic};
 
 pub fn diagnostic_now_ms() -> Result<i64, AppError> {
@@ -17,6 +20,31 @@ pub fn diagnostic_now_ms() -> Result<i64, AppError> {
 }
 
 pub trait ConfigurationStore: Send + Sync {
+    /// 查询持久化运行时诊断；不支持诊断的适配器明确返回能力错误。
+    fn list_diagnostics(
+        &self,
+        _: &DiagnosticFilter,
+        _: usize,
+        _: usize,
+    ) -> Result<DiagnosticPage, AppError> {
+        Err(AppError::unavailable("此配置存储不支持运行时诊断"))
+    }
+    /// 记录运行时诊断，存储适配器负责保留策略和容量上限。
+    fn record_diagnostic(&self, _: &RuntimeDiagnostic) -> Result<(), AppError> {
+        Err(AppError::unavailable("此配置存储不支持运行时诊断"))
+    }
+    /// 仅在用户确认后清理匹配的诊断。
+    fn clear_diagnostics(&self, _: &DiagnosticFilter, _: bool) -> Result<usize, AppError> {
+        Err(AppError::unavailable("此配置存储不支持运行时诊断"))
+    }
+    /// 聚合同类错误，保留底层的单次错误记录。
+    fn diagnostic_groups(&self, _: &DiagnosticFilter) -> Result<Vec<DiagnosticGroup>, AppError> {
+        Err(AppError::unavailable("此配置存储不支持诊断聚合"))
+    }
+    /// 导出完整过滤快照为 JSON Lines。
+    fn export_diagnostics(&self, _: &DiagnosticFilter) -> Result<String, AppError> {
+        Err(AppError::unavailable("此配置存储不支持诊断导出"))
+    }
     fn load(&self) -> Result<PersistedConfiguration, AppError>;
     #[cfg(test)]
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError>;
@@ -72,6 +100,34 @@ impl SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for SqliteConfigurationStore {
+    fn diagnostic_groups(
+        &self,
+        filter: &DiagnosticFilter,
+    ) -> Result<Vec<DiagnosticGroup>, AppError> {
+        SqliteConfigurationStore::diagnostic_groups(self, filter)
+    }
+    fn export_diagnostics(&self, filter: &DiagnosticFilter) -> Result<String, AppError> {
+        SqliteConfigurationStore::export_diagnostics(self, filter)
+    }
+
+    fn list_diagnostics(
+        &self,
+        filter: &DiagnosticFilter,
+        offset: usize,
+        limit: usize,
+    ) -> Result<DiagnosticPage, AppError> {
+        SqliteConfigurationStore::list_diagnostics(self, filter, offset, limit)
+    }
+    fn record_diagnostic(&self, diagnostic: &RuntimeDiagnostic) -> Result<(), AppError> {
+        SqliteConfigurationStore::record_diagnostic(self, diagnostic)
+    }
+    fn clear_diagnostics(
+        &self,
+        filter: &DiagnosticFilter,
+        confirmed: bool,
+    ) -> Result<usize, AppError> {
+        SqliteConfigurationStore::clear_diagnostics(self, filter, confirmed)
+    }
     fn recovery_revision(&self) -> Result<u64, AppError> {
         SqliteConfigurationStore::recovery_revision(self)
     }
@@ -93,11 +149,13 @@ impl ConfigurationStore for SqliteConfigurationStore {
         SqliteConfigurationStore::clear_recovery(self, id)
     }
     fn load(&self) -> Result<PersistedConfiguration, AppError> {
-        let connection = self
-            .connection
-            .lock()
-            .map_err(|_| AppError::storage("配置存储锁不可用"))?;
-        read_configuration(&connection)
+        crate::performance_metrics::measure("configuration_load", || {
+            let connection = self
+                .connection
+                .lock()
+                .map_err(|_| AppError::storage("配置存储锁不可用"))?;
+            read_configuration(&connection)
+        })
     }
 
     #[cfg(test)]
@@ -167,6 +225,34 @@ impl ConfigurationStore for SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for Arc<SqliteConfigurationStore> {
+    fn diagnostic_groups(
+        &self,
+        filter: &DiagnosticFilter,
+    ) -> Result<Vec<DiagnosticGroup>, AppError> {
+        self.as_ref().diagnostic_groups(filter)
+    }
+    fn export_diagnostics(&self, filter: &DiagnosticFilter) -> Result<String, AppError> {
+        self.as_ref().export_diagnostics(filter)
+    }
+
+    fn list_diagnostics(
+        &self,
+        filter: &DiagnosticFilter,
+        offset: usize,
+        limit: usize,
+    ) -> Result<DiagnosticPage, AppError> {
+        self.as_ref().list_diagnostics(filter, offset, limit)
+    }
+    fn record_diagnostic(&self, diagnostic: &RuntimeDiagnostic) -> Result<(), AppError> {
+        self.as_ref().record_diagnostic(diagnostic)
+    }
+    fn clear_diagnostics(
+        &self,
+        filter: &DiagnosticFilter,
+        confirmed: bool,
+    ) -> Result<usize, AppError> {
+        self.as_ref().clear_diagnostics(filter, confirmed)
+    }
     fn recovery_revision(&self) -> Result<u64, AppError> {
         self.as_ref().recovery_revision()
     }

@@ -1,14 +1,17 @@
-import { ipc } from "@/lib/ipc";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError, CommandMap } from "@/lib/generated/ipc";
 import { useEffect, useRef, useState } from "react";
-import { errorMessage } from "@/lib/backend";
 import { parseImportProfiles, type ImportProfile } from "./parseImportProfiles";
 
 type Credential = { username: string; password: string };
 
-export function useConfigurationImport(onImported: () => Promise<void>) {
+export function useConfigurationImport(
+  onImported: () => Promise<void>,
+  importConfiguration: (input: CommandMap["import_configuration"][0]) => Promise<unknown>,
+) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [profiles, setProfiles] = useState<ImportProfile[]>([]);
   const [credentials, setCredentials] = useState<Record<string, Credential>>({});
   const json = useRef("");
@@ -47,7 +50,13 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
     try {
       text = await file.text();
     } catch {
-      if (current()) setError("无法读取配置文件，请重新选择文件。");
+      if (current())
+        setError(
+          normalizeError({
+            code: "validation_error",
+            message: "无法读取配置文件，请重新选择文件。",
+          }),
+        );
       return;
     }
     if (!current()) return;
@@ -55,7 +64,7 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
     try {
       data = JSON.parse(text);
     } catch {
-      setError("配置文件不是有效的 JSON。");
+      setError(normalizeError({ code: "validation_error", message: "配置文件不是有效的 JSON。" }));
       return;
     }
     try {
@@ -64,7 +73,12 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
       setProfiles(preview);
       setOpen(true);
     } catch {
-      setError("配置文件结构无效，请选择本应用导出的配置。");
+      setError(
+        normalizeError({
+          code: "validation_error",
+          message: "配置文件结构无效，请选择本应用导出的配置。",
+        }),
+      );
     }
   }
 
@@ -74,7 +88,12 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
     for (const profile of profiles.filter((item) => item.authentication_enabled)) {
       const credential = credentials[profile.id];
       if (!credential?.username.trim() || !credential.password) {
-        setError(`请为「${profile.name}」重新输入认证用户名和密码。`);
+        setError(
+          normalizeError({
+            code: "validation_error",
+            message: `请为「${profile.name}」重新输入认证用户名和密码。`,
+          }),
+        );
         return;
       }
       updates.push([profile.id, { action: "replace", ...credential }]);
@@ -84,7 +103,7 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
     setError(null);
     const version = epoch.current;
     try {
-      await ipc("import_configuration", {
+      await importConfiguration({
         json: json.current,
         updates: Object.fromEntries(updates),
       });
@@ -92,7 +111,7 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
       reset();
       await onImported();
     } catch (reason) {
-      if (active.current) setError(errorMessage(reason));
+      if (active.current) setError(normalizeError(reason));
     } finally {
       submitting.current = false;
       if (active.current) setBusy(false);

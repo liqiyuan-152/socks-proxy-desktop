@@ -1,0 +1,25 @@
+{
+  "scope": "同步加载首页修复后的三轮配对协议；增加两版相同的 setup/前端诊断字段，仅用于隔离快照",
+  "baseline_revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+  "baseline_identifier": "com.socksproxy.desktop.benchmark-baseline",
+  "current_identifier": "com.socksproxy.desktop.benchmark-current",
+  "protocol_sources": {
+    "src-tauri/src/native_benchmark.rs": "//! 仅用于隔离基准构建的相同测量协议。\nuse std::{sync::{Mutex, atomic::{AtomicBool, Ordering}}, time::Instant};\nuse tauri::Manager;\npub(crate) struct NativeBenchmark { pub started: Instant, pub ready: AtomicBool, pub samples: Mutex<Vec<f64>>, pub setup_us: std::sync::atomic::AtomicU64 }\n#[tauri::command]\npub(crate) fn native_benchmark_ping() -> bool { true }\n#[tauri::command]\npub(crate) fn native_benchmark_ready<R: tauri::Runtime>(app: tauri::AppHandle<R>, state: tauri::State<'_, NativeBenchmark>, frontend_ready_ms: f64) -> Result<(), String> {\n let first = !state.ready.swap(true, Ordering::AcqRel);\n if !first { return Ok(()); }\n let startup_ms = state.started.elapsed().as_secs_f64()*1000.;\n let path=app.path().app_data_dir().map_err(|_| \"benchmark path\")?.join(\"native-benchmark.json\");\n let report=serde_json::json!({\"frontend_ready_ms\":frontend_ready_ms,\"bootstrap_ms\":state.setup_us.load(Ordering::Acquire) as f64/1000.,\"pid\":std::process::id(),\"startup_ms\":startup_ms,\"ipc_ms\":state.samples.lock().map_err(|_| \"benchmark lock\")?.clone()});\n std::fs::write(path,serde_json::to_vec_pretty(&report).map_err(|_| \"benchmark encoding\")?).map_err(|_| \"benchmark write\".to_string())\n}\n#[tauri::command]\npub(crate) fn native_benchmark_ipc_samples<R: tauri::Runtime>(app: tauri::AppHandle<R>, _state: tauri::State<'_, NativeBenchmark>, samples: Vec<f64>) -> Result<(), String> {\n if samples.len()!=200 || samples.iter().any(|x| !x.is_finite() || *x < 0.) {return Err(\"invalid benchmark samples\".into());}\n let path=app.path().app_data_dir().map_err(|_| \"benchmark path\")?.join(\"native-benchmark.json\");\n let mut report:serde_json::Value=serde_json::from_slice(&std::fs::read(&path).map_err(|_| \"benchmark read\")?).map_err(|_| \"benchmark decode\")?;\n report[\"ipc_ms\"]=serde_json::json!(samples);\n std::fs::write(path,serde_json::to_vec_pretty(&report).map_err(|_| \"benchmark encoding\")?).map_err(|_| \"benchmark write\".to_string())\n}\n",
+    "src/lib/native-benchmark.ts": "import { invoke } from \"@tauri-apps/api/core\";\nexport function scheduleNativeBenchmark(): () => void {\n let canceled=false; let frame=0;\n frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{void (async()=>{\n  if(canceled)return;\n  await invoke(\"native_benchmark_ready\", { frontendReadyMs: performance.now() });\n  const samples:number[]=[];\n  for(let i=0;i<220;i++){const start=performance.now();await invoke(\"native_benchmark_ping\");if(i>=20)samples.push(performance.now()-start);}\n  await invoke(\"native_benchmark_ipc_samples\",{samples});\n })();});});\n return ()=>{canceled=true;cancelAnimationFrame(frame);};\n}\n",
+    "native-benchmark-config.json": "{\"productName\": \"Socks Proxy Benchmark Current\", \"identifier\": \"com.socksproxy.desktop.benchmark-current\", \"build\": {\"beforeBuildCommand\": \"pnpm build\"}}"
+  },
+  "source_sha256": {
+    "src-tauri/src/native_benchmark.rs": "000777e43d41df413a65c9c1ed0e062ab80aa5cc024d89794357567781fe12a4",
+    "src/lib/native-benchmark.ts": "54f75b2c12a2cb0df7b89644c21bd8125447be65e459dad48f5b4be198689ca7",
+    "native-benchmark-config.json": "deed3e24defff1eab7d910bd36f4c1b13c10f83e10aecd586f852ef97898efce"
+  },
+  "integration": [
+    "两版 lib.rs 在 run 入口创建相同 NativeBenchmark 状态并注册相同三个临时命令",
+    "两版 AppLayout 在 !loading && snapshot != null 后 useEffect 调用 scheduleNativeBenchmark；当前替代生产 scheduleStartupReady，仅基准快照生效",
+    "使用相同 node_modules、Rust/Node/pnpm 工具链，以 debug app bundle 构建；原生窗口标题保持相同",
+    "CUA 交替启动/退出每个隔离应用；首次数据库创建样本仅预热，不进入正式比较",
+    "capture-native-benchmark.py 只读取测试报告与 ps 内存，不启动或操作 UI",
+    "两版在 runtime_events::start 后记录 setup_us，前端 ready 命令传 performance.now；startup 仍为同一 Rust run 至两可见帧的端点"
+  ],
+  "current_app_import": "首页 StatusPage 改为静态 import，其余页面仍为 lazy；工作区将导入放在导入组，临时快照放在 lazy 声明之后，两者静态导入语义相同。"
+}

@@ -1,3 +1,4 @@
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,11 +24,7 @@ export function ConfigurationImportDialog({
         <p className="text-sm text-muted-foreground">
           导入会校验并替换配置；已认证档案必须重新提供密码。
         </p>
-        {flow.error && (
-          <p role="alert" className="text-sm text-destructive">
-            {flow.error}
-          </p>
-        )}
+        {flow.error && <ErrorAlert error={flow.error} />}
         <div className="max-h-[50vh] space-y-4 overflow-y-auto">
           {flow.profiles
             .filter((profile) => profile.authentication_enabled)

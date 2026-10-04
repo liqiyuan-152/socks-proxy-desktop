@@ -20,7 +20,11 @@ it("shows pending and failed tests without assigning a latency range", () => {
   const { rerender } = render(<LatencyCell result={{ pending: true }} />);
   expect(screen.getByText("测试中…")).toHaveClass("text-muted-foreground");
 
-  rerender(<LatencyCell result={{ error: "测试超时", at: 1000 }} />);
+  rerender(
+    <LatencyCell
+      result={{ error: { code: "timeout", message: "测试超时", fields: [] }, at: 1000 }}
+    />,
+  );
   expect(screen.getByText("失败")).toHaveClass("text-destructive");
   expect(screen.getByText("失败")).toHaveAttribute("title", expect.stringContaining("测试超时"));
 });

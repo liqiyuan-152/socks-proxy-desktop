@@ -1,0 +1,4532 @@
+{
+  "status": "running",
+  "platform": "Windows x64",
+  "native_ui": true,
+  "application_identifier": "com.socksproxy.desktop.architecture-e2e",
+  "application_sha256": "5cb02795c27e0a4a43486290fbf827ef3ff54056903248f61ca21e55cf63da4b",
+  "suite": "runtime",
+  "assisted_native_save": false,
+  "cases": [
+    {
+      "name": "原生无效配置反馈与保留输入",
+      "status": "passed",
+      "screenshot": "case-1.png"
+    },
+    {
+      "name": "原生快速模式选择、页面切换与配置保存后状态一致",
+      "status": "passed",
+      "screenshot": "case-2.png"
+    },
+    {
+      "name": "原生内核崩溃提示与自动恢复真实用户网络",
+      "status": "passed",
+      "screenshot": "case-3.png"
+    },
+    {
+      "name": "原生手动重试创建健康的新内核会话",
+      "status": "passed",
+      "screenshot": "case-4.png"
+    }
+  ],
+  "limitations": [
+    "测试使用合成本地 HTTP 上游，不证明公网可达性",
+    "内核崩溃验证不代表桌面宿主崩溃",
+    "资源采样观察进程树，不证明所有长期泄漏不存在"
+  ],
+  "crash": {
+    "application_pid": 47404,
+    "session_id": 3,
+    "core_pids": [7352],
+    "proxy_port": 60029,
+    "proxy_restored": false,
+    "runtime_directories": 1,
+    "terminated_core_pid": 7352,
+    "core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+    "processes": [
+      {
+        "role": "application",
+        "pid": 47404,
+        "working_set_bytes": 256942080,
+        "private_bytes": 216055808,
+        "handles": 595,
+        "threads": 50
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 13584,
+        "working_set_bytes": 150679552,
+        "private_bytes": 54259712,
+        "handles": 1568,
+        "threads": 72
+      },
+      {
+        "role": "core",
+        "pid": 7352,
+        "working_set_bytes": 37609472,
+        "private_bytes": 62111744,
+        "handles": 291,
+        "threads": 20
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 27212,
+        "working_set_bytes": 10113024,
+        "private_bytes": 2551808,
+        "handles": 152,
+        "threads": 11
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 3132,
+        "working_set_bytes": 97554432,
+        "private_bytes": 136355840,
+        "handles": 635,
+        "threads": 48
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 37892,
+        "working_set_bytes": 37117952,
+        "private_bytes": 12808192,
+        "handles": 346,
+        "threads": 25
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 27412,
+        "working_set_bytes": 20922368,
+        "private_bytes": 8003584,
+        "handles": 187,
+        "threads": 10
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 13284,
+        "working_set_bytes": 164220928,
+        "private_bytes": 110104576,
+        "handles": 294,
+        "threads": 20
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 2336,
+        "working_set_bytes": 7348224,
+        "private_bytes": 1232896,
+        "handles": 98,
+        "threads": 3
+      }
+    ],
+    "detected_in_ui_ms": 939.7927,
+    "recovered": {
+      "application_pid": 47404,
+      "session_id": 3,
+      "core_pids": [],
+      "proxy_port": null,
+      "proxy_restored": true,
+      "runtime_directories": 0,
+      "terminated_core_pid": null,
+      "core_sha256": null,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47404,
+          "working_set_bytes": 256876544,
+          "private_bytes": 215961600,
+          "handles": 587,
+          "threads": 49
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 13584,
+          "working_set_bytes": 151711744,
+          "private_bytes": 55369728,
+          "handles": 1568,
+          "threads": 72
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 27212,
+          "working_set_bytes": 10113024,
+          "private_bytes": 2551808,
+          "handles": 152,
+          "threads": 11
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 3132,
+          "working_set_bytes": 99061760,
+          "private_bytes": 137351168,
+          "handles": 635,
+          "threads": 48
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 37892,
+          "working_set_bytes": 37113856,
+          "private_bytes": 12804096,
+          "handles": 346,
+          "threads": 25
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 27412,
+          "working_set_bytes": 20922368,
+          "private_bytes": 8003584,
+          "handles": 187,
+          "threads": 10
+        },
+        {
+          "role": "webview_or_child",
+          "pid": 13284,
+          "working_set_bytes": 164950016,
+          "private_bytes": 111173632,
+          "handles": 294,
+          "threads": 20
+        }
+      ]
+    }
+  },
+  "retry": {
+    "application_pid": 47404,
+    "session_id": 3,
+    "core_pids": [48512],
+    "proxy_port": 60039,
+    "proxy_restored": false,
+    "runtime_directories": 1,
+    "terminated_core_pid": null,
+    "core_sha256": null,
+    "processes": [
+      {
+        "role": "application",
+        "pid": 47404,
+        "working_set_bytes": 257036288,
+        "private_bytes": 216190976,
+        "handles": 603,
+        "threads": 50
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 13584,
+        "working_set_bytes": 150913024,
+        "private_bytes": 54489088,
+        "handles": 1570,
+        "threads": 72
+      },
+      {
+        "role": "core",
+        "pid": 48512,
+        "working_set_bytes": 37408768,
+        "private_bytes": 61997056,
+        "handles": 289,
+        "threads": 20
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 27212,
+        "working_set_bytes": 10113024,
+        "private_bytes": 2551808,
+        "handles": 152,
+        "threads": 11
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 3132,
+        "working_set_bytes": 98861056,
+        "private_bytes": 130244608,
+        "handles": 636,
+        "threads": 48
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 37892,
+        "working_set_bytes": 37154816,
+        "private_bytes": 12845056,
+        "handles": 346,
+        "threads": 25
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 27412,
+        "working_set_bytes": 20922368,
+        "private_bytes": 8003584,
+        "handles": 187,
+        "threads": 10
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 13284,
+        "working_set_bytes": 168792064,
+        "private_bytes": 115216384,
+        "handles": 294,
+        "threads": 20
+      },
+      {
+        "role": "webview_or_child",
+        "pid": 23372,
+        "working_set_bytes": 7344128,
+        "private_bytes": 1224704,
+        "handles": 98,
+        "threads": 3
+      }
+    ]
+  },
+  "soak": {
+    "requested_seconds": 1800,
+    "elapsed_seconds": 491.2252449,
+    "probes": 374,
+    "transitions": 16,
+    "metadata_saves": 8,
+    "samples": [
+      {
+        "elapsed_seconds": 1.0585911999999988,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48512],
+        "proxy_port": 60039,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257101824,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 50
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151265280,
+            "private_bytes": 54718464,
+            "handles": 1575,
+            "threads": 72
+          },
+          {
+            "role": "core",
+            "pid": 48512,
+            "working_set_bytes": 38105088,
+            "private_bytes": 62291968,
+            "handles": 289,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10113024,
+            "private_bytes": 2551808,
+            "handles": 152,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 101052416,
+            "private_bytes": 126631936,
+            "handles": 636,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37154816,
+            "private_bytes": 12845056,
+            "handles": 346,
+            "threads": 25
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20922368,
+            "private_bytes": 8003584,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 172519424,
+            "private_bytes": 116842496,
+            "handles": 318,
+            "threads": 26
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 23372,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1224704,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 11.182596399999998,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48512],
+        "proxy_port": 60039,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257101824,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 50
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151785472,
+            "private_bytes": 54943744,
+            "handles": 1584,
+            "threads": 72
+          },
+          {
+            "role": "core",
+            "pid": 48512,
+            "working_set_bytes": 38477824,
+            "private_bytes": 62611456,
+            "handles": 289,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10113024,
+            "private_bytes": 2551808,
+            "handles": 152,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 96616448,
+            "private_bytes": 108539904,
+            "handles": 636,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37171200,
+            "private_bytes": 12845056,
+            "handles": 346,
+            "threads": 25
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20922368,
+            "private_bytes": 8003584,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 172212224,
+            "private_bytes": 116228096,
+            "handles": 318,
+            "threads": 26
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 23372,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1224704,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 21.437399699999997,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48512],
+        "proxy_port": 60039,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257101824,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 50
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151687168,
+            "private_bytes": 54636544,
+            "handles": 1564,
+            "threads": 68
+          },
+          {
+            "role": "core",
+            "pid": 48512,
+            "working_set_bytes": 39645184,
+            "private_bytes": 62996480,
+            "handles": 294,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 19144704,
+            "private_bytes": 3461120,
+            "handles": 213,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94232576,
+            "private_bytes": 103895040,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37109760,
+            "private_bytes": 12783616,
+            "handles": 343,
+            "threads": 25
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20922368,
+            "private_bytes": 8003584,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 146870272,
+            "private_bytes": 91103232,
+            "handles": 318,
+            "threads": 26
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 23372,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1224704,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 34.293015100000005,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [37780],
+        "proxy_port": 60139,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257130496,
+            "private_bytes": 216211456,
+            "handles": 603,
+            "threads": 50
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151879680,
+            "private_bytes": 54816768,
+            "handles": 1564,
+            "threads": 68
+          },
+          {
+            "role": "core",
+            "pid": 37780,
+            "working_set_bytes": 37789696,
+            "private_bytes": 60235776,
+            "handles": 258,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 19144704,
+            "private_bytes": 3461120,
+            "handles": 213,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95707136,
+            "private_bytes": 106799104,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37187584,
+            "private_bytes": 12865536,
+            "handles": 343,
+            "threads": 25
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20922368,
+            "private_bytes": 8003584,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 150966272,
+            "private_bytes": 94248960,
+            "handles": 318,
+            "threads": 26
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 30596,
+            "working_set_bytes": 7335936,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 41.43439,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [37780],
+        "proxy_port": 60139,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257130496,
+            "private_bytes": 216211456,
+            "handles": 603,
+            "threads": 50
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151982080,
+            "private_bytes": 54919168,
+            "handles": 1564,
+            "threads": 68
+          },
+          {
+            "role": "core",
+            "pid": 37780,
+            "working_set_bytes": 38047744,
+            "private_bytes": 60489728,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 19144704,
+            "private_bytes": 3461120,
+            "handles": 213,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95858688,
+            "private_bytes": 106172416,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37187584,
+            "private_bytes": 12865536,
+            "handles": 343,
+            "threads": 25
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20922368,
+            "private_bytes": 8003584,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 150765568,
+            "private_bytes": 94081024,
+            "handles": 318,
+            "threads": 26
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 30596,
+            "working_set_bytes": 7335936,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 51.67556690000001,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [37780],
+        "proxy_port": 60139,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257077248,
+            "private_bytes": 216117248,
+            "handles": 601,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 152899584,
+            "private_bytes": 54108160,
+            "handles": 1565,
+            "threads": 66
+          },
+          {
+            "role": "core",
+            "pid": 37780,
+            "working_set_bytes": 38281216,
+            "private_bytes": 60694528,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13144064,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 93184000,
+            "private_bytes": 102518784,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38248448,
+            "private_bytes": 12460032,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20807680,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 144732160,
+            "private_bytes": 87375872,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 30596,
+            "working_set_bytes": 7335936,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 65.8420727,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [26340],
+        "proxy_port": 54071,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257155072,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153309184,
+            "private_bytes": 54509568,
+            "handles": 1565,
+            "threads": 66
+          },
+          {
+            "role": "core",
+            "pid": 26340,
+            "working_set_bytes": 39124992,
+            "private_bytes": 61923328,
+            "handles": 297,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13144064,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 96579584,
+            "private_bytes": 134332416,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37847040,
+            "private_bytes": 12480512,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20467712,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147812352,
+            "private_bytes": 90501120,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 40704,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 71.9573774,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [26340],
+        "proxy_port": 54071,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257155072,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153174016,
+            "private_bytes": 54374400,
+            "handles": 1563,
+            "threads": 66
+          },
+          {
+            "role": "core",
+            "pid": 26340,
+            "working_set_bytes": 39407616,
+            "private_bytes": 62193664,
+            "handles": 297,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13139968,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94658560,
+            "private_bytes": 117727232,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37724160,
+            "private_bytes": 12480512,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147763200,
+            "private_bytes": 90460160,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 40704,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 81.17246349999999,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [26340],
+        "proxy_port": 54071,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257163264,
+            "private_bytes": 216190976,
+            "handles": 603,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 152944640,
+            "private_bytes": 54140928,
+            "handles": 1563,
+            "threads": 66
+          },
+          {
+            "role": "core",
+            "pid": 26340,
+            "working_set_bytes": 39583744,
+            "private_bytes": 62390272,
+            "handles": 297,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13139968,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 92954624,
+            "private_bytes": 102043648,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37724160,
+            "private_bytes": 12480512,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 142970880,
+            "private_bytes": 85295104,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 40704,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 94.08414850000001,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [22344],
+        "proxy_port": 54134,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257183744,
+            "private_bytes": 216199168,
+            "handles": 603,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 150466560,
+            "private_bytes": 51576832,
+            "handles": 1555,
+            "threads": 65
+          },
+          {
+            "role": "core",
+            "pid": 22344,
+            "working_set_bytes": 37756928,
+            "private_bytes": 60145664,
+            "handles": 259,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13139968,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94793728,
+            "private_bytes": 104943616,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37724160,
+            "private_bytes": 12480512,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 140664832,
+            "private_bytes": 83054592,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 44052,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 101.2692865,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [22344],
+        "proxy_port": 54134,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257183744,
+            "private_bytes": 216199168,
+            "handles": 603,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153133056,
+            "private_bytes": 54288384,
+            "handles": 1555,
+            "threads": 65
+          },
+          {
+            "role": "core",
+            "pid": 22344,
+            "working_set_bytes": 37945344,
+            "private_bytes": 60325888,
+            "handles": 259,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13139968,
+            "private_bytes": 3129344,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94887936,
+            "private_bytes": 104665088,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37875712,
+            "private_bytes": 12644352,
+            "handles": 342,
+            "threads": 23
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 143896576,
+            "private_bytes": 85975040,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 44052,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 111.5160416,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [22344],
+        "proxy_port": 54134,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257134592,
+            "private_bytes": 216100864,
+            "handles": 597,
+            "threads": 44
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153382912,
+            "private_bytes": 54190080,
+            "handles": 1551,
+            "threads": 63
+          },
+          {
+            "role": "core",
+            "pid": 22344,
+            "working_set_bytes": 38244352,
+            "private_bytes": 60620800,
+            "handles": 259,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13135872,
+            "private_bytes": 3125248,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 93966336,
+            "private_bytes": 102739968,
+            "handles": 639,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37818368,
+            "private_bytes": 12496896,
+            "handles": 340,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 140701696,
+            "private_bytes": 82919424,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 44052,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 125.85778599999999,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [3360],
+        "proxy_port": 54199,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257159168,
+            "private_bytes": 216088576,
+            "handles": 591,
+            "threads": 40
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153653248,
+            "private_bytes": 54403072,
+            "handles": 1541,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 3360,
+            "working_set_bytes": 39243776,
+            "private_bytes": 62271488,
+            "handles": 295,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13103104,
+            "private_bytes": 3067904,
+            "handles": 185,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95895552,
+            "private_bytes": 131354624,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147238912,
+            "private_bytes": 89436160,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 36296,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 132.0776691,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [3360],
+        "proxy_port": 54199,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257179648,
+            "private_bytes": 216121344,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153206784,
+            "private_bytes": 53968896,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 3360,
+            "working_set_bytes": 39620608,
+            "private_bytes": 62590976,
+            "handles": 295,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13103104,
+            "private_bytes": 3067904,
+            "handles": 185,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94986240,
+            "private_bytes": 131280896,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147841024,
+            "private_bytes": 89886720,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 36296,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 141.3413434,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [3360],
+        "proxy_port": 54199,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257179648,
+            "private_bytes": 216121344,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153231360,
+            "private_bytes": 53993472,
+            "handles": 1542,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 3360,
+            "working_set_bytes": 39837696,
+            "private_bytes": 62787584,
+            "handles": 295,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13078528,
+            "private_bytes": 3014656,
+            "handles": 181,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94429184,
+            "private_bytes": 104214528,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 144941056,
+            "private_bytes": 86712320,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 36296,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 154.26029020000001,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [38544],
+        "proxy_port": 54260,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257146880,
+            "private_bytes": 216129536,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 150810624,
+            "private_bytes": 51523584,
+            "handles": 1542,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 38544,
+            "working_set_bytes": 38096896,
+            "private_bytes": 60837888,
+            "handles": 261,
+            "threads": 15
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13078528,
+            "private_bytes": 3014656,
+            "handles": 181,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94883840,
+            "private_bytes": 105435136,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 145989632,
+            "private_bytes": 88039424,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24264,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 161.3833362,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [38544],
+        "proxy_port": 54260,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257146880,
+            "private_bytes": 216129536,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153296896,
+            "private_bytes": 54059008,
+            "handles": 1542,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 38544,
+            "working_set_bytes": 38293504,
+            "private_bytes": 60993536,
+            "handles": 261,
+            "threads": 15
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13078528,
+            "private_bytes": 3014656,
+            "handles": 181,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94883840,
+            "private_bytes": 105119744,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 145047552,
+            "private_bytes": 87326720,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24264,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 171.61446840000002,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [38544],
+        "proxy_port": 54260,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257163264,
+            "private_bytes": 216129536,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153391104,
+            "private_bytes": 54140928,
+            "handles": 1542,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 38544,
+            "working_set_bytes": 38608896,
+            "private_bytes": 61313024,
+            "handles": 261,
+            "threads": 15
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13078528,
+            "private_bytes": 3014656,
+            "handles": 181,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 93728768,
+            "private_bytes": 103231488,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37777408,
+            "private_bytes": 12394496,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 146296832,
+            "private_bytes": 88629248,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24264,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 185.8834151,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [10640],
+        "proxy_port": 54323,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257183744,
+            "private_bytes": 216174592,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153616384,
+            "private_bytes": 54333440,
+            "handles": 1535,
+            "threads": 60
+          },
+          {
+            "role": "core",
+            "pid": 10640,
+            "working_set_bytes": 39362560,
+            "private_bytes": 61820928,
+            "handles": 292,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95432704,
+            "private_bytes": 133562368,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 149331968,
+            "private_bytes": 91803648,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 43600,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 192.0401295,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [10640],
+        "proxy_port": 54323,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257134592,
+            "private_bytes": 216174592,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153546752,
+            "private_bytes": 54276096,
+            "handles": 1535,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 10640,
+            "working_set_bytes": 39682048,
+            "private_bytes": 62148608,
+            "handles": 292,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 93442048,
+            "private_bytes": 111714304,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 149405696,
+            "private_bytes": 91983872,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 43600,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 201.33503760000002,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [10640],
+        "proxy_port": 54323,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256966656,
+            "private_bytes": 216174592,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153485312,
+            "private_bytes": 54218752,
+            "handles": 1535,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 10640,
+            "working_set_bytes": 39845888,
+            "private_bytes": 62255104,
+            "handles": 292,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 92647424,
+            "private_bytes": 103997440,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37793792,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 150200320,
+            "private_bytes": 92602368,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 43600,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 214.3440845,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19976],
+        "proxy_port": 54384,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257007616,
+            "private_bytes": 216227840,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 150999040,
+            "private_bytes": 51716096,
+            "handles": 1535,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19976,
+            "working_set_bytes": 38264832,
+            "private_bytes": 60813312,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94789632,
+            "private_bytes": 105320448,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37797888,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147709952,
+            "private_bytes": 89747456,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 6720,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 221.61262580000002,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19976],
+        "proxy_port": 54384,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256909312,
+            "private_bytes": 216227840,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153317376,
+            "private_bytes": 54050816,
+            "handles": 1535,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19976,
+            "working_set_bytes": 38457344,
+            "private_bytes": 60977152,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94437376,
+            "private_bytes": 103714816,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37797888,
+            "private_bytes": 12410880,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 149041152,
+            "private_bytes": 91168768,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 6720,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 231.9530981,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19976],
+        "proxy_port": 54384,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256782336,
+            "private_bytes": 216227840,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153296896,
+            "private_bytes": 53997568,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19976,
+            "working_set_bytes": 38768640,
+            "private_bytes": 61321216,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94380032,
+            "private_bytes": 103329792,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37781504,
+            "private_bytes": 12394496,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 148688896,
+            "private_bytes": 91308032,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 6720,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 245.27618189999998,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [33324],
+        "proxy_port": 54458,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256835584,
+            "private_bytes": 216272896,
+            "handles": 593,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 154025984,
+            "private_bytes": 54730752,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 33324,
+            "working_set_bytes": 39759872,
+            "private_bytes": 61644800,
+            "handles": 291,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 97202176,
+            "private_bytes": 132231168,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 149667840,
+            "private_bytes": 91623424,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9940,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 251.4133349,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [33324],
+        "proxy_port": 54458,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256806912,
+            "private_bytes": 216240128,
+            "handles": 591,
+            "threads": 40
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153808896,
+            "private_bytes": 54521856,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 33324,
+            "working_set_bytes": 40042496,
+            "private_bytes": 61890560,
+            "handles": 293,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95551488,
+            "private_bytes": 110657536,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 151175168,
+            "private_bytes": 93257728,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9940,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 261.57676680000003,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [33324],
+        "proxy_port": 54458,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256827392,
+            "private_bytes": 216272896,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153595904,
+            "private_bytes": 54308864,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 33324,
+            "working_set_bytes": 40333312,
+            "private_bytes": 62197760,
+            "handles": 293,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 93503488,
+            "private_bytes": 103632896,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147427328,
+            "private_bytes": 89591808,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9940,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 274.5900401,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19588],
+        "proxy_port": 54521,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256827392,
+            "private_bytes": 216276992,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 151273472,
+            "private_bytes": 51970048,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19588,
+            "working_set_bytes": 38367232,
+            "private_bytes": 60452864,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95170560,
+            "private_bytes": 105988096,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 149630976,
+            "private_bytes": 91873280,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24896,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 281.7369098,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19588],
+        "proxy_port": 54521,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 256827392,
+            "private_bytes": 216276992,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153710592,
+            "private_bytes": 54423552,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19588,
+            "working_set_bytes": 38748160,
+            "private_bytes": 60755968,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13049856,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95068160,
+            "private_bytes": 105226240,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20410368,
+            "private_bytes": 7884800,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147386368,
+            "private_bytes": 89952256,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24896,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 292.0338045,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19588],
+        "proxy_port": 54521,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257015808,
+            "private_bytes": 216342528,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 154152960,
+            "private_bytes": 54439936,
+            "handles": 1541,
+            "threads": 62
+          },
+          {
+            "role": "core",
+            "pid": 19588,
+            "working_set_bytes": 38924288,
+            "private_bytes": 60887040,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13193216,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 95735808,
+            "private_bytes": 104681472,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38080512,
+            "private_bytes": 12668928,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20598784,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147345408,
+            "private_bytes": 89731072,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 24896,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 305.34482549999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19492],
+        "proxy_port": 54586,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257089536,
+            "private_bytes": 216408064,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 154562560,
+            "private_bytes": 54816768,
+            "handles": 1537,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19492,
+            "working_set_bytes": 39964672,
+            "private_bytes": 61923328,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13119488,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94339072,
+            "private_bytes": 131084288,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12701696,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20582400,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 145858560,
+            "private_bytes": 90107904,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9712,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1216512,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 311.46794889999995,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19492],
+        "proxy_port": 54586,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 257089536,
+            "private_bytes": 216408064,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 154218496,
+            "private_bytes": 54480896,
+            "handles": 1537,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19492,
+            "working_set_bytes": 40267776,
+            "private_bytes": 62242816,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 13062144,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 94867456,
+            "private_bytes": 124878848,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 38113280,
+            "private_bytes": 12701696,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20520960,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 147714048,
+            "private_bytes": 93417472,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9712,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1216512,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 321.6766872,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [19492],
+        "proxy_port": 54586,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 255201280,
+            "private_bytes": 216408064,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 153292800,
+            "private_bytes": 54546432,
+            "handles": 1537,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 19492,
+            "working_set_bytes": 40591360,
+            "private_bytes": 62554112,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12840960,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 92643328,
+            "private_bytes": 103424000,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37949440,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 20361216,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 144494592,
+            "private_bytes": 92446720,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 9712,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1216512,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 334.6186148,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [42832],
+        "proxy_port": 54659,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 247472128,
+            "private_bytes": 216408064,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 150589440,
+            "private_bytes": 54685696,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 42832,
+            "working_set_bytes": 38764544,
+            "private_bytes": 60715008,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12668928,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 91680768,
+            "private_bytes": 105492480,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 37449728,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 19976192,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 139386880,
+            "private_bytes": 92520448,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47420,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 341.76925589999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [42832],
+        "proxy_port": 54659,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 242372608,
+            "private_bytes": 216408064,
+            "handles": 593,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 148951040,
+            "private_bytes": 54521856,
+            "handles": 1536,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 42832,
+            "working_set_bytes": 38977536,
+            "private_bytes": 60936192,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12660736,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 91062272,
+            "private_bytes": 105435136,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 36872192,
+            "private_bytes": 12742656,
+            "handles": 334,
+            "threads": 22
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 19898368,
+            "private_bytes": 8060928,
+            "handles": 187,
+            "threads": 12
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 140034048,
+            "private_bytes": 93822976,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47420,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 352.1527879,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [42832],
+        "proxy_port": 54659,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 235507712,
+            "private_bytes": 216408064,
+            "handles": 595,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 147476480,
+            "private_bytes": 55001088,
+            "handles": 1539,
+            "threads": 62
+          },
+          {
+            "role": "core",
+            "pid": 42832,
+            "working_set_bytes": 39223296,
+            "private_bytes": 61157376,
+            "handles": 260,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12546048,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 89079808,
+            "private_bytes": 103337984,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 36597760,
+            "private_bytes": 12795904,
+            "handles": 337,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 19410944,
+            "private_bytes": 8019968,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 138899456,
+            "private_bytes": 92708864,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47420,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1228800,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 367.95365119999997,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48508],
+        "proxy_port": 54722,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 224501760,
+            "private_bytes": 216457216,
+            "handles": 595,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 144691200,
+            "private_bytes": 55025664,
+            "handles": 1539,
+            "threads": 62
+          },
+          {
+            "role": "core",
+            "pid": 48508,
+            "working_set_bytes": 40034304,
+            "private_bytes": 62377984,
+            "handles": 289,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12369920,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 90619904,
+            "private_bytes": 132313088,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 36048896,
+            "private_bytes": 12804096,
+            "handles": 337,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 18845696,
+            "private_bytes": 8019968,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 138960896,
+            "private_bytes": 92446720,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 28608,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 372.21706399999994,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48508],
+        "proxy_port": 54722,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 221814784,
+            "private_bytes": 216457216,
+            "handles": 595,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 143974400,
+            "private_bytes": 54890496,
+            "handles": 1539,
+            "threads": 62
+          },
+          {
+            "role": "core",
+            "pid": 48508,
+            "working_set_bytes": 40267776,
+            "private_bytes": 62590976,
+            "handles": 289,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12361728,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 90931200,
+            "private_bytes": 113827840,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 35880960,
+            "private_bytes": 12804096,
+            "handles": 337,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 18743296,
+            "private_bytes": 8019968,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 139743232,
+            "private_bytes": 94031872,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 28608,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 381.476154,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [48508],
+        "proxy_port": 54722,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 215281664,
+            "private_bytes": 216457216,
+            "handles": 595,
+            "threads": 43
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 142196736,
+            "private_bytes": 54779904,
+            "handles": 1545,
+            "threads": 62
+          },
+          {
+            "role": "core",
+            "pid": 48508,
+            "working_set_bytes": 40472576,
+            "private_bytes": 62803968,
+            "handles": 291,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 12128256,
+            "private_bytes": 3096576,
+            "handles": 175,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 87650304,
+            "private_bytes": 103448576,
+            "handles": 637,
+            "threads": 48
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 35065856,
+            "private_bytes": 12804096,
+            "handles": 337,
+            "threads": 21
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 18513920,
+            "private_bytes": 8019968,
+            "handles": 187,
+            "threads": 11
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 139161600,
+            "private_bytes": 94302208,
+            "handles": 324,
+            "threads": 29
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 28608,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1241088,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 394.50775949999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [5644],
+        "proxy_port": 54777,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 206991360,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 139296768,
+            "private_bytes": 54677504,
+            "handles": 1539,
+            "threads": 60
+          },
+          {
+            "role": "core",
+            "pid": 5644,
+            "working_set_bytes": 38928384,
+            "private_bytes": 60866560,
+            "handles": 263,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 11837440,
+            "private_bytes": 2961408,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 89219072,
+            "private_bytes": 106663936,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 34328576,
+            "private_bytes": 12754944,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 18083840,
+            "private_bytes": 7938048,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 133423104,
+            "private_bytes": 90353664,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 11292,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 401.78781769999995,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [5644],
+        "proxy_port": 54777,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 202715136,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 137515008,
+            "private_bytes": 54571008,
+            "handles": 1539,
+            "threads": 60
+          },
+          {
+            "role": "core",
+            "pid": 5644,
+            "working_set_bytes": 39174144,
+            "private_bytes": 61095936,
+            "handles": 263,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 11743232,
+            "private_bytes": 2961408,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 88580096,
+            "private_bytes": 105459712,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 33882112,
+            "private_bytes": 12754944,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 17829888,
+            "private_bytes": 7938048,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 134782976,
+            "private_bytes": 92553216,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 11292,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 412.103707,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [5644],
+        "proxy_port": 54777,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 196706304,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 136462336,
+            "private_bytes": 54587392,
+            "handles": 1541,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 5644,
+            "working_set_bytes": 39342080,
+            "private_bytes": 61259776,
+            "handles": 263,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 11452416,
+            "private_bytes": 2961408,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 87035904,
+            "private_bytes": 104402944,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 33189888,
+            "private_bytes": 12697600,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 17440768,
+            "private_bytes": 7938048,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 133025792,
+            "private_bytes": 91607040,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 11292,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1232896,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 425.43298189999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28280],
+        "proxy_port": 54842,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 188604416,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 135028736,
+            "private_bytes": 55226368,
+            "handles": 1541,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28280,
+            "working_set_bytes": 40042496,
+            "private_bytes": 62169088,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 11046912,
+            "private_bytes": 2961408,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 88346624,
+            "private_bytes": 131403776,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 32436224,
+            "private_bytes": 12881920,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 16785408,
+            "private_bytes": 7938048,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 134385664,
+            "private_bytes": 93827072,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 17472,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 431.7003117,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28280],
+        "proxy_port": 54842,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 185233408,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 130654208,
+            "private_bytes": 52318208,
+            "handles": 1541,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28280,
+            "working_set_bytes": 40321024,
+            "private_bytes": 62439424,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10858496,
+            "private_bytes": 2961408,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 86675456,
+            "private_bytes": 110993408,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 32137216,
+            "private_bytes": 12881920,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 16535552,
+            "private_bytes": 7938048,
+            "handles": 187,
+            "threads": 10
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 135376896,
+            "private_bytes": 95027200,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 17472,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 441.9459707,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28280],
+        "proxy_port": 54842,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 179752960,
+            "private_bytes": 216387584,
+            "handles": 595,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 132382720,
+            "private_bytes": 54824960,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28280,
+            "working_set_bytes": 40620032,
+            "private_bytes": 62750720,
+            "handles": 287,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10608640,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 85848064,
+            "private_bytes": 105099264,
+            "handles": 635,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 31739904,
+            "private_bytes": 12881920,
+            "handles": 337,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 16105472,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 134221824,
+            "private_bytes": 93790208,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 17472,
+            "working_set_bytes": 7344128,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 454.0180474,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28992],
+        "proxy_port": 54903,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 173371392,
+            "private_bytes": 216354816,
+            "handles": 591,
+            "threads": 40
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 130170880,
+            "private_bytes": 54947840,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28992,
+            "working_set_bytes": 38699008,
+            "private_bytes": 60637184,
+            "handles": 261,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10326016,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 85540864,
+            "private_bytes": 105631744,
+            "handles": 631,
+            "threads": 46
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 30978048,
+            "private_bytes": 12832768,
+            "handles": 333,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 15618048,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 134709248,
+            "private_bytes": 93839360,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47912,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 461.32860999999997,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28992],
+        "proxy_port": 54903,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 169758720,
+            "private_bytes": 216354816,
+            "handles": 591,
+            "threads": 40
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 127975424,
+            "private_bytes": 54820864,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28992,
+            "working_set_bytes": 38965248,
+            "private_bytes": 61153280,
+            "handles": 263,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 10199040,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 85336064,
+            "private_bytes": 105693184,
+            "handles": 631,
+            "threads": 46
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 30486528,
+            "private_bytes": 12832768,
+            "handles": 333,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 15302656,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 135892992,
+            "private_bytes": 95330304,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47912,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 471.59310939999995,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [28992],
+        "proxy_port": 54903,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 164253696,
+            "private_bytes": 216387584,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 123531264,
+            "private_bytes": 52224000,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 28992,
+            "working_set_bytes": 39153664,
+            "private_bytes": 61333504,
+            "handles": 263,
+            "threads": 16
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 9965568,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 82956288,
+            "private_bytes": 104099840,
+            "handles": 633,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 29630464,
+            "private_bytes": 12730368,
+            "handles": 333,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 14839808,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 136286208,
+            "private_bytes": 95592448,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 47912,
+            "working_set_bytes": 7348224,
+            "private_bytes": 1236992,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 485.96896899999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [18448],
+        "proxy_port": 54970,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 157523968,
+            "private_bytes": 216436736,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 123273216,
+            "private_bytes": 55181312,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 18448,
+            "working_set_bytes": 40423424,
+            "private_bytes": 62332928,
+            "handles": 295,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 9613312,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 83955712,
+            "private_bytes": 132001792,
+            "handles": 633,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 28618752,
+            "private_bytes": 12746752,
+            "handles": 333,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 14233600,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 139948032,
+            "private_bytes": 99450880,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 31804,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1220608,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      },
+      {
+        "elapsed_seconds": 491.22524039999996,
+        "application_pid": 47404,
+        "session_id": 3,
+        "core_pids": [18448],
+        "proxy_port": 54970,
+        "proxy_restored": false,
+        "runtime_directories": 1,
+        "terminated_core_pid": null,
+        "core_sha256": null,
+        "processes": [
+          {
+            "role": "application",
+            "pid": 47404,
+            "working_set_bytes": 155172864,
+            "private_bytes": 216436736,
+            "handles": 591,
+            "threads": 41
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13584,
+            "working_set_bytes": 118951936,
+            "private_bytes": 52346880,
+            "handles": 1543,
+            "threads": 61
+          },
+          {
+            "role": "core",
+            "pid": 18448,
+            "working_set_bytes": 40660992,
+            "private_bytes": 62554112,
+            "handles": 295,
+            "threads": 20
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27212,
+            "working_set_bytes": 9506816,
+            "private_bytes": 2957312,
+            "handles": 175,
+            "threads": 8
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 3132,
+            "working_set_bytes": 82931712,
+            "private_bytes": 131883008,
+            "handles": 633,
+            "threads": 47
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 37892,
+            "working_set_bytes": 28344320,
+            "private_bytes": 12746752,
+            "handles": 333,
+            "threads": 19
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 27412,
+            "working_set_bytes": 14020608,
+            "private_bytes": 7892992,
+            "handles": 187,
+            "threads": 9
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 13284,
+            "working_set_bytes": 136359936,
+            "private_bytes": 95637504,
+            "handles": 324,
+            "threads": 27
+          },
+          {
+            "role": "webview_or_child",
+            "pid": 31804,
+            "working_set_bytes": 7340032,
+            "private_bytes": 1220608,
+            "handles": 98,
+            "threads": 3
+          }
+        ]
+      }
+    ]
+  }
+}

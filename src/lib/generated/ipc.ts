@@ -18,7 +18,45 @@ export type ProfileView = {
   authentication_enabled: boolean;
   enabled: boolean;
 };
-export type AppError = { code: string; message: string; fields: Array<FieldError> };
+export type ErrorDomain =
+  | "proxy"
+  | "routing"
+  | "runtime"
+  | "storage"
+  | "credential"
+  | "validation"
+  | "application";
+export type ErrorContext = {
+  error_id: string;
+  /**
+   * 本地错误因果链身份，跨领域转换保留，不包含业务输入。
+   */
+  trace_id?: string;
+  /**
+   * subscriber 分配的本进程 span 身份；未启用追踪时可以缺省。
+   */
+  span_id?: string;
+  /**
+   * UTC Unix 毫秒；时钟不可用时为 0，错误处理不得再次失败。
+   */
+  timestamp_ms: number;
+  domain: ErrorDomain;
+  /**
+   * 稳定的领域变体名称，例如 `not_found`。
+   */
+  kind: string;
+  operation?: string;
+  recovery_suggestion: string;
+};
+export type AppError = {
+  code: string;
+  message: string;
+  fields: Array<FieldError>;
+  /**
+   * 领域边界补充的上下文；旧错误仍可只包含原有三个字段。
+   */
+  context?: ErrorContext;
+};
 export type FieldError = { field: string; message: string };
 export type ProxyProtocol = "socks5" | "http";
 export type RuntimeMode = "rules" | "global" | "direct";
@@ -121,20 +159,41 @@ export type RuntimeDiagnostic = {
   created_at_ms: number;
   severity: string;
   summary: string;
+  /**
+   * 稳定的领域及错误变体；普通事件和旧记录可以没有类型。
+   */
+  error_type?: string;
+  /**
+   * 发生错误的应用操作，聚合时不依赖消息内容。
+   */
+  operation?: string;
 };
 export type DiagnosticFilter = {
   from_ms: number | null;
   until_ms: number | null;
   severity: string | null;
+  /**
+   * 对编号、摘要、类型和操作进行不区分 ASCII 大小写的字面搜索。
+   */
+  search?: string;
 };
 export type DiagnosticPage = {
   items: Array<RuntimeDiagnostic>;
   total: number;
   next_offset: number | null;
 };
+export type DiagnosticGroup = {
+  error_type: string;
+  operation: string | null;
+  severity: string;
+  occurrences: number;
+  first_seen_ms: number;
+  last_seen_ms: number;
+};
 export type NetworkRecoveryResult = { completed_at_ms: number; snapshot: RuntimeSnapshot };
 export type HistoryUnavailable = { available: boolean; reason: string };
 export type CommandMap = {
+  acknowledge_frontend_ready: [null, boolean];
   get_capabilities: [null, Capabilities];
   get_connection_history: [{ _filter?: unknown; _cursor?: string }, HistoryUnavailable];
   list_profiles: [null, Array<ProfileView>];
@@ -151,8 +210,11 @@ export type CommandMap = {
   set_china_direct_enabled: [{ enabled: boolean }, ChinaDirectStatus];
   test_route: [{ target: string; port: number }, RouteTestResult];
   export_configuration: [null, string];
+  save_configuration: [null, boolean];
   import_configuration: [{ json: string; updates: { [key in string]?: CredentialUpdate } }, null];
   get_runtime_snapshot: [null, RuntimeSnapshot];
+  export_runtime_snapshot: [null, string];
+  validate_configuration: [null, string];
   set_runtime_mode: [{ mode: RuntimeMode }, RuntimeSnapshot];
   stop_runtime: [null, RuntimeSnapshot];
   recover_network: [{ confirmed: boolean }, NetworkRecoveryResult];
@@ -162,6 +224,9 @@ export type CommandMap = {
     { filter: DiagnosticFilter; offset: number; limit: number },
     DiagnosticPage,
   ];
+  get_diagnostic_groups: [{ filter: DiagnosticFilter }, Array<DiagnosticGroup>];
+  export_runtime_diagnostics: [{ filter: DiagnosticFilter }, string];
+  save_runtime_diagnostics: [{ filter: DiagnosticFilter }, boolean];
   clear_runtime_diagnostics: [{ filter: DiagnosticFilter; confirmed: boolean }, number];
   start_proxy_latency_task: [{ id: string }, LatencySubscription];
   get_proxy_latency_task: [{ subscriptionId: string }, LatencyTaskSnapshot];

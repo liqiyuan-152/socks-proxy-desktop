@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { BackendProvider } from "@/lib/backend-context";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
 import type { RuntimeSnapshot } from "@/lib/backend";
 
 const mocks = vi.hoisted(() => ({ invoke: vi.fn(), listen: vi.fn() }));
@@ -32,7 +32,7 @@ function runtimeSnapshot(): RuntimeSnapshot {
 }
 
 function Probe() {
-  const { snapshot, connections } = useBackend();
+  const { snapshot, connections } = useBackendStore();
   return (
     <p>
       {snapshot?.runtime_uptime_ms} ms / {connections?.active_count} connections

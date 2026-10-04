@@ -1,0 +1,25 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "remote_directory": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004",
+  "snapshot_archive_sha256": "eb105faae3bc8a563135c0d9e35dc2249910c77532ef58be3d80a3185462f647",
+  "baseline_commit": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+  "scope": "current uncommitted worktree snapshot; excluded local .cargo settings and ignored generated artifacts",
+  "status": "passed",
+  "credentials": "not retained",
+  "manual_ui_acceptance": "not performed via SSH",
+  "completed_at": "2026-10-04T13:19:34+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 136,
+    "rust_tests": 194,
+    "rust_ignored": 6,
+    "rust_doc_tests": 2,
+    "real_core_preflight_tests": 2,
+    "real_core_version": "1.14.1",
+    "real_core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "limitation": "Snapshot precedes task 2.4.4 page migration; no manual UI, native startup/JavaScript IPC benchmark, or real system-proxy takeover acceptance."
+}

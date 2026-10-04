@@ -191,6 +191,13 @@ beforeEach(() => {
         return fixture.settings;
       case "get_runtime_diagnostics":
         return { items: fixture.diagnostics, total: fixture.diagnostics.length, next_offset: null };
+      case "save_configuration":
+      case "save_runtime_diagnostics":
+        return true;
+      case "get_diagnostic_groups":
+        return [];
+      case "export_runtime_diagnostics":
+        return fixture.diagnostics.map((item) => JSON.stringify(item)).join("\n");
       case "clear_runtime_diagnostics":
         fixture.diagnostics = [];
         return 1;

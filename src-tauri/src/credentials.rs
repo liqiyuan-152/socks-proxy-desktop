@@ -102,6 +102,7 @@ fn credential_error() -> AppError {
         code: "credential_error".into(),
         message: "系统凭据存储不可用".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

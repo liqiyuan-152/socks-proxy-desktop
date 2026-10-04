@@ -1,11 +1,11 @@
-use super::{rollback_failed, ConfigurationService};
+use super::{rollback_failed, ConfigurationContext};
 use crate::{
     china_rules::ChinaRuleSets, configuration_recovery::StartupChange,
     credentials::ProxyCredential, error::AppError, models::PersistedConfiguration,
 };
 
-impl ConfigurationService {
-    pub(super) fn commit(
+impl ConfigurationContext {
+    pub(crate) fn commit(
         &self,
         current: &PersistedConfiguration,
         candidate: &PersistedConfiguration,
@@ -13,7 +13,7 @@ impl ConfigurationService {
         self.commit_durable(current, candidate, vec![], None)
     }
 
-    pub(super) fn commit_effects(
+    pub(crate) fn commit_effects(
         &self,
         current: &PersistedConfiguration,
         candidate: &PersistedConfiguration,
@@ -54,7 +54,7 @@ impl ConfigurationService {
         self.commit_effects(&current, &candidate, staged, None)
     }
 
-    pub(super) fn startup_change(&self, enabled: bool) -> Result<Option<StartupChange>, AppError> {
+    pub(crate) fn startup_change(&self, enabled: bool) -> Result<Option<StartupChange>, AppError> {
         if self.startup.is_enabled()? == enabled {
             return Ok(None);
         }

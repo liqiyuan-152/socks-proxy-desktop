@@ -6,7 +6,7 @@ export default defineConfig({
     perf: "error",
     suspicious: "error",
   },
-  ignorePatterns: ["dist", "node_modules", "src-tauri/target"],
+  ignorePatterns: ["dist", "node_modules", "src-tauri/target", "coverage"],
   plugins: ["react", "typescript"],
   rules: {
     "no-console": "off",

@@ -207,7 +207,7 @@ fn retention_applies_time_windows_and_permanent_capacity() {
         for (index, days_ago) in [0, 20, 60, 120].iter().enumerate() {
             connection
                 .execute(
-                    "INSERT INTO runtime_diagnostics VALUES (?1, ?2, 'info', 'runtime event')",
+                    "INSERT INTO runtime_diagnostics (id, created_at_ms, severity, summary) VALUES (?1, ?2, 'info', 'runtime event')",
                     params![
                         format!("diag-{index}"),
                         now - days_ago * 24 * 60 * 60 * 1000
@@ -258,6 +258,8 @@ fn permanent_retention_caps_records_during_insert() {
     }
     store
         .record_diagnostic(&RuntimeDiagnostic {
+            error_type: None,
+            operation: None,
             id: "newest".into(),
             created_at_ms: now,
             severity: "info".into(),

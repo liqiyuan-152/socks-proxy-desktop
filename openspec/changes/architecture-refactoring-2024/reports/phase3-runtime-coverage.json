@@ -1,0 +1,312 @@
+{
+  "tool": "cargo-llvm-cov",
+  "platform": "macOS",
+  "rust_tests_passed": 205,
+  "ignored": 4,
+  "files": [
+    {
+      "file": "runtime.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 15,
+          "covered": 12,
+          "percent": 80.0
+        },
+        "instantiations": {
+          "count": 26,
+          "covered": 12,
+          "percent": 46.15384615384615
+        },
+        "lines": {
+          "count": 86,
+          "covered": 76,
+          "percent": 88.37209302325581
+        },
+        "regions": {
+          "count": 122,
+          "covered": 111,
+          "notcovered": 11,
+          "percent": 90.98360655737704
+        }
+      }
+    },
+    {
+      "file": "runtime_configuration.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 3,
+          "covered": 1,
+          "percent": 33.33333333333333
+        },
+        "instantiations": {
+          "count": 3,
+          "covered": 1,
+          "percent": 33.33333333333333
+        },
+        "lines": {
+          "count": 37,
+          "covered": 33,
+          "percent": 89.1891891891892
+        },
+        "regions": {
+          "count": 68,
+          "covered": 60,
+          "notcovered": 8,
+          "percent": 88.23529411764706
+        }
+      }
+    },
+    {
+      "file": "runtime_health.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 1,
+          "percent": 25.0
+        },
+        "instantiations": {
+          "count": 4,
+          "covered": 1,
+          "percent": 25.0
+        },
+        "lines": {
+          "count": 56,
+          "covered": 51,
+          "percent": 91.07142857142857
+        },
+        "regions": {
+          "count": 66,
+          "covered": 58,
+          "notcovered": 8,
+          "percent": 87.87878787878788
+        }
+      }
+    },
+    {
+      "file": "runtime_manager.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 36,
+          "covered": 19,
+          "percent": 52.77777777777778
+        },
+        "instantiations": {
+          "count": 36,
+          "covered": 19,
+          "percent": 52.77777777777778
+        },
+        "lines": {
+          "count": 284,
+          "covered": 243,
+          "percent": 85.56338028169014
+        },
+        "regions": {
+          "count": 399,
+          "covered": 330,
+          "notcovered": 69,
+          "percent": 82.70676691729322
+        }
+      }
+    },
+    {
+      "file": "runtime_state_machine.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 94,
+          "covered": 94,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 119,
+          "covered": 119,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      }
+    },
+    {
+      "file": "runtime_state_transitions.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 151,
+          "covered": 149,
+          "percent": 98.67549668874173
+        },
+        "regions": {
+          "count": 175,
+          "covered": 173,
+          "notcovered": 2,
+          "percent": 98.85714285714286
+        }
+      }
+    },
+    {
+      "file": "runtime_transition.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 2,
+          "percent": 28.57142857142857
+        },
+        "instantiations": {
+          "count": 7,
+          "covered": 2,
+          "percent": 28.57142857142857
+        },
+        "lines": {
+          "count": 147,
+          "covered": 122,
+          "percent": 82.99319727891157
+        },
+        "regions": {
+          "count": 232,
+          "covered": 187,
+          "notcovered": 45,
+          "percent": 80.60344827586206
+        }
+      }
+    },
+    {
+      "file": "runtime_transition_history.rs",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 61,
+          "covered": 60,
+          "percent": 98.36065573770492
+        },
+        "regions": {
+          "count": 68,
+          "covered": 66,
+          "notcovered": 2,
+          "percent": 97.05882352941178
+        }
+      }
+    }
+  ]
+}

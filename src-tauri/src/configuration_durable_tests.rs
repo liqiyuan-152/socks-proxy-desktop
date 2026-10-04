@@ -7,7 +7,7 @@ fn pending_durable_intent_blocks_all_mutations_before_external_effects() {
     let credentials = Arc::new(MemoryCredentials::default());
     let startup = Arc::new(MemoryStartup::default());
     let runtime = Arc::new(FakeRuntime::default());
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(credentials.clone()),
         Box::new(startup.clone()),
@@ -62,7 +62,7 @@ fn pending_durable_intent_blocks_all_mutations_before_external_effects() {
 fn pure_configuration_commit_uses_atomic_revision_and_clears_durable_intent() {
     let store = Arc::new(crate::store::SqliteConfigurationStore::open_in_memory().unwrap());
     let runtime = Arc::new(FakeRuntime::default());
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(Arc::new(MemoryCredentials::default())),
         Box::new(Arc::new(MemoryStartup::default())),
@@ -84,7 +84,7 @@ fn pure_configuration_commit_uses_atomic_revision_and_clears_durable_intent() {
 fn credential_read_uses_saved_reference_and_export_hides_it() {
     let store = Arc::new(crate::store::SqliteConfigurationStore::open_in_memory().unwrap());
     let credentials = Arc::new(MemoryCredentials::default());
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(credentials.clone()),
         Box::new(Arc::new(MemoryStartup::default())),

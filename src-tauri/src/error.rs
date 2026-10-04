@@ -14,6 +14,10 @@ pub struct AppError {
     pub code: String,
     pub message: String,
     pub fields: Vec<FieldError>,
+    /// 领域边界补充的上下文；旧错误仍可只包含原有三个字段。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(test, ts(optional))]
+    pub context: Option<Box<crate::error_context::ErrorContext>>,
 }
 
 impl AppError {
@@ -22,6 +26,7 @@ impl AppError {
             code: "unavailable".into(),
             message: message.into(),
             fields: Vec::new(),
+            context: None,
         }
     }
 
@@ -30,6 +35,7 @@ impl AppError {
             code: "validation_error".into(),
             message: "配置包含无效字段".into(),
             fields,
+            context: None,
         }
     }
 
@@ -38,6 +44,7 @@ impl AppError {
             code: "storage_error".into(),
             message: message.into(),
             fields: Vec::new(),
+            context: None,
         }
     }
 }

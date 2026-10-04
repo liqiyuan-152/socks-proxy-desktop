@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "suite": "journey",
+  "native_ui": true,
+  "assisted_native_save": true,
+  "run_directory": "C:/Users/lqy15/AppData/Local/Temp/socks-native-e2e-9be528846b28453a874a070bb9d24cb0",
+  "configuration_schema_version": 2,
+  "full_configuration_equal": true,
+  "bytes_equal": true,
+  "password_fields_present": false,
+  "before_bytes": 831,
+  "after_bytes": 831,
+  "before_sha256": "6e99555f9e71118e0ba6c29dd4f7eb442aa65f1164aa6578e2d58d32d7979d4c",
+  "after_sha256": "6e99555f9e71118e0ba6c29dd4f7eb442aa65f1164aa6578e2d58d32d7979d4c",
+  "raw_report_sha256": "9bc555b043b8c735fa779ce8d17ea9bc4aa49856876b95df65064b10880b8707",
+  "cases": [
+    {
+      "name": "4.5.2 添加代理并启动规则模式",
+      "status": "passed",
+      "screenshot": "case-1.png"
+    },
+    {
+      "name": "4.5.3 路由规则和国内直连",
+      "status": "passed",
+      "screenshot": "case-2.png"
+    },
+    {
+      "name": "4.5.4 原生保存与配置导入往返（人工保存检查点）",
+      "status": "passed",
+      "screenshot": "case-3.png"
+    },
+    {
+      "name": "4.5.5 用户网络恢复",
+      "status": "passed",
+      "screenshot": "case-4.png"
+    }
+  ],
+  "cleanup_audit": {
+    "observed_at": "2026-10-04T19:12:36.4063940+08:00",
+    "remaining_test_processes": [],
+    "runtime_directories": 0,
+    "user_proxy_restored": true,
+    "scheduled_task_state": "absent",
+    "executed_source_sha256": {
+      "scripts/e2e/scenarios.mjs": "9abd5e06daf59480cfae04eddceeb55d17d5f8c3f4760c2d6436a1f408e2d1ec",
+      "scripts/e2e/webdriver.mjs": "202da6a477d7256742cb134651e5fccf341e5a5c0ca3eded35f79190bcd04224",
+      "scripts/e2e/run-windows.mjs": "2859584bcd8a98d9fb750e131fb0ca30ba6c14f56739d5285bcb22bf0917960c",
+      "scripts/run-native-e2e.ps1": "7fcfe832994d507d5b203706f59b9eeee0f96fc7dee78a755884e22bc24442dc"
+    }
+  },
+  "limits": [
+    "真实原生保存由用户完成，两次文件均为本轮新文件。",
+    "本地合成上游，不证明公网连通性。",
+    "原始系统代理/PAC 五字段快照仅保留远端临时目录，不纳入仓库。",
+    "运行脚本实际摘要在 cleanup_audit；本地随后仅调整 lint 注释，无行为改变。"
+  ]
+}

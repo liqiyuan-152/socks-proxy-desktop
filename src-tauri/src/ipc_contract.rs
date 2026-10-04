@@ -2,9 +2,9 @@
 //! never implement TS; the three explicit credential DTOs live in a separate file.
 use crate::{
     capabilities::Capabilities,
-    configuration_service::{ChinaDirectStatus, ProfileCredentialView, ProfileInput, ProfileView},
     credentials::CredentialUpdate,
     error::{AppError, FieldError},
+    error_context::{ErrorContext, ErrorDomain},
     ipc::{HistoryUnavailable, NetworkRecoveryResult},
     latency_tasks::{LatencyResult, LatencySubscription, LatencyTaskSnapshot, LatencyTaskState},
     models::{
@@ -17,7 +17,8 @@ use crate::{
         OperationOutcome, OperationResult, RuntimePhase, RuntimeSnapshot, SessionHealth,
         TrafficCoverage,
     },
-    store::{DiagnosticFilter, DiagnosticPage, RuntimeDiagnostic},
+    services::{ChinaDirectStatus, ProfileCredentialView, ProfileInput, ProfileView},
+    store::{DiagnosticFilter, DiagnosticGroup, DiagnosticPage, RuntimeDiagnostic},
 };
 use ts_rs::TS;
 
@@ -54,6 +55,9 @@ args!(DiagnosticsArgs {
     filter: DiagnosticFilter,
     offset: usize,
     limit: usize
+});
+args!(DiagnosticReportArgs {
+    filter: DiagnosticFilter
 });
 args!(ClearArgs {
     filter: DiagnosticFilter,
@@ -92,6 +96,8 @@ fn public_contract() -> String {
         Capabilities,
         ChinaDirectStatus,
         ProfileView,
+        ErrorDomain,
+        ErrorContext,
         AppError,
         FieldError,
         ProxyProtocol,
@@ -119,12 +125,14 @@ fn public_contract() -> String {
         RuntimeDiagnostic,
         DiagnosticFilter,
         DiagnosticPage,
+        DiagnosticGroup,
         NetworkRecoveryResult,
         HistoryUnavailable
     );
     output.push_str("export type CommandMap = {\n");
     macro_rules! commands { ($($name:ident: $args:ty => $result:ty),* $(,)?) => { $(output.push_str(&entry::<$args, $result>(stringify!($name)));)* }; }
     commands!(
+        acknowledge_frontend_ready: () => bool,
         get_capabilities: () => Capabilities,
         get_connection_history: HistoryArgs => HistoryUnavailable,
         list_profiles: () => Vec<ProfileView>,
@@ -141,14 +149,20 @@ fn public_contract() -> String {
         set_china_direct_enabled: EnabledArgs => ChinaDirectStatus,
         test_route: RouteArgs => RouteTestResult,
         export_configuration: () => String,
+        save_configuration: () => bool,
         import_configuration: ImportArgs => (),
         get_runtime_snapshot: () => RuntimeSnapshot,
+        export_runtime_snapshot: () => String,
+        validate_configuration: () => String,
         set_runtime_mode: ModeArgs => RuntimeSnapshot,
         stop_runtime: () => RuntimeSnapshot,
         recover_network: ConfirmedArgs => NetworkRecoveryResult,
         get_active_connections: () => ActiveConnectionsSnapshot,
         copy_active_connection_detail: IdArgs => String,
         get_runtime_diagnostics: DiagnosticsArgs => DiagnosticPage,
+        get_diagnostic_groups: DiagnosticReportArgs => Vec<DiagnosticGroup>,
+        export_runtime_diagnostics: DiagnosticReportArgs => String,
+        save_runtime_diagnostics: DiagnosticReportArgs => bool,
         clear_runtime_diagnostics: ClearArgs => usize,
         start_proxy_latency_task: IdArgs => LatencySubscription,
         get_proxy_latency_task: SubscriptionArgs => LatencyTaskSnapshot,

@@ -1,0 +1,4462 @@
+{
+  "scope": "2026-10-04 最新工作区：macOS Rust LLVM 单元/集成/示例、独立进程生产追踪标识测试，以及同步首页后的全套前端 V8",
+  "rust": {
+    "totals": {
+      "branches": {
+        "count": 0,
+        "covered": 0,
+        "notcovered": 0,
+        "percent": 0
+      },
+      "functions": {
+        "count": 958,
+        "covered": 702,
+        "percent": 73.2776617954071
+      },
+      "instantiations": {
+        "count": 2119,
+        "covered": 1087,
+        "percent": 51.2977819726286
+      },
+      "lines": {
+        "count": 7445,
+        "covered": 6428,
+        "percent": 86.33982538616522
+      },
+      "mcdc": {
+        "count": 0,
+        "covered": 0,
+        "notcovered": 0,
+        "percent": 0
+      },
+      "regions": {
+        "count": 10725,
+        "covered": 8916,
+        "notcovered": 1809,
+        "percent": 83.13286713286713
+      }
+    },
+    "files": {
+      "src-tauri/src/capabilities.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 3,
+          "covered": 2,
+          "percent": 66.66666666666666
+        },
+        "lines": {
+          "count": 17,
+          "covered": 17,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 12,
+          "covered": 12,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/china_rules.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 13,
+          "covered": 7,
+          "percent": 53.84615384615385
+        },
+        "instantiations": {
+          "count": 21,
+          "covered": 7,
+          "percent": 33.33333333333333
+        },
+        "lines": {
+          "count": 79,
+          "covered": 45,
+          "percent": 56.9620253164557
+        },
+        "regions": {
+          "count": 138,
+          "covered": 89,
+          "notcovered": 49,
+          "percent": 64.4927536231884
+        }
+      },
+      "src-tauri/src/configuration_crash_resources.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 9,
+          "covered": 8,
+          "percent": 88.88888888888889
+        },
+        "instantiations": {
+          "count": 9,
+          "covered": 8,
+          "percent": 88.88888888888889
+        },
+        "lines": {
+          "count": 56,
+          "covered": 53,
+          "percent": 94.64285714285714
+        },
+        "regions": {
+          "count": 85,
+          "covered": 79,
+          "notcovered": 6,
+          "percent": 92.94117647058822
+        }
+      },
+      "src-tauri/src/configuration_recovery.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 8,
+          "covered": 8,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 16,
+          "covered": 16,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 53,
+          "covered": 52,
+          "percent": 98.11320754716981
+        },
+        "regions": {
+          "count": 79,
+          "covered": 76,
+          "notcovered": 3,
+          "percent": 96.20253164556962
+        }
+      },
+      "src-tauri/src/configuration_startup_recovery.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 4,
+          "covered": 3,
+          "percent": 75.0
+        },
+        "lines": {
+          "count": 52,
+          "covered": 51,
+          "percent": 98.07692307692307
+        },
+        "regions": {
+          "count": 76,
+          "covered": 70,
+          "notcovered": 6,
+          "percent": 92.10526315789474
+        }
+      },
+      "src-tauri/src/core_control.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 11,
+          "covered": 8,
+          "percent": 72.72727272727273
+        },
+        "instantiations": {
+          "count": 11,
+          "covered": 8,
+          "percent": 72.72727272727273
+        },
+        "lines": {
+          "count": 79,
+          "covered": 74,
+          "percent": 93.67088607594938
+        },
+        "regions": {
+          "count": 108,
+          "covered": 90,
+          "notcovered": 18,
+          "percent": 83.33333333333334
+        }
+      },
+      "src-tauri/src/credentials.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 25,
+          "covered": 15,
+          "percent": 60.0
+        },
+        "instantiations": {
+          "count": 40,
+          "covered": 18,
+          "percent": 45.0
+        },
+        "lines": {
+          "count": 280,
+          "covered": 220,
+          "percent": 78.57142857142857
+        },
+        "regions": {
+          "count": 415,
+          "covered": 327,
+          "notcovered": 88,
+          "percent": 78.79518072289157
+        }
+      },
+      "src-tauri/src/domain_errors/adapters.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 6,
+          "covered": 5,
+          "percent": 83.33333333333334
+        },
+        "lines": {
+          "count": 36,
+          "covered": 36,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 46,
+          "covered": 46,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/domain_errors/conversions.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 8,
+          "covered": 8,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 18,
+          "covered": 15,
+          "percent": 83.33333333333334
+        },
+        "lines": {
+          "count": 111,
+          "covered": 111,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 183,
+          "covered": 183,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/error.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 11,
+          "covered": 8,
+          "percent": 72.72727272727273
+        },
+        "lines": {
+          "count": 27,
+          "covered": 27,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 26,
+          "covered": 26,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/error_context.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 6,
+          "percent": 85.71428571428571
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 12,
+          "percent": 85.71428571428571
+        },
+        "lines": {
+          "count": 61,
+          "covered": 60,
+          "percent": 98.36065573770492
+        },
+        "regions": {
+          "count": 99,
+          "covered": 95,
+          "notcovered": 4,
+          "percent": 95.95959595959596
+        }
+      },
+      "src-tauri/src/ipc.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 122,
+          "covered": 72,
+          "percent": 59.01639344262295
+        },
+        "instantiations": {
+          "count": 447,
+          "covered": 118,
+          "percent": 26.39821029082774
+        },
+        "lines": {
+          "count": 317,
+          "covered": 203,
+          "percent": 64.03785488958991
+        },
+        "regions": {
+          "count": 397,
+          "covered": 258,
+          "notcovered": 139,
+          "percent": 64.98740554156171
+        }
+      },
+      "src-tauri/src/ipc_contract.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 75,
+          "covered": 75,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 106,
+          "covered": 102,
+          "percent": 96.22641509433963
+        },
+        "regions": {
+          "count": 159,
+          "covered": 145,
+          "notcovered": 14,
+          "percent": 91.19496855345912
+        }
+      },
+      "src-tauri/src/ipc_latency.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 5,
+          "percent": 50.0
+        },
+        "instantiations": {
+          "count": 21,
+          "covered": 5,
+          "percent": 23.809523809523807
+        },
+        "lines": {
+          "count": 32,
+          "covered": 21,
+          "percent": 65.625
+        },
+        "regions": {
+          "count": 32,
+          "covered": 19,
+          "notcovered": 13,
+          "percent": 59.375
+        }
+      },
+      "src-tauri/src/latency.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 21,
+          "covered": 15,
+          "percent": 71.42857142857143
+        },
+        "instantiations": {
+          "count": 21,
+          "covered": 15,
+          "percent": 71.42857142857143
+        },
+        "lines": {
+          "count": 157,
+          "covered": 145,
+          "percent": 92.35668789808918
+        },
+        "regions": {
+          "count": 207,
+          "covered": 182,
+          "notcovered": 25,
+          "percent": 87.92270531400966
+        }
+      },
+      "src-tauri/src/latency_task_lifecycle.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 8,
+          "percent": 80.0
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 8,
+          "percent": 40.0
+        },
+        "lines": {
+          "count": 66,
+          "covered": 63,
+          "percent": 95.45454545454545
+        },
+        "regions": {
+          "count": 100,
+          "covered": 94,
+          "notcovered": 6,
+          "percent": 94.0
+        }
+      },
+      "src-tauri/src/latency_tasks.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 16,
+          "covered": 10,
+          "percent": 62.5
+        },
+        "instantiations": {
+          "count": 31,
+          "covered": 10,
+          "percent": 32.25806451612903
+        },
+        "lines": {
+          "count": 161,
+          "covered": 147,
+          "percent": 91.30434782608695
+        },
+        "regions": {
+          "count": 230,
+          "covered": 208,
+          "notcovered": 22,
+          "percent": 90.43478260869564
+        }
+      },
+      "src-tauri/src/lib.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 5,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "lines": {
+          "count": 66,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "regions": {
+          "count": 132,
+          "covered": 0,
+          "notcovered": 132,
+          "percent": 0.0
+        }
+      },
+      "src-tauri/src/main.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 1,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "lines": {
+          "count": 3,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "regions": {
+          "count": 3,
+          "covered": 0,
+          "notcovered": 3,
+          "percent": 0.0
+        }
+      },
+      "src-tauri/src/models.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 42,
+          "covered": 29,
+          "percent": 69.04761904761905
+        },
+        "lines": {
+          "count": 251,
+          "covered": 210,
+          "percent": 83.66533864541833
+        },
+        "regions": {
+          "count": 329,
+          "covered": 289,
+          "notcovered": 40,
+          "percent": 87.84194528875379
+        }
+      },
+      "src-tauri/src/observability.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 26,
+          "covered": 22,
+          "percent": 84.61538461538461
+        },
+        "instantiations": {
+          "count": 49,
+          "covered": 22,
+          "percent": 44.89795918367347
+        },
+        "lines": {
+          "count": 167,
+          "covered": 153,
+          "percent": 91.61676646706587
+        },
+        "regions": {
+          "count": 224,
+          "covered": 192,
+          "notcovered": 32,
+          "percent": 85.71428571428571
+        }
+      },
+      "src-tauri/src/performance_metrics.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 13,
+          "covered": 13,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 29,
+          "covered": 24,
+          "percent": 82.75862068965517
+        },
+        "lines": {
+          "count": 101,
+          "covered": 101,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 147,
+          "covered": 146,
+          "notcovered": 1,
+          "percent": 99.31972789115646
+        }
+      },
+      "src-tauri/src/route_test.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 9,
+          "covered": 6,
+          "percent": 66.66666666666666
+        },
+        "instantiations": {
+          "count": 18,
+          "covered": 6,
+          "percent": 33.33333333333333
+        },
+        "lines": {
+          "count": 116,
+          "covered": 60,
+          "percent": 51.72413793103448
+        },
+        "regions": {
+          "count": 173,
+          "covered": 90,
+          "notcovered": 83,
+          "percent": 52.02312138728323
+        }
+      },
+      "src-tauri/src/routing.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 15,
+          "covered": 15,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 21,
+          "covered": 15,
+          "percent": 71.42857142857143
+        },
+        "lines": {
+          "count": 150,
+          "covered": 140,
+          "percent": 93.33333333333333
+        },
+        "regions": {
+          "count": 222,
+          "covered": 200,
+          "notcovered": 22,
+          "percent": 90.09009009009009
+        }
+      },
+      "src-tauri/src/rule_match_process.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 3,
+          "percent": 30.0
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 3,
+          "percent": 15.0
+        },
+        "lines": {
+          "count": 48,
+          "covered": 40,
+          "percent": 83.33333333333334
+        },
+        "regions": {
+          "count": 74,
+          "covered": 59,
+          "notcovered": 15,
+          "percent": 79.72972972972973
+        }
+      },
+      "src-tauri/src/runtime.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 16,
+          "covered": 13,
+          "percent": 81.25
+        },
+        "instantiations": {
+          "count": 44,
+          "covered": 22,
+          "percent": 50.0
+        },
+        "lines": {
+          "count": 89,
+          "covered": 79,
+          "percent": 88.76404494382022
+        },
+        "regions": {
+          "count": 125,
+          "covered": 114,
+          "notcovered": 11,
+          "percent": 91.2
+        }
+      },
+      "src-tauri/src/runtime_configuration.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 3,
+          "covered": 1,
+          "percent": 33.33333333333333
+        },
+        "instantiations": {
+          "count": 6,
+          "covered": 2,
+          "percent": 33.33333333333333
+        },
+        "lines": {
+          "count": 37,
+          "covered": 33,
+          "percent": 89.1891891891892
+        },
+        "regions": {
+          "count": 68,
+          "covered": 60,
+          "notcovered": 8,
+          "percent": 88.23529411764706
+        }
+      },
+      "src-tauri/src/runtime_events.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 8,
+          "covered": 3,
+          "percent": 37.5
+        },
+        "instantiations": {
+          "count": 15,
+          "covered": 3,
+          "percent": 20.0
+        },
+        "lines": {
+          "count": 92,
+          "covered": 42,
+          "percent": 45.65217391304348
+        },
+        "regions": {
+          "count": 124,
+          "covered": 51,
+          "notcovered": 73,
+          "percent": 41.12903225806452
+        }
+      },
+      "src-tauri/src/runtime_health.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 1,
+          "percent": 25.0
+        },
+        "instantiations": {
+          "count": 8,
+          "covered": 2,
+          "percent": 25.0
+        },
+        "lines": {
+          "count": 56,
+          "covered": 51,
+          "percent": 91.07142857142857
+        },
+        "regions": {
+          "count": 66,
+          "covered": 58,
+          "notcovered": 8,
+          "percent": 87.87878787878788
+        }
+      },
+      "src-tauri/src/runtime_manager.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 38,
+          "covered": 20,
+          "percent": 52.63157894736842
+        },
+        "instantiations": {
+          "count": 76,
+          "covered": 30,
+          "percent": 39.473684210526315
+        },
+        "lines": {
+          "count": 299,
+          "covered": 255,
+          "percent": 85.28428093645485
+        },
+        "regions": {
+          "count": 412,
+          "covered": 338,
+          "notcovered": 74,
+          "percent": 82.03883495145631
+        }
+      },
+      "src-tauri/src/runtime_plan.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 11,
+          "covered": 11,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 22,
+          "covered": 16,
+          "percent": 72.72727272727273
+        },
+        "lines": {
+          "count": 99,
+          "covered": 99,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 115,
+          "covered": 114,
+          "notcovered": 1,
+          "percent": 99.1304347826087
+        }
+      },
+      "src-tauri/src/runtime_session.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 8,
+          "covered": 7,
+          "percent": 87.5
+        },
+        "instantiations": {
+          "count": 15,
+          "covered": 12,
+          "percent": 80.0
+        },
+        "lines": {
+          "count": 43,
+          "covered": 41,
+          "percent": 95.34883720930233
+        },
+        "regions": {
+          "count": 61,
+          "covered": 57,
+          "notcovered": 4,
+          "percent": 93.44262295081968
+        }
+      },
+      "src-tauri/src/runtime_state_machine.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 19,
+          "percent": 95.0
+        },
+        "lines": {
+          "count": 94,
+          "covered": 94,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 119,
+          "covered": 119,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/runtime_state_transitions.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 14,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 151,
+          "covered": 151,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 175,
+          "covered": 175,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/runtime_transition.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 9,
+          "covered": 4,
+          "percent": 44.44444444444444
+        },
+        "instantiations": {
+          "count": 18,
+          "covered": 8,
+          "percent": 44.44444444444444
+        },
+        "lines": {
+          "count": 159,
+          "covered": 134,
+          "percent": 84.27672955974843
+        },
+        "regions": {
+          "count": 246,
+          "covered": 201,
+          "notcovered": 45,
+          "percent": 81.70731707317071
+        }
+      },
+      "src-tauri/src/runtime_transition_history.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 7,
+          "covered": 6,
+          "percent": 85.71428571428571
+        },
+        "lines": {
+          "count": 65,
+          "covered": 64,
+          "percent": 98.46153846153847
+        },
+        "regions": {
+          "count": 76,
+          "covered": 74,
+          "notcovered": 2,
+          "percent": 97.36842105263156
+        }
+      },
+      "src-tauri/src/runtime_unavailable.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 4,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "instantiations": {
+          "count": 8,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "lines": {
+          "count": 22,
+          "covered": 0,
+          "percent": 0.0
+        },
+        "regions": {
+          "count": 13,
+          "covered": 0,
+          "notcovered": 13,
+          "percent": 0.0
+        }
+      },
+      "src-tauri/src/services/../configuration_durable_commit.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 14,
+          "covered": 13,
+          "percent": 92.85714285714286
+        },
+        "instantiations": {
+          "count": 28,
+          "covered": 24,
+          "percent": 85.71428571428571
+        },
+        "lines": {
+          "count": 160,
+          "covered": 156,
+          "percent": 97.5
+        },
+        "regions": {
+          "count": 220,
+          "covered": 208,
+          "notcovered": 12,
+          "percent": 94.54545454545455
+        }
+      },
+      "src-tauri/src/services/../configuration_latency.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 15,
+          "covered": 12,
+          "percent": 80.0
+        },
+        "instantiations": {
+          "count": 30,
+          "covered": 14,
+          "percent": 46.666666666666664
+        },
+        "lines": {
+          "count": 76,
+          "covered": 67,
+          "percent": 88.1578947368421
+        },
+        "regions": {
+          "count": 121,
+          "covered": 103,
+          "notcovered": 18,
+          "percent": 85.12396694214877
+        }
+      },
+      "src-tauri/src/services/../configuration_memory_recovery.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 67,
+          "covered": 63,
+          "percent": 94.02985074626868
+        },
+        "regions": {
+          "count": 100,
+          "covered": 93,
+          "notcovered": 7,
+          "percent": 93.0
+        }
+      },
+      "src-tauri/src/services/../configuration_transaction.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 8,
+          "percent": 80.0
+        },
+        "lines": {
+          "count": 49,
+          "covered": 48,
+          "percent": 97.95918367346938
+        },
+        "regions": {
+          "count": 74,
+          "covered": 70,
+          "notcovered": 4,
+          "percent": 94.5945945945946
+        }
+      },
+      "src-tauri/src/services/application_diagnostics.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 8,
+          "covered": 8,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 16,
+          "covered": 10,
+          "percent": 62.5
+        },
+        "lines": {
+          "count": 91,
+          "covered": 88,
+          "percent": 96.7032967032967
+        },
+        "regions": {
+          "count": 106,
+          "covered": 96,
+          "notcovered": 10,
+          "percent": 90.56603773584906
+        }
+      },
+      "src-tauri/src/services/application_errors.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 88,
+          "covered": 51,
+          "percent": 57.95454545454546
+        },
+        "lines": {
+          "count": 82,
+          "covered": 79,
+          "percent": 96.34146341463415
+        },
+        "regions": {
+          "count": 124,
+          "covered": 120,
+          "notcovered": 4,
+          "percent": 96.7741935483871
+        }
+      },
+      "src-tauri/src/services/application_service.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 36,
+          "covered": 33,
+          "percent": 91.66666666666666
+        },
+        "instantiations": {
+          "count": 68,
+          "covered": 43,
+          "percent": 63.23529411764706
+        },
+        "lines": {
+          "count": 203,
+          "covered": 196,
+          "percent": 96.55172413793105
+        },
+        "regions": {
+          "count": 253,
+          "covered": 242,
+          "notcovered": 11,
+          "percent": 95.65217391304348
+        }
+      },
+      "src-tauri/src/services/application_transfer.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 1,
+          "percent": 50.0
+        },
+        "lines": {
+          "count": 26,
+          "covered": 26,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 41,
+          "covered": 38,
+          "notcovered": 3,
+          "percent": 92.68292682926831
+        }
+      },
+      "src-tauri/src/services/context.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 5,
+          "covered": 4,
+          "percent": 80.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 7,
+          "percent": 70.0
+        },
+        "lines": {
+          "count": 39,
+          "covered": 38,
+          "percent": 97.43589743589743
+        },
+        "regions": {
+          "count": 40,
+          "covered": 37,
+          "notcovered": 3,
+          "percent": 92.5
+        }
+      },
+      "src-tauri/src/services/diagnostic_export.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 12,
+          "covered": 10,
+          "percent": 83.33333333333334
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 10,
+          "percent": 50.0
+        },
+        "lines": {
+          "count": 106,
+          "covered": 104,
+          "percent": 98.11320754716981
+        },
+        "regions": {
+          "count": 220,
+          "covered": 211,
+          "notcovered": 9,
+          "percent": 95.9090909090909
+        }
+      },
+      "src-tauri/src/services/profile_service.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 21,
+          "covered": 20,
+          "percent": 95.23809523809523
+        },
+        "instantiations": {
+          "count": 42,
+          "covered": 37,
+          "percent": 88.09523809523807
+        },
+        "lines": {
+          "count": 187,
+          "covered": 174,
+          "percent": 93.04812834224599
+        },
+        "regions": {
+          "count": 252,
+          "covered": 227,
+          "notcovered": 25,
+          "percent": 90.07936507936508
+        }
+      },
+      "src-tauri/src/services/profile_types.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 11,
+          "covered": 11,
+          "notcovered": 0,
+          "percent": 100.0
+        }
+      },
+      "src-tauri/src/services/routing_service.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 18,
+          "covered": 13,
+          "percent": 72.22222222222221
+        },
+        "instantiations": {
+          "count": 36,
+          "covered": 14,
+          "percent": 38.88888888888889
+        },
+        "lines": {
+          "count": 117,
+          "covered": 104,
+          "percent": 88.88888888888889
+        },
+        "regions": {
+          "count": 189,
+          "covered": 159,
+          "notcovered": 30,
+          "percent": 84.12698412698413
+        }
+      },
+      "src-tauri/src/services/runtime_report.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 5,
+          "percent": 71.42857142857143
+        },
+        "instantiations": {
+          "count": 13,
+          "covered": 5,
+          "percent": 38.46153846153847
+        },
+        "lines": {
+          "count": 49,
+          "covered": 47,
+          "percent": 95.91836734693877
+        },
+        "regions": {
+          "count": 88,
+          "covered": 79,
+          "notcovered": 9,
+          "percent": 89.77272727272727
+        }
+      },
+      "src-tauri/src/services/runtime_service.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 13,
+          "percent": 92.85714285714286
+        },
+        "lines": {
+          "count": 44,
+          "covered": 43,
+          "percent": 97.72727272727273
+        },
+        "regions": {
+          "count": 61,
+          "covered": 57,
+          "notcovered": 4,
+          "percent": 93.44262295081968
+        }
+      },
+      "src-tauri/src/services/settings_service.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 6,
+          "covered": 4,
+          "percent": 66.66666666666666
+        },
+        "lines": {
+          "count": 18,
+          "covered": 18,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 36,
+          "covered": 32,
+          "notcovered": 4,
+          "percent": 88.88888888888889
+        }
+      },
+      "src-tauri/src/sing_box_backend.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 20,
+          "covered": 8,
+          "percent": 40.0
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 8,
+          "percent": 40.0
+        },
+        "lines": {
+          "count": 185,
+          "covered": 125,
+          "percent": 67.56756756756756
+        },
+        "regions": {
+          "count": 254,
+          "covered": 150,
+          "notcovered": 104,
+          "percent": 59.055118110236215
+        }
+      },
+      "src-tauri/src/sing_box_config.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 8,
+          "percent": 80.0
+        },
+        "instantiations": {
+          "count": 10,
+          "covered": 8,
+          "percent": 80.0
+        },
+        "lines": {
+          "count": 155,
+          "covered": 143,
+          "percent": 92.25806451612904
+        },
+        "regions": {
+          "count": 232,
+          "covered": 210,
+          "notcovered": 22,
+          "percent": 90.51724137931035
+        }
+      },
+      "src-tauri/src/sing_box_process.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 31,
+          "covered": 22,
+          "percent": 70.96774193548387
+        },
+        "instantiations": {
+          "count": 31,
+          "covered": 22,
+          "percent": 70.96774193548387
+        },
+        "lines": {
+          "count": 204,
+          "covered": 186,
+          "percent": 91.17647058823528
+        },
+        "regions": {
+          "count": 275,
+          "covered": 230,
+          "notcovered": 45,
+          "percent": 83.63636363636363
+        }
+      },
+      "src-tauri/src/startup.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 11,
+          "covered": 4,
+          "percent": 36.36363636363637
+        },
+        "instantiations": {
+          "count": 52,
+          "covered": 15,
+          "percent": 28.846153846153843
+        },
+        "lines": {
+          "count": 58,
+          "covered": 34,
+          "percent": 58.620689655172406
+        },
+        "regions": {
+          "count": 77,
+          "covered": 39,
+          "notcovered": 38,
+          "percent": 50.64935064935064
+        }
+      },
+      "src-tauri/src/startup_metrics.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 10,
+          "covered": 10,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 10,
+          "percent": 71.42857142857143
+        },
+        "lines": {
+          "count": 61,
+          "covered": 61,
+          "percent": 100.0
+        },
+        "regions": {
+          "count": 103,
+          "covered": 99,
+          "notcovered": 4,
+          "percent": 96.11650485436894
+        }
+      },
+      "src-tauri/src/store.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 55,
+          "covered": 37,
+          "percent": 67.27272727272727
+        },
+        "instantiations": {
+          "count": 121,
+          "covered": 54,
+          "percent": 44.62809917355372
+        },
+        "lines": {
+          "count": 279,
+          "covered": 218,
+          "percent": 78.13620071684588
+        },
+        "regions": {
+          "count": 341,
+          "covered": 263,
+          "notcovered": 78,
+          "percent": 77.12609970674487
+        }
+      },
+      "src-tauri/src/store_diagnostic_report.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 7,
+          "covered": 4,
+          "percent": 57.14285714285714
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 4,
+          "percent": 28.57142857142857
+        },
+        "lines": {
+          "count": 56,
+          "covered": 53,
+          "percent": 94.64285714285714
+        },
+        "regions": {
+          "count": 114,
+          "covered": 89,
+          "notcovered": 25,
+          "percent": 78.0701754385965
+        }
+      },
+      "src-tauri/src/store_diagnostics.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 26,
+          "covered": 19,
+          "percent": 73.07692307692307
+        },
+        "instantiations": {
+          "count": 47,
+          "covered": 22,
+          "percent": 46.808510638297875
+        },
+        "lines": {
+          "count": 185,
+          "covered": 177,
+          "percent": 95.67567567567568
+        },
+        "regions": {
+          "count": 267,
+          "covered": 237,
+          "notcovered": 30,
+          "percent": 88.76404494382022
+        }
+      },
+      "src-tauri/src/store_migrations.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 31,
+          "covered": 31,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 123,
+          "covered": 120,
+          "percent": 97.5609756097561
+        },
+        "regions": {
+          "count": 196,
+          "covered": 187,
+          "notcovered": 9,
+          "percent": 95.40816326530613
+        }
+      },
+      "src-tauri/src/store_proxy_ownership.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 14,
+          "covered": 6,
+          "percent": 42.857142857142854
+        },
+        "instantiations": {
+          "count": 14,
+          "covered": 6,
+          "percent": 42.857142857142854
+        },
+        "lines": {
+          "count": 97,
+          "covered": 83,
+          "percent": 85.56701030927834
+        },
+        "regions": {
+          "count": 122,
+          "covered": 97,
+          "notcovered": 25,
+          "percent": 79.50819672131148
+        }
+      },
+      "src-tauri/src/store_recovery.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 19,
+          "covered": 12,
+          "percent": 63.1578947368421
+        },
+        "instantiations": {
+          "count": 42,
+          "covered": 26,
+          "percent": 61.904761904761905
+        },
+        "lines": {
+          "count": 121,
+          "covered": 111,
+          "percent": 91.73553719008265
+        },
+        "regions": {
+          "count": 212,
+          "covered": 172,
+          "notcovered": 40,
+          "percent": 81.13207547169812
+        }
+      },
+      "src-tauri/src/system_proxy.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 13,
+          "covered": 13,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 13,
+          "covered": 13,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 104,
+          "covered": 100,
+          "percent": 96.15384615384616
+        },
+        "regions": {
+          "count": 156,
+          "covered": 141,
+          "notcovered": 15,
+          "percent": 90.38461538461539
+        }
+      },
+      "src-tauri/src/test_core.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100.0
+        },
+        "instantiations": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100.0
+        },
+        "lines": {
+          "count": 9,
+          "covered": 6,
+          "percent": 66.66666666666666
+        },
+        "regions": {
+          "count": 15,
+          "covered": 7,
+          "notcovered": 8,
+          "percent": 46.666666666666664
+        }
+      },
+      "src-tauri/src/trace_writer.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 22,
+          "covered": 19,
+          "percent": 86.36363636363636
+        },
+        "instantiations": {
+          "count": 37,
+          "covered": 19,
+          "percent": 51.35135135135135
+        },
+        "lines": {
+          "count": 189,
+          "covered": 185,
+          "percent": 97.88359788359789
+        },
+        "regions": {
+          "count": 358,
+          "covered": 311,
+          "notcovered": 47,
+          "percent": 86.87150837988827
+        }
+      },
+      "src-tauri/src/tracing_setup.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 18,
+          "covered": 17,
+          "percent": 94.44444444444444
+        },
+        "instantiations": {
+          "count": 26,
+          "covered": 17,
+          "percent": 65.38461538461539
+        },
+        "lines": {
+          "count": 176,
+          "covered": 171,
+          "percent": 97.1590909090909
+        },
+        "regions": {
+          "count": 313,
+          "covered": 284,
+          "notcovered": 29,
+          "percent": 90.73482428115018
+        }
+      },
+      "src-tauri/src/transfer.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 11,
+          "covered": 10,
+          "percent": 90.9090909090909
+        },
+        "instantiations": {
+          "count": 18,
+          "covered": 10,
+          "percent": 55.55555555555556
+        },
+        "lines": {
+          "count": 166,
+          "covered": 165,
+          "percent": 99.3975903614458
+        },
+        "regions": {
+          "count": 226,
+          "covered": 224,
+          "notcovered": 2,
+          "percent": 99.11504424778762
+        }
+      },
+      "src-tauri/src/tray.rs": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0.0
+        },
+        "functions": {
+          "count": 11,
+          "covered": 2,
+          "percent": 18.181818181818183
+        },
+        "instantiations": {
+          "count": 21,
+          "covered": 2,
+          "percent": 9.523809523809524
+        },
+        "lines": {
+          "count": 153,
+          "covered": 53,
+          "percent": 34.64052287581699
+        },
+        "regions": {
+          "count": 232,
+          "covered": 57,
+          "notcovered": 175,
+          "percent": 24.568965517241377
+        }
+      }
+    }
+  },
+  "frontend": {
+    "totals": {
+      "lines": {
+        "total": 1298,
+        "covered": 1206,
+        "skipped": 0,
+        "pct": 92.91
+      },
+      "statements": {
+        "total": 1488,
+        "covered": 1340,
+        "skipped": 0,
+        "pct": 90.05
+      },
+      "functions": {
+        "total": 465,
+        "covered": 396,
+        "skipped": 0,
+        "pct": 85.16
+      },
+      "branches": {
+        "total": 1126,
+        "covered": 913,
+        "skipped": 0,
+        "pct": 81.08
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "files": {
+      "src/App.tsx": {
+        "lines": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 9,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/index.css": {
+        "lines": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/main.tsx": {
+        "lines": {
+          "total": 2,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 2,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/vite-env.d.ts": {
+        "lines": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/AppErrorBoundary.tsx": {
+        "lines": {
+          "total": 6,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 6,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/AppLayout.tsx": {
+        "lines": {
+          "total": 15,
+          "covered": 15,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 8,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 18,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 24,
+          "covered": 24,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ConfirmDeletionDialog.tsx": {
+        "lines": {
+          "total": 18,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 21,
+          "covered": 19,
+          "skipped": 0,
+          "pct": 90.47
+        },
+        "branches": {
+          "total": 17,
+          "covered": 15,
+          "skipped": 0,
+          "pct": 88.23
+        }
+      },
+      "src/components/ErrorAlert.tsx": {
+        "lines": {
+          "total": 18,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 19,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 94.73
+        },
+        "branches": {
+          "total": 22,
+          "covered": 21,
+          "skipped": 0,
+          "pct": 95.45
+        }
+      },
+      "src/components/RuntimeFeedback.tsx": {
+        "lines": {
+          "total": 26,
+          "covered": 24,
+          "skipped": 0,
+          "pct": 92.3
+        },
+        "functions": {
+          "total": 10,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 90
+        },
+        "statements": {
+          "total": 27,
+          "covered": 25,
+          "skipped": 0,
+          "pct": 92.59
+        },
+        "branches": {
+          "total": 26,
+          "covered": 26,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/forms/Field.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/badge.tsx": {
+        "lines": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 4,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 75
+        }
+      },
+      "src/components/ui/button.tsx": {
+        "lines": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 5,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 80
+        }
+      },
+      "src/components/ui/card.tsx": {
+        "lines": {
+          "total": 7,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 57.14
+        },
+        "functions": {
+          "total": 7,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 57.14
+        },
+        "statements": {
+          "total": 7,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 57.14
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/dialog.tsx": {
+        "lines": {
+          "total": 10,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 90
+        },
+        "functions": {
+          "total": 10,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 90
+        },
+        "statements": {
+          "total": 10,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 90
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/input.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/label.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/select.tsx": {
+        "lines": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/separator.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/sheet.tsx": {
+        "lines": {
+          "total": 11,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 9.09
+        },
+        "functions": {
+          "total": 10,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "statements": {
+          "total": 11,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 9.09
+        },
+        "branches": {
+          "total": 12,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        }
+      },
+      "src/components/ui/sidebar.tsx": {
+        "lines": {
+          "total": 47,
+          "covered": 37,
+          "skipped": 0,
+          "pct": 78.72
+        },
+        "functions": {
+          "total": 19,
+          "covered": 14,
+          "skipped": 0,
+          "pct": 73.68
+        },
+        "statements": {
+          "total": 52,
+          "covered": 37,
+          "skipped": 0,
+          "pct": 71.15
+        },
+        "branches": {
+          "total": 31,
+          "covered": 17,
+          "skipped": 0,
+          "pct": 54.83
+        }
+      },
+      "src/components/ui/skeleton.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "functions": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "statements": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/sonner.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/switch.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/table.tsx": {
+        "lines": {
+          "total": 9,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 88.88
+        },
+        "functions": {
+          "total": 8,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 87.5
+        },
+        "statements": {
+          "total": 9,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 88.88
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/tabs.tsx": {
+        "lines": {
+          "total": 5,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 80
+        },
+        "functions": {
+          "total": 4,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 75
+        },
+        "statements": {
+          "total": 5,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 80
+        },
+        "branches": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/textarea.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "functions": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "statements": {
+          "total": 1,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 0
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/components/ui/tooltip.tsx": {
+        "lines": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/hooks/use-mobile.ts": {
+        "lines": {
+          "total": 9,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 88.88
+        },
+        "functions": {
+          "total": 5,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 80
+        },
+        "statements": {
+          "total": 11,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 90.9
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/app-version.ts": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/backend-context.tsx": {
+        "lines": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 6,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/backend.ts": {
+        "lines": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 66.66
+        },
+        "statements": {
+          "total": 4,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 75
+        },
+        "branches": {
+          "total": 2,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 50
+        }
+      },
+      "src/lib/error-handler.ts": {
+        "lines": {
+          "total": 26,
+          "covered": 26,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 9,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 27,
+          "covered": 27,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 44,
+          "covered": 44,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/ipc.ts": {
+        "lines": {
+          "total": 3,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 66.66
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 3,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 66.66
+        },
+        "branches": {
+          "total": 4,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 75
+        }
+      },
+      "src/lib/proxy-mode.ts": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/startup-ready.ts": {
+        "lines": {
+          "total": 17,
+          "covered": 17,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 7,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 20,
+          "covered": 20,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 13,
+          "covered": 12,
+          "skipped": 0,
+          "pct": 92.3
+        }
+      },
+      "src/lib/system-theme.ts": {
+        "lines": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 7,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/utils.ts": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/generated/credentials.ts": {
+        "lines": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/lib/generated/ipc.ts": {
+        "lines": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/connection-history/index.tsx": {
+        "lines": {
+          "total": 49,
+          "covered": 44,
+          "skipped": 0,
+          "pct": 89.79
+        },
+        "functions": {
+          "total": 21,
+          "covered": 19,
+          "skipped": 0,
+          "pct": 90.47
+        },
+        "statements": {
+          "total": 53,
+          "covered": 48,
+          "skipped": 0,
+          "pct": 90.56
+        },
+        "branches": {
+          "total": 34,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 64.7
+        }
+      },
+      "src/pages/proxies/LatencyCell.tsx": {
+        "lines": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 20,
+          "covered": 19,
+          "skipped": 0,
+          "pct": 95
+        }
+      },
+      "src/pages/proxies/ProxyAuthenticationFields.tsx": {
+        "lines": {
+          "total": 6,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 83.33
+        },
+        "functions": {
+          "total": 9,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 77.77
+        },
+        "statements": {
+          "total": 10,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 80
+        },
+        "branches": {
+          "total": 9,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 66.66
+        }
+      },
+      "src/pages/proxies/ProxyFormDialog.tsx": {
+        "lines": {
+          "total": 8,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 62.5
+        },
+        "functions": {
+          "total": 10,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 60
+        },
+        "statements": {
+          "total": 12,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 58.33
+        },
+        "branches": {
+          "total": 16,
+          "covered": 12,
+          "skipped": 0,
+          "pct": 75
+        }
+      },
+      "src/pages/proxies/ProxyLinkInput.tsx": {
+        "lines": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 4,
+          "covered": 4,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/proxies/ProxyStatus.tsx": {
+        "lines": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 8,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/proxies/ProxyToolbar.tsx": {
+        "lines": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 2,
+          "covered": 2,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 7,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/proxies/index.tsx": {
+        "lines": {
+          "total": 53,
+          "covered": 51,
+          "skipped": 0,
+          "pct": 96.22
+        },
+        "functions": {
+          "total": 22,
+          "covered": 21,
+          "skipped": 0,
+          "pct": 95.45
+        },
+        "statements": {
+          "total": 57,
+          "covered": 54,
+          "skipped": 0,
+          "pct": 94.73
+        },
+        "branches": {
+          "total": 51,
+          "covered": 46,
+          "skipped": 0,
+          "pct": 90.19
+        }
+      },
+      "src/pages/proxies/latencyTask.ts": {
+        "lines": {
+          "total": 30,
+          "covered": 30,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 7,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 85.71
+        },
+        "statements": {
+          "total": 38,
+          "covered": 34,
+          "skipped": 0,
+          "pct": 89.47
+        },
+        "branches": {
+          "total": 22,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 81.81
+        }
+      },
+      "src/pages/proxies/parseProxyLink.ts": {
+        "lines": {
+          "total": 34,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 97.05
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 35,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 94.28
+        },
+        "branches": {
+          "total": 35,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 94.28
+        }
+      },
+      "src/pages/proxies/proxyDraft.ts": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 10,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/proxies/useProxyEditor.ts": {
+        "lines": {
+          "total": 78,
+          "covered": 76,
+          "skipped": 0,
+          "pct": 97.43
+        },
+        "functions": {
+          "total": 10,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 90,
+          "covered": 86,
+          "skipped": 0,
+          "pct": 95.55
+        },
+        "branches": {
+          "total": 41,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 80.48
+        }
+      },
+      "src/pages/proxies/useProxyLatency.ts": {
+        "lines": {
+          "total": 100,
+          "covered": 98,
+          "skipped": 0,
+          "pct": 98
+        },
+        "functions": {
+          "total": 22,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 117,
+          "covered": 113,
+          "skipped": 0,
+          "pct": 96.58
+        },
+        "branches": {
+          "total": 58,
+          "covered": 52,
+          "skipped": 0,
+          "pct": 89.65
+        }
+      },
+      "src/pages/rules/ChinaDirectPreset.tsx": {
+        "lines": {
+          "total": 22,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 8,
+          "covered": 8,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 24,
+          "covered": 24,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 21,
+          "covered": 19,
+          "skipped": 0,
+          "pct": 90.47
+        }
+      },
+      "src/pages/rules/RouteTest.tsx": {
+        "lines": {
+          "total": 54,
+          "covered": 52,
+          "skipped": 0,
+          "pct": 96.29
+        },
+        "functions": {
+          "total": 12,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 83.33
+        },
+        "statements": {
+          "total": 61,
+          "covered": 56,
+          "skipped": 0,
+          "pct": 91.8
+        },
+        "branches": {
+          "total": 42,
+          "covered": 34,
+          "skipped": 0,
+          "pct": 80.95
+        }
+      },
+      "src/pages/rules/RuleForm.tsx": {
+        "lines": {
+          "total": 16,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 43.75
+        },
+        "functions": {
+          "total": 22,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 27.27
+        },
+        "statements": {
+          "total": 24,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 29.16
+        },
+        "branches": {
+          "total": 24,
+          "covered": 14,
+          "skipped": 0,
+          "pct": 58.33
+        }
+      },
+      "src/pages/rules/index.tsx": {
+        "lines": {
+          "total": 44,
+          "covered": 35,
+          "skipped": 0,
+          "pct": 79.54
+        },
+        "functions": {
+          "total": 25,
+          "covered": 19,
+          "skipped": 0,
+          "pct": 76
+        },
+        "statements": {
+          "total": 48,
+          "covered": 38,
+          "skipped": 0,
+          "pct": 79.16
+        },
+        "branches": {
+          "total": 89,
+          "covered": 67,
+          "skipped": 0,
+          "pct": 75.28
+        }
+      },
+      "src/pages/rules/useRoutingRules.ts": {
+        "lines": {
+          "total": 37,
+          "covered": 31,
+          "skipped": 0,
+          "pct": 83.78
+        },
+        "functions": {
+          "total": 12,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 75
+        },
+        "statements": {
+          "total": 49,
+          "covered": 39,
+          "skipped": 0,
+          "pct": 79.59
+        },
+        "branches": {
+          "total": 18,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 50
+        }
+      },
+      "src/pages/settings/AboutCard.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/ConfigurationImportDialog.tsx": {
+        "lines": {
+          "total": 7,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 85.71
+        },
+        "functions": {
+          "total": 7,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 85.71
+        },
+        "statements": {
+          "total": 7,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 85.71
+        },
+        "branches": {
+          "total": 8,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 75
+        }
+      },
+      "src/pages/settings/DiagnosticsCard.tsx": {
+        "lines": {
+          "total": 58,
+          "covered": 55,
+          "skipped": 0,
+          "pct": 94.82
+        },
+        "functions": {
+          "total": 13,
+          "covered": 12,
+          "skipped": 0,
+          "pct": 92.3
+        },
+        "statements": {
+          "total": 66,
+          "covered": 60,
+          "skipped": 0,
+          "pct": 90.9
+        },
+        "branches": {
+          "total": 60,
+          "covered": 41,
+          "skipped": 0,
+          "pct": 68.33
+        }
+      },
+      "src/pages/settings/LatencyTestCard.tsx": {
+        "lines": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/NetworkRecoveryCard.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 6,
+          "covered": 6,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/StartupCard.tsx": {
+        "lines": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 5,
+          "covered": 5,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/index.tsx": {
+        "lines": {
+          "total": 85,
+          "covered": 78,
+          "skipped": 0,
+          "pct": 91.76
+        },
+        "functions": {
+          "total": 20,
+          "covered": 18,
+          "skipped": 0,
+          "pct": 90
+        },
+        "statements": {
+          "total": 98,
+          "covered": 87,
+          "skipped": 0,
+          "pct": 88.77
+        },
+        "branches": {
+          "total": 77,
+          "covered": 53,
+          "skipped": 0,
+          "pct": 68.83
+        }
+      },
+      "src/pages/settings/parseImportProfiles.ts": {
+        "lines": {
+          "total": 10,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 1,
+          "covered": 1,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 10,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 22,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/settingsTypes.ts": {
+        "lines": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/pages/settings/useConfigurationImport.ts": {
+        "lines": {
+          "total": 64,
+          "covered": 63,
+          "skipped": 0,
+          "pct": 98.43
+        },
+        "functions": {
+          "total": 11,
+          "covered": 11,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 74,
+          "covered": 70,
+          "skipped": 0,
+          "pct": 94.59
+        },
+        "branches": {
+          "total": 29,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 75.86
+        }
+      },
+      "src/pages/status/index.tsx": {
+        "lines": {
+          "total": 26,
+          "covered": 26,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 13,
+          "covered": 13,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 28,
+          "covered": 28,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 61,
+          "covered": 52,
+          "skipped": 0,
+          "pct": 85.24
+        }
+      },
+      "src/store/backend-business.ts": {
+        "lines": {
+          "total": 33,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 20,
+          "covered": 20,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 41,
+          "covered": 41,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 15,
+          "covered": 12,
+          "skipped": 0,
+          "pct": 80
+        }
+      },
+      "src/store/backend-modes.ts": {
+        "lines": {
+          "total": 72,
+          "covered": 72,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 9,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 81,
+          "covered": 79,
+          "skipped": 0,
+          "pct": 97.53
+        },
+        "branches": {
+          "total": 43,
+          "covered": 39,
+          "skipped": 0,
+          "pct": 90.69
+        }
+      },
+      "src/store/backend-observation.ts": {
+        "lines": {
+          "total": 36,
+          "covered": 33,
+          "skipped": 0,
+          "pct": 91.66
+        },
+        "functions": {
+          "total": 7,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 45,
+          "covered": 42,
+          "skipped": 0,
+          "pct": 93.33
+        },
+        "branches": {
+          "total": 28,
+          "covered": 22,
+          "skipped": 0,
+          "pct": 78.57
+        }
+      },
+      "src/store/backend-polling.ts": {
+        "lines": {
+          "total": 30,
+          "covered": 30,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 7,
+          "covered": 7,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 35,
+          "covered": 34,
+          "skipped": 0,
+          "pct": 97.14
+        },
+        "branches": {
+          "total": 15,
+          "covered": 14,
+          "skipped": 0,
+          "pct": 93.33
+        }
+      },
+      "src/store/backend-store-types.ts": {
+        "lines": {
+          "total": 9,
+          "covered": 9,
+          "skipped": 0,
+          "pct": 100
+        },
+        "functions": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        },
+        "statements": {
+          "total": 10,
+          "covered": 10,
+          "skipped": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 3,
+          "covered": 3,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "src/store/backend-store.ts": {
+        "lines": {
+          "total": 45,
+          "covered": 44,
+          "skipped": 0,
+          "pct": 97.77
+        },
+        "functions": {
+          "total": 16,
+          "covered": 14,
+          "skipped": 0,
+          "pct": 87.5
+        },
+        "statements": {
+          "total": 55,
+          "covered": 49,
+          "skipped": 0,
+          "pct": 89.09
+        },
+        "branches": {
+          "total": 24,
+          "covered": 16,
+          "skipped": 0,
+          "pct": 66.66
+        }
+      }
+    }
+  },
+  "artifacts": {
+    "rust_full_json": "/tmp/architecture-final-soak-coverage.json",
+    "frontend_summary": "/Users/liqiyuan/RustProjects/socks-proxy-desktop/coverage/coverage-summary.json"
+  },
+  "limitations": [
+    "Rust 不包含当前 macOS 编译之外的 Windows 专属分支",
+    "Rust 默认 LLVM branch/mcdc 未采集，零计数表示未采集",
+    "不替代原生 UI、真实首屏性能与 Windows 覆盖率",
+    "显式 ignored 长时内核测试不在默认覆盖率中；Windows 真实内核测试报告单独证明该流程，不能把默认门禁视为长时 UI 证明"
+  ]
+}

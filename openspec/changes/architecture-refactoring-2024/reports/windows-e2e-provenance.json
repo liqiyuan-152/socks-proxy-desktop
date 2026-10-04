@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "ui_session_created": false,
+  "scope": "真实 Windows 隔离构建、驱动就绪及 SkipBuild 来源门禁；不创建 UI 会话",
+  "preflight": {
+    "status": "passed",
+    "application": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004\\src-tauri\\target\\debug\\socks-proxy.exe",
+    "application_sha256": "022e6d3ad54e2af5b8fa515b744428207cd2ac7b5f8f0f225e304bff7dbd66ae",
+    "application_identifier": "com.socksproxy.desktop.architecture-e2e",
+    "configuration_sha256": "cf44ad187b0758c0ad42a472a2ea048cd7ef8729a725da871026b8e383f3344d",
+    "webdriver": {
+      "driver_version": "2.1.0",
+      "tauri_driver": "C:\\Users\\lqy15\\.cargo\\bin\\tauri-driver.exe",
+      "edge_version": "154.0.4258.53",
+      "native_driver": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004\\.e2e-tools\\msedgedriver.exe",
+      "native_driver_sha256": "008115b68b38437b1c0138f3cced648f61f333cf4623a9895296e7c1c01abcb8",
+      "signature": "Microsoft Corporation / Valid",
+      "documentation": "https://v2.tauri.app/develop/tests/webdriver/manual-setup/"
+    },
+    "server_response": {
+      "value": {
+        "build": {
+          "version": "154.0.4258.53 (5af6e80f702cffe10645c6d6433668f011b739be)"
+        },
+        "message": "msedgedriver ready for new sessions.",
+        "os": {
+          "arch": "x86_64",
+          "name": "Windows NT",
+          "version": "10.0.26200"
+        },
+        "ready": true
+      }
+    },
+    "ui_session_created": false,
+    "scope": "官方驱动与原生隔离应用构建；只验证服务就绪，不等同用户 E2E 场景"
+  },
+  "guard_checks": [
+    "旧预检缺少新哈希时拒绝；驱动未启动",
+    "完整重建后 SkipBuild 成功",
+    "application_sha256 不匹配时拒绝",
+    "configuration_sha256 不匹配时拒绝",
+    "application_identifier 不匹配时拒绝",
+    "临时改变的预检文件在 finally 中完整恢复"
+  ],
+  "source_sha256": "ff79504828be46052d8f4ea1caceb0617bdfc3826a458a76903d3a5073ae13ac"
+}

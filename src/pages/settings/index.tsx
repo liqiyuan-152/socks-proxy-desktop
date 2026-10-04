@@ -1,3 +1,7 @@
+import { DiagnosticsCard } from "./DiagnosticsCard";
+import { ErrorAlert } from "@/components/ErrorAlert";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArchiveX, Download, Info, Upload } from "lucide-react";
@@ -17,8 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { errorMessage, type BackendError } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { AboutCard } from "./AboutCard";
 import { LatencyTestCard } from "./LatencyTestCard";
 import { useConfigurationImport } from "./useConfigurationImport";
@@ -30,13 +34,23 @@ import type { Retention, Settings } from "./settingsTypes";
 type SettingsAction = "clear" | "restore" | null;
 
 export default function SettingsPage() {
-  const { refresh, capabilities } = useBackend();
+  const { refresh, capabilities, persistSettings, importConfiguration, recoverNetwork } =
+    useBackendStore(
+      useShallow((state) => ({
+        refresh: state.refresh,
+        capabilities: state.capabilities,
+        persistSettings: state.updateSettings,
+        importConfiguration: state.importConfiguration,
+        recoverNetwork: state.recoverNetwork,
+      })),
+    );
   const active = useRef(false);
+  const exportFlight = useRef(false);
   const settingsRequest = useRef(0);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [pendingAction, setPendingAction] = useState<SettingsAction>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -47,7 +61,7 @@ export default function SettingsPage() {
       setSettings(next);
       setError(null);
     } catch (reason) {
-      if (active.current && version === settingsRequest.current) setError(errorMessage(reason));
+      if (active.current && version === settingsRequest.current) setError(normalizeError(reason));
     }
   }, []);
   useEffect(() => {
@@ -66,40 +80,37 @@ export default function SettingsPage() {
     setMessage(null);
     const version = ++settingsRequest.current;
     try {
-      const updated = await ipc("update_settings", { settings: next });
+      const updated = await persistSettings(next);
       if (active.current && version === settingsRequest.current) setSettings(updated);
     } catch (reason) {
       if (!active.current || version !== settingsRequest.current) return;
-      const typed = reason as Partial<BackendError>;
-      setError(typed.fields?.map((field) => field.message).join("；") || errorMessage(reason));
+      setError(normalizeError(reason));
     } finally {
       if (active.current) setBusy(false);
     }
   }
 
   async function exportConfig() {
+    if (exportFlight.current) return;
+    exportFlight.current = true;
     setBusy(true);
     setError(null);
+    setMessage(null);
     try {
-      const json = await ipc("export_configuration");
-      const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = "socks-proxy-config.json";
-      anchor.click();
-      window.setTimeout(() => URL.revokeObjectURL(url), 0);
-      setMessage("已导出不含密码的配置；请妥善保管文件。");
+      const saved = await ipc("save_configuration");
+      if (active.current && saved) setMessage("已保存不含密码的配置；请妥善保管文件。");
     } catch (reason) {
-      setError(errorMessage(reason));
+      if (active.current) setError(normalizeError(reason));
     } finally {
+      exportFlight.current = false;
       if (active.current) setBusy(false);
     }
   }
 
   const importFlow = useConfigurationImport(async () => {
     setMessage("配置已导入；密码没有从导出文件恢复。");
-    await Promise.all([load(), refresh()]);
-  });
+    await load();
+  }, importConfiguration);
   const actionBusy = busy || importFlow.busy;
 
   const actionDetails = {
@@ -132,7 +143,7 @@ export default function SettingsPage() {
         setMessage(`已清理 ${count} 条运行时诊断。`);
         setPendingAction(null);
       } catch (reason) {
-        setError(errorMessage(reason));
+        setError(normalizeError(reason));
       } finally {
         if (active.current) setBusy(false);
       }
@@ -141,14 +152,14 @@ export default function SettingsPage() {
       setBusy(true);
       setError(null);
       try {
-        const result = await ipc("recover_network", { confirmed: true });
+        const result = await recoverNetwork();
         setMessage(
           `网络恢复检查完成：${new Date(result.completed_at_ms).toLocaleString()}。仅处理本应用可确认拥有的设置。`,
         );
         setPendingAction(null);
         await refresh();
       } catch (reason) {
-        setError(errorMessage(reason));
+        setError(normalizeError(reason));
       } finally {
         if (active.current) setBusy(false);
       }
@@ -166,11 +177,7 @@ export default function SettingsPage() {
 
       <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
-          {error && !pendingAction && (
-            <p role="alert" className="text-destructive">
-              {error}
-            </p>
-          )}
+          {error && !pendingAction && <ErrorAlert error={error} />}
           {message && (
             <p role="status" className="text-muted-foreground">
               {message}
@@ -279,16 +286,13 @@ export default function SettingsPage() {
             />
           </div>
 
+          <DiagnosticsCard />
           <AboutCard />
         </div>
       </div>
 
       <ConfigurationImportDialog flow={importFlow} />
-      {importFlow.error && !importFlow.open && (
-        <p role="alert" className="px-6 text-destructive">
-          {importFlow.error}
-        </p>
-      )}
+      {importFlow.error && !importFlow.open && <ErrorAlert error={importFlow.error} />}
       <Dialog
         open={pendingAction !== null}
         onOpenChange={(open) => !open && setPendingAction(null)}
@@ -303,11 +307,7 @@ export default function SettingsPage() {
                 <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                 <p>{activeAction.description}</p>
               </div>
-              {error && (
-                <p role="alert" className="px-6 pb-4 text-sm text-destructive">
-                  {error}
-                </p>
-              )}
+              {error && <ErrorAlert error={error} />}
               <DialogFooter className="border-t border-border px-6 py-4">
                 {activeAction.destructive && (
                   <Button variant="secondary" onClick={() => setPendingAction(null)}>

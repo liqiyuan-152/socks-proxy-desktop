@@ -54,7 +54,7 @@ impl CredentialStore for Arc<JournalCredentials> {
 }
 
 struct StagingFixture {
-    service: ConfigurationService,
+    service: ApplicationService,
     store: Arc<MemoryStore>,
     credentials: Arc<JournalCredentials>,
     runtime: Arc<FakeRuntime>,
@@ -70,7 +70,7 @@ impl StagingFixture {
             fail_cleanup: AtomicBool::new(false),
         });
         let runtime = Arc::new(FakeRuntime::default());
-        let service = ConfigurationService::new(
+        let service = ApplicationService::new(
             Box::new(store.clone()),
             Box::new(credentials.clone()),
             Box::new(Arc::new(MemoryStartup::default())),
@@ -229,7 +229,7 @@ fn legacy_reference_upgrade_preserves_secret_and_retry_after_rejected_commit() {
     fixture.service.upgrade_legacy_credentials().unwrap();
     assert_eq!(fixture.reference(), reference);
     assert_eq!(fixture.store.recovery_revision().unwrap(), revision);
-    let restarted = ConfigurationService::new(
+    let restarted = ApplicationService::new(
         Box::new(fixture.store.clone()),
         Box::new(fixture.credentials.clone()),
         Box::new(Arc::new(MemoryStartup::default())),
@@ -285,7 +285,7 @@ fn external_startup_change_retains_original_config_and_recovery_evidence() {
         store: fixture.store.clone(),
         value: Mutex::new(None),
     });
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(fixture.store.clone()),
         Box::new(fixture.credentials.clone()),
         Box::new(startup.clone()),

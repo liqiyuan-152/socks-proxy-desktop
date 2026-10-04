@@ -24,7 +24,7 @@ jobs:
         run: pnpm prepare:core
       - name: Static checks and frontend unit tests
         run: pnpm check
-      - name: Rust unit tests (without real core)
+      - name: Rust unit, integration, property and documentation tests (without real core)
         run: cargo test --manifest-path src-tauri/Cargo.toml --locked
       - name: Real-core gate regression tests
         run: node --test scripts/test-real-core-checks.mjs
@@ -36,3 +36,34 @@ jobs:
         run: pnpm build
       - name: Desktop build
         run: pnpm tauri:build:check
+
+  coverage:
+    runs-on: windows-latest
+    env:
+      RUST_TEST_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - uses: taiki-e/install-action@cargo-llvm-cov
+      - run: pnpm install --frozen-lockfile
+      - name: Frontend store coverage
+        run: pnpm test:coverage
+      - name: Rust unit and integration coverage
+        run: cargo llvm-cov --manifest-path src-tauri/Cargo.toml --locked --lcov --output-path rust-coverage.lcov
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-coverage-windows
+          path: |
+            rust-coverage.lcov
+            coverage/
+          if-no-files-found: error

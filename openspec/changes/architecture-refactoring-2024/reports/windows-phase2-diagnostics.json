@@ -1,0 +1,23 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "remote_directory": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004",
+  "snapshot_archive_sha256": "104f8c2f7f856663a49c06e3cc01ec8b3c1750aa8abbfbbd3cfff19ff7582922",
+  "scope": "phase2 diagnostics implementation and page migration; excludes later benchmark instrumentation only",
+  "status": "passed",
+  "completed_at": "2026-10-04T13:39:54.1136484+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 142,
+    "rust_tests": 198,
+    "rust_ignored": 6,
+    "rust_doc_tests": 2,
+    "real_core_preflight_tests": 2,
+    "real_core_version": "1.14.1",
+    "real_core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "manual_ui_acceptance": "not performed via SSH",
+  "credentials": "not retained"
+}

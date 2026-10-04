@@ -45,11 +45,43 @@ it("explains unfinished restoration and retries recovery only when supported", a
     return original(name, args);
   });
   render(<App />);
-  expect(await screen.findByRole("alert")).toHaveTextContent("应用不会覆盖外部修改");
+  expect(await screen.findByText(/应用不会覆盖外部修改/)).toHaveAttribute("role", "alert");
   expect(screen.queryByRole("button", { name: "重试模式切换" })).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "恢复系统代理" }));
   await waitFor(() =>
     expect(mocks.invoke).toHaveBeenCalledWith("recover_network", { confirmed: true }),
   );
   await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
+});
+
+it("retains typed failure context when snapshot repeats the same message", async () => {
+  const original = mocks.invoke.getMockImplementation()!;
+  mocks.invoke.mockImplementation((name: string, args: Record<string, unknown>) => {
+    if (name === "set_runtime_mode")
+      return Promise.reject({
+        code: "runtime_failed",
+        message: "内核健康检查失败",
+        fields: [],
+        context: {
+          error_id: "runtime-error-42",
+          timestamp_ms: 1,
+          domain: "runtime",
+          kind: "health_check",
+          recovery_suggestion: "检查本地内核后重试",
+        },
+      });
+    if (name === "get_runtime_snapshot")
+      return Promise.resolve({
+        ...runtime(),
+        last_operation: { id: 2, outcome: "failed", error: "内核健康检查失败" },
+        last_error: "内核健康检查失败",
+      });
+    return original(name, args);
+  });
+  render(<App />);
+  await screen.findByRole("button", { name: "重试模式切换" });
+  fireEvent.click(screen.getByRole("button", { name: "重试模式切换" }));
+  expect(await screen.findByText("错误编号：runtime-error-42")).toBeInTheDocument();
+  expect(screen.getByText("检查本地内核后重试")).toBeInTheDocument();
+  expect(screen.getAllByRole("alert")).toHaveLength(1);
 });

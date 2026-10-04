@@ -16,6 +16,9 @@ use tauri::{
     WebviewWindowBuilder,
 };
 
+#[path = "ipc_benchmark_tests.rs"]
+mod benchmarks;
+
 struct Credentials;
 impl CredentialStore for Credentials {
     fn get(&self, _: &str) -> CommandResult<Option<ProxyCredential>> {
@@ -122,7 +125,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     )
     .unwrap();
     let startup = Arc::new(Startup(AtomicBool::new(false)));
-    let service = Arc::new(ConfigurationService::new(
+    let service = Arc::new(ApplicationService::new(
         Box::new(store.clone()),
         Box::new(Credentials),
         Box::new(startup.clone()),
@@ -187,7 +190,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     assert!(created.get("password").is_none());
     assert_eq!(
         invoke("get_profile_credential", json!({ "id": id })).unwrap_err()["code"],
-        "unavailable"
+        "credential_error"
     );
     let invalid = invoke(
         "save_profile",
@@ -199,6 +202,16 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     .unwrap_err();
     assert_eq!(invalid["code"], "validation_error");
     assert_eq!(invalid["fields"][0]["field"], "profiles[1].host");
+    assert_eq!(invalid["context"]["domain"], "validation");
+    assert_eq!(invalid["context"]["kind"], "validation_failed");
+    assert_eq!(invalid["context"]["operation"], "save_profile");
+    assert!(uuid::Uuid::parse_str(invalid["context"]["error_id"].as_str().unwrap()).is_ok());
+    assert!(invalid["context"]["timestamp_ms"].as_u64().unwrap() > 0);
+    assert!(invalid["context"]["recovery_suggestion"]
+        .as_str()
+        .unwrap()
+        .contains("字段"));
+    assert!(invalid["context"].get("stack").is_none());
     assert_eq!(
         invoke("list_profiles", json!({}))
             .unwrap()
@@ -253,14 +266,20 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
         json!({"filter": error_filter, "offset": 0, "limit": 10}),
     )
     .unwrap();
-    assert_eq!(failure["total"], 1);
+    assert_eq!(failure["total"], 2);
+    let recorded: Value =
+        serde_json::from_str(failure["items"][0]["summary"].as_str().unwrap()).unwrap();
+    assert_eq!(recorded["context"]["domain"], "runtime");
+    assert_eq!(recorded["context"]["operation"], "set_runtime_mode");
+    assert_eq!(recorded["context"]["error_id"], failure["items"][0]["id"]);
+    assert!(recorded["stack"].is_array());
     assert!(failure["items"][0]["summary"]
         .as_str()
         .unwrap()
         .contains("切换至规则代理失败"));
     backend.reject_stop.store(true, Ordering::SeqCst);
     let failed = invoke("delete_profile", json!({ "id": id })).unwrap_err();
-    assert_eq!(failed["code"], "validation_error");
+    assert_eq!(failed["code"], "proxy_in_use");
     assert_eq!(failed["fields"][0]["field"], "rules[0].proxy_profile_id");
     assert_eq!(
         invoke("get_runtime_snapshot", json!({})).unwrap()["applied_mode"],
@@ -315,7 +334,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "offset": 0, "limit": 10})
         )
         .unwrap()["total"],
-        2
+        8
     );
     assert_eq!(
         invoke(
@@ -327,6 +346,8 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     );
     store
         .record_diagnostic(&crate::store::RuntimeDiagnostic {
+            error_type: None,
+            operation: None,
             id: "restart-event".into(),
             created_at_ms: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
@@ -342,7 +363,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "offset": 0, "limit": 10})
         )
         .unwrap()["total"],
-        3
+        10
     );
     assert_eq!(
         invoke(
@@ -350,7 +371,7 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
             json!({"filter": filter, "confirmed": true})
         )
         .unwrap(),
-        3
+        10
     );
 
     let replacement = invoke(

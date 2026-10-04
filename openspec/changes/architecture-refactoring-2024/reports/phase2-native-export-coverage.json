@@ -1,0 +1,104 @@
+{
+  "scope": "diagnostics, native file persistence, migration, application boundary and IPC",
+  "platform": "macOS aarch64",
+  "rust_tests_passed": 191,
+  "line_count": 868,
+  "covered_lines": 759,
+  "line_coverage_percent": 87.44239631336406,
+  "limitations": [
+    "native chooser success/cancel not exercised by CLI; desktop acceptance remains pending"
+  ],
+  "files": [
+    {
+      "file": "ipc.rs",
+      "lines": {
+        "count": 277,
+        "covered": 191,
+        "percent": 68.95306859205776
+      },
+      "functions": {
+        "count": 109,
+        "covered": 66,
+        "percent": 60.550458715596335
+      }
+    },
+    {
+      "file": "services/application_diagnostics.rs",
+      "lines": {
+        "count": 91,
+        "covered": 88,
+        "percent": 96.7032967032967
+      },
+      "functions": {
+        "count": 8,
+        "covered": 8,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "services/application_errors.rs",
+      "lines": {
+        "count": 73,
+        "covered": 70,
+        "percent": 95.8904109589041
+      },
+      "functions": {
+        "count": 4,
+        "covered": 4,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "services/diagnostic_export.rs",
+      "lines": {
+        "count": 76,
+        "covered": 74,
+        "percent": 97.36842105263156
+      },
+      "functions": {
+        "count": 10,
+        "covered": 8,
+        "percent": 80.0
+      }
+    },
+    {
+      "file": "store_diagnostic_report.rs",
+      "lines": {
+        "count": 56,
+        "covered": 53,
+        "percent": 94.64285714285714
+      },
+      "functions": {
+        "count": 7,
+        "covered": 4,
+        "percent": 57.14285714285714
+      }
+    },
+    {
+      "file": "store_diagnostics.rs",
+      "lines": {
+        "count": 172,
+        "covered": 163,
+        "percent": 94.76744186046513
+      },
+      "functions": {
+        "count": 23,
+        "covered": 16,
+        "percent": 69.56521739130434
+      }
+    },
+    {
+      "file": "store_migrations.rs",
+      "lines": {
+        "count": 123,
+        "covered": 120,
+        "percent": 97.5609756097561
+      },
+      "functions": {
+        "count": 12,
+        "covered": 12,
+        "percent": 100.0
+      }
+    }
+  ]
+}

@@ -326,3 +326,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "system_proxy_live_tests.rs"]
+mod live_tests;

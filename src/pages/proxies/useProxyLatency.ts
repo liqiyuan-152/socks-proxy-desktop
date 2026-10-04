@@ -1,11 +1,13 @@
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { errorMessage, type ProxyProfile } from "@/lib/backend";
+import { type ProxyProfile } from "@/lib/backend";
 
 import { createLatencyRequest } from "./latencyTask";
 
-type LatencyState = { latency?: number; error?: string; at?: number; pending?: boolean };
+type LatencyState = { latency?: number; error?: AppError; at?: number; pending?: boolean };
 
 export function useProxyLatency(profiles: ProxyProfile[], available = true) {
   const [results, setResults] = useState<Record<string, LatencyState>>({});
@@ -133,12 +135,12 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
         }
       } catch (reason) {
         if (active.current && tokens.current.get(id) === token) {
-          const message = errorMessage(reason);
+          const error = normalizeError(reason);
           setResults((current) => ({
             ...current,
-            [id]: { error: message, at: Date.now() },
+            [id]: { error, at: Date.now() },
           }));
-          toast.error(`${name} 延迟测试失败：${message}`, { id: toastId });
+          toast.error(`${name} 延迟测试失败：${error.message}`, { id: toastId });
         }
       } finally {
         if (tokens.current.get(id) === token) requests.current.delete(id);

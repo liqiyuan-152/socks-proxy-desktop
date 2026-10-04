@@ -1,0 +1,6 @@
+{
+  "identifier": "com.socksproxy.desktop.architecture-e2e",
+  "build": {
+    "beforeBuildCommand": "pnpm prepare:core && pnpm build"
+  }
+}

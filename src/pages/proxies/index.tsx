@@ -1,4 +1,6 @@
-import { ipc } from "@/lib/ipc";
+import { ErrorAlert } from "@/components/ErrorAlert";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { useState } from "react";
 import { Circle, CircleDot, Edit3, Timer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,21 +14,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { errorMessage, type BackendError, type ProxyProfile } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-state";
+import { type ProxyProfile } from "@/lib/backend";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { ProxyFormDialog } from "./ProxyFormDialog";
 import { ProxyStatus } from "./ProxyStatus";
 import { ProxyToolbar } from "./ProxyToolbar";
 import { useProxyLatency } from "./useProxyLatency";
 import { LatencyCell } from "./LatencyCell";
 import { useProxyEditor } from "./useProxyEditor";
+import { ConfirmDeletionDialog } from "@/components/ConfirmDeletionDialog";
 
 export default function ProxyList() {
-  const { profiles, snapshot, refresh, loading, capabilities } = useBackend();
+  const {
+    profiles,
+    snapshot,
+    loading,
+    capabilities,
+    deleteProfile,
+    selectProfile,
+    saveProfile: persistProfile,
+  } = useBackendStore(
+    useShallow((state) => ({
+      profiles: state.profiles,
+      snapshot: state.snapshot,
+      loading: state.loading,
+      capabilities: state.capabilities,
+      deleteProfile: state.deleteProfile,
+      selectProfile: state.selectProfile,
+      saveProfile: state.saveProfile,
+    })),
+  );
   const [search, setSearch] = useState("");
   const [protocolFilter, setProtocolFilter] = useState("all");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [busy, setBusy] = useState(false);
+  const [deletingProxy, setDeletingProxy] = useState<ProxyProfile | null>(null);
   const latency = useProxyLatency(profiles, capabilities?.proxy_latency ?? false);
   const {
     dialogOpen,
@@ -48,7 +71,7 @@ export default function ProxyList() {
     busy,
     setBusy,
     setError,
-    refresh,
+    persistProfile,
     clearLatency: latency.clear,
   });
 
@@ -65,15 +88,16 @@ export default function ProxyList() {
     setError(null);
     try {
       if (commandName === "delete_profile") {
-        if (id === null) return;
-        await ipc("delete_profile", { id });
+        if (id === null) return false;
+        await deleteProfile(id);
       } else {
-        await ipc("select_profile", { id });
+        await selectProfile(id);
       }
       if (commandName === "delete_profile" && id) latency.clear(id);
-      await refresh();
+      return true;
     } catch (reason) {
-      setError(errorMessage(reason));
+      setError(normalizeError(reason));
+      return false;
     } finally {
       setBusy(false);
     }
@@ -83,26 +107,19 @@ export default function ProxyList() {
     setBusy(true);
     setError(null);
     try {
-      await ipc("save_profile", {
-        input: {
-          id: proxy.id,
-          name: proxy.name,
-          protocol: proxy.protocol,
-          host: proxy.host,
-          port: proxy.port,
-          authentication_enabled: proxy.authentication_enabled,
-          enabled,
-          credential: { action: "preserve" },
-        },
+      await persistProfile({
+        id: proxy.id,
+        name: proxy.name,
+        protocol: proxy.protocol,
+        host: proxy.host,
+        port: proxy.port,
+        authentication_enabled: proxy.authentication_enabled,
+        enabled,
+        credential: { action: "preserve" },
       });
       latency.clear(proxy.id);
-      await refresh();
     } catch (reason) {
-      const typed = reason as Partial<BackendError>;
-      setError(
-        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
-          errorMessage(reason),
-      );
+      setError(normalizeError(reason));
     } finally {
       setBusy(false);
     }
@@ -142,11 +159,7 @@ export default function ProxyList() {
               取消默认代理
             </Button>
           )}
-          {error && (
-            <p role="alert" className="text-destructive">
-              {error}
-            </p>
-          )}
+          {error && !dialogOpen && !deletingProxy && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载代理档案…</p>}
 
           <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
@@ -264,9 +277,8 @@ export default function ProxyList() {
                             aria-label={`删除${proxy.name}`}
                             disabled={busy}
                             onClick={() => {
-                              if (window.confirm(`确认删除代理「${proxy.name}」？`)) {
-                                void changeProfile("delete_profile", proxy.id);
-                              }
+                              setError(null);
+                              setDeletingProxy(proxy);
                             }}
                           >
                             <Trash2 className="size-4" aria-hidden="true" />
@@ -289,6 +301,15 @@ export default function ProxyList() {
         </div>
       </div>
 
+      {deletingProxy && (
+        <ConfirmDeletionDialog
+          name={deletingProxy.name}
+          resource="代理"
+          error={error}
+          onCancel={() => setDeletingProxy(null)}
+          onConfirm={() => changeProfile("delete_profile", deletingProxy.id)}
+        />
+      )}
       <ProxyFormDialog
         open={dialogOpen}
         onOpenChange={(open) => {
@@ -296,6 +317,7 @@ export default function ProxyList() {
         }}
         isEditing={isEditing}
         busy={busy || credentialLoading || !!credentialError}
+        error={error}
         credentialLoading={credentialLoading}
         credentialError={credentialError}
         onRetryCredential={() => {

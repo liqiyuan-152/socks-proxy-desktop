@@ -231,6 +231,7 @@ fn backend_error() -> AppError {
         code: "runtime_error".into(),
         message: "受管内核会话状态不一致".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

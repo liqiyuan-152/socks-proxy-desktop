@@ -134,7 +134,7 @@ impl StartupAdapter for FailingStartupRestore {
 #[test]
 fn failed_startup_rollback_does_not_skip_runtime_rollback() {
     let mut fixture = Fixture::new();
-    fixture.service = ConfigurationService::new(
+    fixture.service = ApplicationService::new(
         Box::new(fixture.store.clone()),
         Box::new(fixture.credentials.clone()),
         Box::new(FailingStartupRestore(fixture.startup.clone())),

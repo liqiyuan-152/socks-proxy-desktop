@@ -90,5 +90,6 @@ pub(crate) fn recovery_error() -> AppError {
         code: "configuration_recovery".into(),
         message: "配置恢复记录不一致，请保留数据并检查恢复状态".into(),
         fields: Vec::new(),
+        context: None,
     }
 }

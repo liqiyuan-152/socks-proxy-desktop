@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "application": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004\\src-tauri\\target\\debug\\socks-proxy.exe",
+  "application_identifier": "com.socksproxy.desktop.architecture-e2e",
+  "webdriver": {
+    "driver_version": "2.1.0",
+    "tauri_driver": "C:\\Users\\lqy15\\.cargo\\bin\\tauri-driver.exe",
+    "edge_version": "154.0.4258.53",
+    "native_driver": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004\\.e2e-tools\\msedgedriver.exe",
+    "native_driver_sha256": "008115b68b38437b1c0138f3cced648f61f333cf4623a9895296e7c1c01abcb8",
+    "signature": "Microsoft Corporation / Valid",
+    "documentation": "https://v2.tauri.app/develop/tests/webdriver/manual-setup/"
+  },
+  "server_response": {
+    "value": {
+      "build": {
+        "version": "154.0.4258.53 (5af6e80f702cffe10645c6d6433668f011b739be)"
+      },
+      "message": "msedgedriver ready for new sessions.",
+      "os": {
+        "arch": "x86_64",
+        "name": "Windows NT",
+        "version": "10.0.26200"
+      },
+      "ready": true
+    }
+  },
+  "ui_session_created": false,
+  "scope": "官方驱动与原生隔离应用构建；只验证服务就绪，不等同用户 E2E 场景"
+}

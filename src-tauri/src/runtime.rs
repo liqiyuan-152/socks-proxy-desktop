@@ -1,3 +1,4 @@
+use crate::runtime_state_machine::{ActiveSession, RuntimeEvent, RuntimeStateNode};
 use crate::{
     error::AppError,
     models::{PersistedConfiguration, RuntimeMode},
@@ -118,7 +119,7 @@ struct PendingConfiguration {
     mode: RuntimeMode,
     explicit_stop: bool,
     session: Option<BackendSession>,
-    started_at: Option<Instant>,
+    previous_node: RuntimeStateNode,
     credential_versions: HashMap<String, String>,
     runtime_plan_revision: u64,
 }
@@ -138,18 +139,38 @@ struct RuntimeState {
     credential_versions: HashMap<String, String>,
     selected_mode: RuntimeMode,
     desired_mode: RuntimeMode,
-    applied_mode: Option<RuntimeMode>,
-    phase: RuntimePhase,
-    session_health: SessionHealth,
+    node: RuntimeStateNode,
+    history: history::TransitionHistory,
     last_operation: OperationResult,
-    session: Option<BackendSession>,
-    started_at: Option<Instant>,
     last_error: Option<String>,
     pending: Option<PendingConfiguration>,
     pending_settings: Option<PendingMetadata>,
 }
 
 impl RuntimeState {
+    fn apply_event(&mut self, event: RuntimeEvent) -> Result<(), AppError> {
+        let from = self.node.phase();
+        let result = self.node.transition(event.clone());
+        let to = result.as_ref().map_or(from, RuntimeStateNode::phase);
+        self.history
+            .record(self.last_operation.id, from, to, &event, result.is_ok());
+        self.node = result.map_err(AppError::from)?;
+        Ok(())
+    }
+
+    fn session(&self) -> Option<&BackendSession> {
+        self.node.active().map(|active| &active.session)
+    }
+
+    fn commit_session(&mut self, explicit_stop: bool) -> Result<(), AppError> {
+        let event = if self.node.phase() == RuntimePhase::Recovering {
+            RuntimeEvent::RecoverySucceeded { explicit_stop }
+        } else {
+            RuntimeEvent::HealthCheckPassed
+        };
+        self.apply_event(event)
+    }
+
     fn begin_operation(&mut self) {
         self.last_operation = OperationResult {
             id: self.last_operation.id + 1,
@@ -168,7 +189,7 @@ impl RuntimeState {
         self.last_operation.outcome = OperationOutcome::Succeeded;
         self.last_operation.error = None;
         if matches!(
-            self.session_health,
+            self.node.health(),
             SessionHealth::Healthy | SessionHealth::Inactive
         ) {
             self.last_error = None;
@@ -176,37 +197,41 @@ impl RuntimeState {
     }
 
     fn snapshot(&self) -> RuntimeSnapshot {
-        let system_proxy_enabled = self
-            .session
-            .as_ref()
-            .is_some_and(|run| run.system_proxy_enabled);
+        let active = self.node.active();
+        let system_proxy_enabled = active.is_some_and(|run| run.session.system_proxy_enabled);
         RuntimeSnapshot {
             revision: self.revision,
             configuration_revision: self.configuration_revision,
             runtime_plan_revision: self.runtime_plan_revision,
             selected_mode: self.selected_mode,
             desired_mode: self.desired_mode,
-            applied_mode: self.applied_mode,
-            phase: self.phase,
-            session_health: self.session_health,
+            applied_mode: self.node.applied_mode(),
+            phase: self.node.phase(),
+            session_health: self.node.health(),
             last_operation: self.last_operation.clone(),
             active_profile_id: self.configuration.active_profile_id.clone(),
-            runtime_uptime_ms: self
-                .started_at
-                .map(|start| start.elapsed().as_millis() as u64),
+            runtime_uptime_ms: active.map(|run| run.started_at.elapsed().as_millis() as u64),
             system_proxy_enabled,
-            tun_enabled: self.session.as_ref().is_some_and(|run| run.tun_enabled),
+            tun_enabled: active.is_some_and(|run| run.session.tun_enabled),
             coverage: if system_proxy_enabled {
                 TrafficCoverage::SystemProxyApps
             } else {
                 TrafficCoverage::None
             },
-            last_error: self.last_error.clone(),
+            last_error: self
+                .last_error
+                .clone()
+                .or_else(|| self.node.last_error().map(str::to_owned)),
         }
     }
 }
 
 pub trait RuntimeCoordinator: Send + Sync {
+    /// 有界脱敏的转换历史；不支持历史的适配器返回空集合。
+    fn transition_history(&self) -> Vec<TransitionRecord> {
+        Vec::new()
+    }
+
     fn snapshot(&self) -> RuntimeSnapshot;
     fn report_configuration_recovery_issue(&self, _: &AppError) {}
     fn active_connections(&self) -> ActiveConnectionsSnapshot {
@@ -242,3 +267,7 @@ pub trait RuntimeCoordinator: Send + Sync {
 #[path = "runtime_manager.rs"]
 mod manager;
 pub use manager::ManagedRuntime;
+
+#[path = "runtime_transition_history.rs"]
+mod history;
+pub use history::TransitionRecord;

@@ -1,5 +1,7 @@
+import type { AppError } from "@/lib/generated/ipc";
+import { errorDetails, recoverySuggestion } from "@/lib/error-handler";
 type Props = {
-  result?: { latency?: number; error?: string; at?: number; pending?: boolean };
+  result?: { latency?: number; error?: AppError; at?: number; pending?: boolean };
 };
 
 export function LatencyCell({ result }: Props) {
@@ -12,7 +14,7 @@ export function LatencyCell({ result }: Props) {
         : "—";
   const detail =
     result?.at !== undefined
-      ? `${result.error ?? "测试完成"} · ${new Date(result.at).toLocaleString()}`
+      ? `${result.error ? `${errorDetails(result.error)} · ${recoverySuggestion(result.error)}${result.error.context ? ` · 错误编号：${result.error.context.error_id}` : ""}` : "测试完成"} · ${new Date(result.at).toLocaleString()}`
       : undefined;
   const color = result?.error
     ? "text-destructive"

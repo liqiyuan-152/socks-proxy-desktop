@@ -1,0 +1,269 @@
+{
+  "scope": "配置加载稳态基准，3 轮顺序基线/当前配对，每轮 100 次预热、1000 次测量，临时 SQLite、10 个无认证代理档案，无并行本地编译负载",
+  "platform": "macOS aarch64",
+  "build": "debug",
+  "baseline_revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+  "current_revision": "refactoring-v1 0.2.0 未提交工作区",
+  "configuration_load": {
+    "baseline_median_us": 58.0,
+    "current_median_us": 56.875,
+    "change_percent": -1.93965517241379
+  },
+  "runs": [
+    {
+      "baseline": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 364.334,
+          "median_us": 58.417,
+          "min_us": 53.708,
+          "p95_us": 81.75,
+          "samples": 1000
+        },
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 599.417,
+          "median_us": 437.916,
+          "min_us": 378.29200000000003,
+          "p95_us": 534.959,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+        "tauri_command_dispatch": {
+          "max_us": 330.583,
+          "median_us": 220.5,
+          "min_us": 197.375,
+          "p95_us": 268.791,
+          "samples": 100
+        }
+      },
+      "current": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 154.875,
+          "median_us": 56.875,
+          "min_us": 53.708,
+          "p95_us": 70.209,
+          "samples": 1000
+        },
+        "json_tracing_enabled": true,
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 1030.292,
+          "median_us": 649.791,
+          "min_us": 546.0,
+          "p95_us": 876.875,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "refactoring-v1-0.2.0-working-tree",
+        "successful_profile_save": {
+          "max_us": 3289.75,
+          "median_us": 2338.4170000000004,
+          "min_us": 1842.917,
+          "p95_us": 2800.75,
+          "samples": 100
+        },
+        "successful_rule_save": {
+          "max_us": 3423.708,
+          "median_us": 2182.916,
+          "min_us": 1817.875,
+          "p95_us": 2710.708,
+          "samples": 100
+        },
+        "tauri_command_dispatch": {
+          "max_us": 586.8330000000001,
+          "median_us": 292.041,
+          "min_us": 257.959,
+          "p95_us": 431.625,
+          "samples": 100
+        }
+      }
+    },
+    {
+      "baseline": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 251.084,
+          "median_us": 58.0,
+          "min_us": 53.25,
+          "p95_us": 71.29199999999999,
+          "samples": 1000
+        },
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 979.4999999999999,
+          "median_us": 428.25,
+          "min_us": 366.91700000000003,
+          "p95_us": 554.7090000000001,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+        "tauri_command_dispatch": {
+          "max_us": 447.125,
+          "median_us": 215.0,
+          "min_us": 194.166,
+          "p95_us": 299.083,
+          "samples": 100
+        }
+      },
+      "current": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 564.834,
+          "median_us": 59.458,
+          "min_us": 54.5,
+          "p95_us": 89.208,
+          "samples": 1000
+        },
+        "json_tracing_enabled": true,
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 982.583,
+          "median_us": 635.875,
+          "min_us": 477.541,
+          "p95_us": 873.542,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "refactoring-v1-0.2.0-working-tree",
+        "successful_profile_save": {
+          "max_us": 3073.166,
+          "median_us": 2342.958,
+          "min_us": 1860.542,
+          "p95_us": 2793.25,
+          "samples": 100
+        },
+        "successful_rule_save": {
+          "max_us": 2902.958,
+          "median_us": 2178.333,
+          "min_us": 1772.75,
+          "p95_us": 2541.8340000000003,
+          "samples": 100
+        },
+        "tauri_command_dispatch": {
+          "max_us": 581.8340000000001,
+          "median_us": 287.042,
+          "min_us": 232.458,
+          "p95_us": 370.292,
+          "samples": 100
+        }
+      }
+    },
+    {
+      "baseline": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 276.25,
+          "median_us": 56.208,
+          "min_us": 53.5,
+          "p95_us": 68.708,
+          "samples": 1000
+        },
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 929.917,
+          "median_us": 426.166,
+          "min_us": 368.75,
+          "p95_us": 586.542,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+        "tauri_command_dispatch": {
+          "max_us": 319.625,
+          "median_us": 216.583,
+          "min_us": 194.95800000000003,
+          "p95_us": 294.834,
+          "samples": 100
+        }
+      },
+      "current": {
+        "architecture": "aarch64",
+        "build": "debug",
+        "configuration_load": {
+          "max_us": 227.375,
+          "median_us": 56.583,
+          "min_us": 53.5,
+          "p95_us": 70.16600000000001,
+          "samples": 1000
+        },
+        "json_tracing_enabled": true,
+        "limitations": [
+          "测试宿主初始化不包含原生窗口、托盘或真实内核启动",
+          "IPC 采样不包含 WebView JavaScript 往返",
+          "未测量 Windows 系统代理接管"
+        ],
+        "mock_application_bootstrap": {
+          "max_us": 957.0,
+          "median_us": 617.0830000000001,
+          "min_us": 471.0,
+          "p95_us": 747.583,
+          "samples": 100
+        },
+        "platform": "macos",
+        "profile_count": 10,
+        "revision": "refactoring-v1-0.2.0-working-tree",
+        "successful_profile_save": {
+          "max_us": 3159.7909999999997,
+          "median_us": 2289.292,
+          "min_us": 1865.958,
+          "p95_us": 2784.041,
+          "samples": 100
+        },
+        "successful_rule_save": {
+          "max_us": 3098.6659999999997,
+          "median_us": 2159.375,
+          "min_us": 1836.083,
+          "p95_us": 2627.833,
+          "samples": 100
+        },
+        "tauri_command_dispatch": {
+          "max_us": 610.417,
+          "median_us": 279.459,
+          "min_us": 227.917,
+          "p95_us": 345.583,
+          "samples": 100
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "配置基准不包含 GUI、WebView 或原生进程启动",
+    "Rust 分发附带数据不作为 JavaScript IPC 往返证明",
+    "当前启用默认 info 结构化异步日志，基线保持原行为",
+    "不是 Windows 配置基准或真实系统代理接管测试"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "platform": "macOS aarch64",
+  "build": "debug",
+  "application_identifier": "com.socksproxy.desktop.refactor-validation",
+  "measurement": "Rust run 入口至初始数据可用、页面挂载并跨两个可见帧后 Rust 收到就绪确认",
+  "clock": "Rust Instant 单调时钟，前端不提供时间参数",
+  "sample": {
+    "timestamp": "2026-10-04T08:20:20.572219Z",
+    "level": "INFO",
+    "fields": {
+      "message": "native frontend ready",
+      "operation": "startup_frontend_ready",
+      "elapsed_ms": 1011.5228329999999
+    },
+    "target": "performance"
+  },
+  "validation": [
+    "CUA 启动最新原生 bundle 并观察加载提示转为完整状态页",
+    "每个原生进程仅接收首个就绪确认",
+    "并发确认和实际 MockRuntime IPC 幂等测试通过",
+    "前端两帧、隐藏恢复、卸载取消、浏览器跳过与失败隔离测试通过"
+  ],
+  "limitations": [
+    "单次样本，不能证明启动不超过基线 +10%",
+    "不包含操作系统创建进程耗时，也不是实际像素首绘",
+    "不是 Windows 原生启动测量"
+  ]
+}

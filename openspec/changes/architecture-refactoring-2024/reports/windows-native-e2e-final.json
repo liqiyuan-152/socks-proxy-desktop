@@ -1,0 +1,38 @@
+﻿{
+  "status": "passed",
+  "platform": "Windows x64",
+  "native_ui": true,
+  "application_identifier": "com.socksproxy.desktop.architecture-e2e",
+  "application_sha256": "5cb02795c27e0a4a43486290fbf827ef3ff54056903248f61ca21e55cf63da4b",
+  "suite": "journey",
+  "assisted_native_save": true,
+  "cases": [
+    {
+      "name": "4.5.2 添加代理并启动规则模式",
+      "status": "passed",
+      "screenshot": "case-1.png"
+    },
+    {
+      "name": "4.5.3 路由规则和国内直连",
+      "status": "passed",
+      "screenshot": "case-2.png"
+    },
+    {
+      "name": "4.5.4 原生保存与配置导入往返（人工保存检查点）",
+      "status": "passed",
+      "screenshot": "case-3.png"
+    },
+    {
+      "name": "4.5.5 用户网络恢复",
+      "status": "passed",
+      "screenshot": "case-4.png"
+    }
+  ],
+  "limitations": [
+    "测试使用合成本地 HTTP 上游，不证明公网可达性",
+    "原生保存窗口由操作员完成",
+    "进程崩溃自动恢复及长时 UI 稳定性另行验收"
+  ],
+  "cleanup": "network recovery through native UI completed",
+  "user_proxy_restored": true
+}

@@ -1,0 +1,26 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "snapshot_archive_sha256": "9e17e81f28154e56375e77e1834ffe1093a182bef92be2645afb70a631bc3695",
+  "scope": "配置恢复集成测试、异步追踪、指标、诊断搜索与追踪身份、诊断工具",
+  "status": "passed",
+  "completed_at": "2026-10-04T15:42:02.3282615+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 150,
+    "rust_unit_tests": 235,
+    "rust_ignored": 7,
+    "integration_tests": 10,
+    "rust_doc_tests": 2,
+    "flamegraph_example_tests": 1,
+    "log_query_tests": 3,
+    "real_core_version": "1.14.1",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "limitations": [
+    "尚未验证 Windows 原生用户界面、保存对话框和系统代理接管",
+    "不包含后续真实用户代理显式测试和本地文档收尾"
+  ],
+  "credentials": "未保存"
+}

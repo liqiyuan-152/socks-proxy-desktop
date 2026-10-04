@@ -11,6 +11,8 @@ fn filters_pages_and_clears_only_confirmed_diagnostics() {
     ] {
         store
             .record_diagnostic(&RuntimeDiagnostic {
+                error_type: None,
+                operation: None,
                 id: id.into(),
                 created_at_ms,
                 severity: severity.into(),
@@ -22,6 +24,7 @@ fn filters_pages_and_clears_only_confirmed_diagnostics() {
         from_ms: Some(at - 2_500),
         until_ms: Some(at),
         severity: None,
+        search: None,
     };
     let first = store.list_diagnostics(&filter, 0, 1).unwrap();
     assert_eq!(first.total, 2);
@@ -51,6 +54,7 @@ fn rejects_invalid_filters_and_retains_permanent_cap() {
         from_ms: Some(5),
         until_ms: Some(5),
         severity: None,
+        search: None,
     };
     assert!(store.list_diagnostics(&invalid, 0, 10).is_err());
     assert!(store.clear_diagnostics(&invalid, true).is_err());
@@ -62,4 +66,22 @@ fn rejects_invalid_filters_and_retains_permanent_cap() {
     assert!(store
         .list_diagnostics(&DiagnosticFilter::default(), 0, 101)
         .is_err());
+}
+
+#[test]
+fn invalid_severity_is_rejected_before_any_record_is_written() -> Result<(), AppError> {
+    let store = SqliteConfigurationStore::open_in_memory()?;
+    let error = store
+        .record_diagnostic(&RuntimeDiagnostic {
+            id: "invalid".into(),
+            created_at_ms: now_ms()?,
+            severity: "success".into(),
+            summary: "invalid severity".into(),
+            error_type: None,
+            operation: None,
+        })
+        .expect_err("invalid diagnostic severity");
+    assert_eq!(error.code, "unavailable");
+    assert_eq!(store.diagnostic_count()?, 0);
+    Ok(())
 }

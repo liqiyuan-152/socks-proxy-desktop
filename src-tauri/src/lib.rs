@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod application_latency_lifecycle_tests;
 mod capabilities;
 mod china_rules;
 #[cfg(test)]
@@ -5,12 +7,13 @@ mod china_rules_tests;
 #[cfg(test)]
 mod configuration_crash_tests;
 mod configuration_recovery;
-mod configuration_service;
 mod configuration_startup_recovery;
 #[cfg(any(windows, test))]
 mod core_control;
 mod credentials;
+pub mod domain_errors;
 mod error;
+pub mod error_context;
 mod ipc;
 #[cfg(test)]
 mod ipc_contract;
@@ -22,15 +25,22 @@ mod latency;
 mod latency_tasks;
 mod models;
 mod observability;
+pub mod performance_metrics;
 mod route_test;
 mod routing;
 mod rule_match_process;
 mod runtime;
+#[cfg(all(test, windows))]
+mod runtime_crash_tests;
 mod runtime_events;
 mod runtime_plan;
 mod runtime_session;
+#[cfg(test)]
+mod runtime_soak_tests;
+pub mod runtime_state_machine;
 #[cfg(not(windows))]
 mod runtime_unavailable;
+pub mod services;
 #[cfg(any(windows, test))]
 mod sing_box_backend;
 #[cfg(any(windows, test))]
@@ -42,6 +52,7 @@ mod sing_box_windows_acl;
 #[cfg(windows)]
 mod sing_box_windows_job;
 mod startup;
+mod startup_metrics;
 mod store;
 #[cfg(any(windows, test))]
 mod system_proxy;
@@ -49,15 +60,18 @@ mod system_proxy;
 mod system_proxy_windows;
 #[cfg(test)]
 mod test_core;
+mod trace_writer;
+mod tracing_setup;
 mod transfer;
 mod tray;
 
-use configuration_service::ConfigurationService;
 use credentials::OsCredentialStore;
-use runtime::{ManagedRuntime, RuntimeBackend};
+use runtime::RuntimeBackend;
+pub use runtime::{ManagedRuntime, TransitionRecord};
 use runtime_session::{SessionLease, RUNTIME_SESSION_KEY};
 #[cfg(not(windows))]
 use runtime_unavailable::UnavailableRuntimeBackend;
+use services::ApplicationService;
 use startup::SystemStartupAdapter;
 use std::sync::Arc;
 use store::{ConfigurationStore, SqliteConfigurationStore};
@@ -103,9 +117,13 @@ fn windows_backend<R: tauri::Runtime>(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let bootstrap_started = std::time::Instant::now();
     tauri::Builder::default()
+        .manage(startup_metrics::StartupMetrics::new(bootstrap_started))
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             capabilities::get_capabilities,
+            startup_metrics::acknowledge_frontend_ready,
             ipc::list_profiles,
             ipc::get_profile_credential,
             ipc_latency::test_proxy_latency,
@@ -124,30 +142,29 @@ pub fn run() {
             ipc::test_route,
             ipc::update_settings,
             ipc::export_configuration,
+            ipc::save_configuration,
             ipc::import_configuration,
             ipc::get_runtime_snapshot,
+            ipc::export_runtime_snapshot,
+            ipc::validate_configuration,
             ipc::set_runtime_mode,
             ipc::stop_runtime,
             ipc::recover_network,
             ipc::get_active_connections,
             ipc::copy_active_connection_detail,
             ipc::get_runtime_diagnostics,
+            ipc::get_diagnostic_groups,
+            ipc::export_runtime_diagnostics,
+            ipc::save_runtime_diagnostics,
             ipc::clear_runtime_diagnostics,
             ipc::get_connection_history,
         ])
-        .setup(|app| {
-            if cfg!(debug_assertions) {
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-            }
-
+        .setup(move |app| {
             // Claim the per-session runtime before opening or migrating any state.
             let ownership = SessionLease::acquire(RUNTIME_SESSION_KEY)?;
             let app_data = app.path().app_data_dir()?;
             std::fs::create_dir_all(&app_data)?;
+            app.manage(tracing_setup::initialize(&app_data.join("logs")));
             let store = Arc::new(SqliteConfigurationStore::open(
                 app_data.join("config.sqlite3"),
             )?);
@@ -176,7 +193,7 @@ pub fn run() {
                 runtime.report_startup_recovery_issue(message);
             }
             let runtime_updates = runtime.subscribe();
-            let service = ConfigurationService::new(
+            let service = ApplicationService::new(
                 Box::new(store.clone()),
                 Box::new(OsCredentialStore),
                 Box::new(SystemStartupAdapter),
@@ -213,6 +230,11 @@ pub fn run() {
             tray::install(app)?;
             runtime_events::start(app.handle().clone(), store, runtime_updates);
 
+            performance_metrics::record(
+                "startup_bootstrap",
+                bootstrap_started.elapsed().as_secs_f64() * 1000.0,
+                true,
+            );
             Ok(())
         })
         .on_window_event(|window, event| {

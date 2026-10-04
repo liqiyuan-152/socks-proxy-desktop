@@ -1,17 +1,36 @@
 import { ipc } from "@/lib/ipc";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { errorMessage } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-state";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
+import { ErrorAlert } from "./ErrorAlert";
+import { useNavigate } from "react-router-dom";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { proxyModes } from "@/lib/proxy-mode";
 
 export function RuntimeFeedback() {
-  const { snapshot, error, capabilities, pending, switchMode, refresh } = useBackend();
+  const { snapshot, error, capabilities, pending, switchMode, refresh } = useBackendStore(
+    useShallow((state) => ({
+      snapshot: state.snapshot,
+      error: state.error,
+      capabilities: state.capabilities,
+      pending: state.pending,
+      switchMode: state.switchMode,
+      refresh: state.refresh,
+    })),
+  );
   const [recovering, setRecovering] = useState(false);
-  const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const [recoveryError, setRecoveryError] = useState<AppError | null>(null);
   const operationError = snapshot?.last_operation.error;
   const healthError = snapshot?.last_error;
-  const errors = [...new Set([error, operationError, healthError, recoveryError].filter(Boolean))];
+  const navigate = useNavigate();
+  const candidates = [error, recoveryError, operationError, healthError]
+    .filter((reason) => reason != null)
+    .map((reason) => normalizeError(typeof reason === "string" ? { message: reason } : reason));
+  const errors = [
+    ...new Map([...candidates].reverse().map((reason) => [reason.message, reason])).values(),
+  ];
   const recoveryRequired = snapshot?.session_health === "recovery_required";
   if (!errors.length && !recoveryRequired) return null;
 
@@ -22,7 +41,7 @@ export function RuntimeFeedback() {
       await ipc("recover_network", { confirmed: true });
       await refresh();
     } catch (reason) {
-      setRecoveryError(errorMessage(reason));
+      setRecoveryError(normalizeError(reason));
     } finally {
       setRecovering(false);
     }
@@ -30,11 +49,17 @@ export function RuntimeFeedback() {
 
   return (
     <section aria-label="运行时反馈" className="space-y-2 rounded-lg border border-border p-4">
-      <div role="alert" className="space-y-1 text-sm text-destructive">
-        {errors.map((message) => (
-          <p key={message}>{message}</p>
+      <div className="space-y-1 text-sm text-destructive">
+        {errors.map((reason) => (
+          <ErrorAlert
+            key={reason.context?.error_id ?? reason.message}
+            error={reason}
+            onOpenDiagnostics={() => navigate("/logs")}
+          />
         ))}
-        {recoveryRequired && <p>恢复未完成，请检查 Windows 系统代理设置；应用不会覆盖外部修改。</p>}
+        {recoveryRequired && (
+          <p role="alert">恢复未完成，请检查 Windows 系统代理设置；应用不会覆盖外部修改。</p>
+        )}
       </div>
       <p className="text-sm text-muted-foreground">
         当前仍生效的模式：

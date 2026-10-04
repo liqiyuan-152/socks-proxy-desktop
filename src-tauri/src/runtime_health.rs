@@ -23,7 +23,7 @@ impl ManagedRuntime {
             if state.pending.is_some() || state.pending_settings.is_some() {
                 return state.snapshot();
             }
-            state.session.clone()
+            state.session().cloned()
         };
         let Some(session) = session else {
             return snapshot;
@@ -33,32 +33,30 @@ impl ManagedRuntime {
             .state
             .lock()
             .unwrap_or_else(|poison| poison.into_inner());
-        if state.session.as_ref() != Some(&session) {
+        if state.session() != Some(&session) {
             return state.snapshot();
         }
         let healthy = matches!(health, Ok(true));
         match health {
             Ok(true) => {}
             Ok(false) => {
-                state.session = None;
-                state.applied_mode = None;
-                state.phase = RuntimePhase::Failed;
-                state.started_at = None;
-                state.session_health = SessionHealth::Exited;
-                state.last_error = Some("受管内核意外退出，系统代理已恢复".into());
+                state
+                    .apply_event(RuntimeEvent::ProcessExited {
+                        recovery_error: None,
+                    })
+                    .expect("reconciled committed session can exit");
             }
             Err(error) => {
-                state.session = None;
-                state.applied_mode = None;
-                state.phase = RuntimePhase::Failed;
-                state.started_at = None;
-                // On a failed restoration the prior process is no longer a
-                // usable owned session; never report its proxy as applied.
-                state.session_health = SessionHealth::RecoveryRequired;
-                state.last_error = Some(format!("内核异常或网络恢复失败：{}", error.message));
+                state
+                    .apply_event(RuntimeEvent::ProcessExited {
+                        recovery_error: Some(error.message),
+                    })
+                    .expect("reconciled committed session can fail recovery");
             }
         }
+
         if !healthy {
+            state.last_error = None;
             self.publish(state.snapshot());
         }
         state.snapshot()
