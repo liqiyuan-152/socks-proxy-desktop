@@ -15,6 +15,7 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-primary-text: var(--primary-text);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -23,6 +24,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -38,6 +40,9 @@
 }
 
 :root {
+  --primary-text: oklch(0.52 0.21 255);
+  --gradient-primary: linear-gradient(135deg, oklch(0.52 0.2 255), oklch(0.48 0.22 265));
+  --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.49 0.13 145);
   --success-foreground: oklch(0.99 0 0);
   --warning: oklch(0.5 0.12 70);
@@ -131,6 +136,9 @@ button:not(:disabled),
 }
 
 .dark {
+  --primary-text: oklch(0.74 0.14 255);
+  --gradient-primary: linear-gradient(135deg, oklch(0.54 0.18 255), oklch(0.5 0.2 265));
+  --destructive-foreground: oklch(0.16 0.015 25);
   --success: oklch(0.72 0.14 145);
   --success-foreground: oklch(0.16 0.015 145);
   --warning: oklch(0.78 0.14 70);
@@ -146,7 +154,7 @@ button:not(:disabled),
   --foreground: oklch(0.94 0.01 250);
   --card: oklch(0.19 0.018 250);
   --card-foreground: oklch(0.94 0.01 250);
-  --primary: oklch(0.6 0.22 255);
+  --primary: oklch(0.55 0.2 255);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.24 0.02 250);
   --secondary-foreground: oklch(0.92 0.01 250);

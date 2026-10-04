@@ -53,37 +53,37 @@
 
 ### 任务列表
 
-- [ ] **T2.1** 增强按钮基础类
+- [x] **T2.1** 增强按钮基础类
   - 文件: `src/components/ui/button.tsx`
   - 内容: 修改 buttonVariants 基础类，添加 transition-all、圆角优化
   - 验证: 检查所有按钮是否有平滑过渡
 
-- [ ] **T2.2** 升级 default 变体
+- [x] **T2.2** 升级 default 变体
   - 文件: `src/components/ui/button.tsx`
   - 内容: 添加阴影、hover 缩放、使用 primary-hover 色
   - 验证: hover 按钮观察阴影和缩放效果
 
-- [ ] **T2.3** 新增 gradient 变体
+- [x] **T2.3** 新增 gradient 变体
   - 文件: `src/components/ui/button.tsx`
   - 内容: 创建渐变背景按钮变体
   - 验证: `<Button variant="gradient">` 显示蓝色渐变
 
-- [ ] **T2.4** 优化 outline 变体
+- [x] **T2.4** 优化 outline 变体
   - 文件: `src/components/ui/button.tsx`
   - 内容: 增加边框粗细、hover 边框变色
   - 验证: hover outline 按钮检查边框变化
 
-- [ ] **T2.5** 优化 destructive 变体
+- [x] **T2.5** 优化 destructive 变体
   - 文件: `src/components/ui/button.tsx`
   - 内容: 添加红色阴影和 hover 效果
   - 验证: 删除按钮有红色阴影
 
-- [ ] **T2.6** 优化按钮尺寸
+- [x] **T2.6** 优化按钮尺寸
   - 文件: `src/components/ui/button.tsx`
   - 内容: 调整各尺寸的高度和内边距
   - 验证: 测试 xs/sm/default/lg 各尺寸
 
-- [ ] **T2.7** 应用新按钮变体到关键页面
+- [x] **T2.7** 应用新按钮变体到关键页面
   - 文件: `src/pages/proxies/index.tsx`
   - 内容: 将"添加代理"改为 gradient 变体
   - 验证: 查看代理列表页按钮效果
@@ -564,8 +564,8 @@
 
 **开始日期**: 2026-10-04  
 **预计完成**: 开始后 7 个工作日  
-**当前阶段**: Phase 1  
-**完成度**: 7% (6/85)
+**当前阶段**: Phase 2  
+**完成度**: 15% (13/85)
 
 ---
 

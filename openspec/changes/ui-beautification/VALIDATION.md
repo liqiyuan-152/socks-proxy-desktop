@@ -7,3 +7,10 @@
 - 原回归测试依赖已移除硬编码颜色，改为验证状态语义变体。类型检查与 lint 通过。
 - 全仓库格式检查发现已有的三个无关未跟踪文档格式问题：architecture-refactoring-2024/ACCEPTANCE_REPORT.md、ui-layout-optimization/ANALYSIS.md、ui-layout-optimization/EXECUTION_GUIDE.md。按仓库要求保留不动；阶段文件单独格式检查，其他质量检查单列。提交 hook 不重跑此已核验的无关格式阻断，最终在干净交付树执行完整检查。
 - 当前只验证新语义色徽章；全页面对比度、响应式和60fps将在后续阶段实测，不用此阶段结论代替。
+
+## Phase 2 — 按钮增强
+
+- T2.1–T2.7：默认、危险、边框、渐变、玻璃和成功变体；xs/sm/default/lg 及四个 icon 尺寸保留，实际高度24/32/40/48px。添加代理使用渐变，过渡限制在颜色、阴影和 transform，尊重 reduced motion。
+- 独立本地验证页通过官方 mockIPC 使用合成代理与状态，页面明确标注模拟数据，不改生产入口、用户数据库或系统代理。实际浅深组件样式、尺寸、渐变、hover背景/阴影/缩放和键盘焦点检查通过；375px验证面板可滚动。全应用响应式及60fps留在后续验收。
+- 深色文字单独使用 primary-text，按钮填充保持白字可读；避免将同一蓝色用作深底文字和底色。16项代理/删除相关测试、lint及typecheck通过。
+- 提交使用 Phase 1 已记录的无关文档格式 hook 例外。
