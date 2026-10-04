@@ -1,9 +1,10 @@
+import { ProxyAction } from "./ProxyAction";
 import { PageHeader } from "@/components/PageHeader";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
 import type { AppError } from "@/lib/generated/ipc";
 import { useState } from "react";
-import { Circle, CircleDot, Edit3, Timer, Trash2 } from "lucide-react";
+import { Circle, CircleDot, Edit3, Timer, Trash2, Server, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -132,7 +133,7 @@ export default function ProxyList() {
       <PageHeader title="代理" description="管理多个 SOCKS5 或 HTTP 代理" />
 
       <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-        <div className="w-full space-y-5">
+        <div className="w-full space-y-6">
           <ProxyToolbar
             search={search}
             onSearch={setSearch}
@@ -235,7 +236,7 @@ export default function ProxyList() {
                       <TableCell className="px-2 py-4 sm:px-4">
                         <div className="grid grid-cols-2 justify-items-end gap-1 sm:flex sm:justify-end">
                           {!active && (
-                            <Button
+                            <ProxyAction
                               variant="ghost"
                               size="icon-sm"
                               disabled={busy || !proxy.enabled}
@@ -243,9 +244,9 @@ export default function ProxyList() {
                               onClick={() => void changeProfile("select_profile", proxy.id)}
                             >
                               <CircleDot className="size-4" aria-hidden="true" />
-                            </Button>
+                            </ProxyAction>
                           )}
-                          <Button
+                          <ProxyAction
                             variant="ghost"
                             size="icon-sm"
                             aria-label={`测试${proxy.name}延迟`}
@@ -259,8 +260,8 @@ export default function ProxyList() {
                             onClick={() => void latency.test(proxy.id)}
                           >
                             <Timer className="size-4" aria-hidden="true" />
-                          </Button>
-                          <Button
+                          </ProxyAction>
+                          <ProxyAction
                             variant="ghost"
                             size="icon-sm"
                             aria-label={`编辑${proxy.name}`}
@@ -268,8 +269,8 @@ export default function ProxyList() {
                             onClick={() => openDialog(proxy)}
                           >
                             <Edit3 className="size-4" aria-hidden="true" />
-                          </Button>
-                          <Button
+                          </ProxyAction>
+                          <ProxyAction
                             variant="ghost"
                             size="icon-sm"
                             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -281,7 +282,7 @@ export default function ProxyList() {
                             }}
                           >
                             <Trash2 className="size-4" aria-hidden="true" />
-                          </Button>
+                          </ProxyAction>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -290,7 +291,30 @@ export default function ProxyList() {
                 {!loading && filtered.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center text-muted-foreground">
-                      暂无匹配的代理档案
+                      <div className="flex flex-col items-center gap-3 px-3 py-8">
+                        {profiles.length ? (
+                          <SearchX className="size-9 text-muted-foreground" aria-hidden="true" />
+                        ) : (
+                          <Server className="size-9 text-primary" aria-hidden="true" />
+                        )}
+                        <p className="font-medium text-foreground">
+                          {profiles.length ? "暂无匹配的代理档案" : "还没有代理档案"}
+                        </p>
+                        <p className="text-sm">
+                          {profiles.length
+                            ? "试试其他关键词或协议筛选。"
+                            : "添加一个 SOCKS5 或 HTTP 代理，开始配置你的网络出口。"}
+                        </p>
+                        {!profiles.length && (
+                          <Button
+                            variant="gradient"
+                            onClick={() => openDialog()}
+                            disabled={loading || busy}
+                          >
+                            添加第一个代理
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}

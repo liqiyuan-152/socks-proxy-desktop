@@ -44,7 +44,9 @@ export function ErrorAlert({ error, title = "操作未完成", onRetry, onOpenDi
   return (
     <Card role="alert" className="gap-3 border-destructive/40 p-4">
       <div className="flex items-center gap-2 font-medium text-destructive">
-        <AlertCircle className="size-4 shrink-0" aria-hidden="true" />
+        <span className="shrink-0 rounded-lg bg-destructive/10 p-2 ring-1 ring-destructive/20">
+          <AlertCircle className="size-4" aria-hidden="true" />
+        </span>
         <span>{title}</span>
       </div>
       <p className="text-sm text-foreground">{normalized.message}</p>
