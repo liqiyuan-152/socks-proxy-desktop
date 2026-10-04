@@ -99,62 +99,62 @@
 
 #### 卡片增强
 
-- [ ] **T3.1** 为 Card 组件添加 variant 支持
+- [x] **T3.1** 为 Card 组件添加 variant 支持
   - 文件: `src/components/ui/card.tsx`
   - 内容: 添加 variant prop（default/elevated/glass/bordered）
   - 验证: `<Card variant="elevated">` 显示增强阴影
 
-- [ ] **T3.2** 实现 elevated 变体
+- [x] **T3.2** 实现 elevated 变体
   - 文件: `src/components/ui/card.tsx`
   - 内容: 添加大阴影效果
   - 验证: 卡片有明显的浮起效果
 
-- [ ] **T3.3** 实现 glass 变体
+- [x] **T3.3** 实现 glass 变体
   - 文件: `src/components/ui/card.tsx`
   - 内容: 毛玻璃效果（backdrop-blur + 半透明背景）
   - 验证: 卡片有模糊透明效果
 
-- [ ] **T3.4** 实现 bordered 变体
+- [x] **T3.4** 实现 bordered 变体
   - 文件: `src/components/ui/card.tsx`
   - 内容: 透明背景 + 双倍边框 + hover 变色
   - 验证: hover 卡片边框变为主色
 
-- [ ] **T3.5** 统一卡片圆角
+- [x] **T3.5** 统一卡片圆角
   - 文件: `src/components/ui/card.tsx`
   - 内容: 将所有卡片改用 `rounded-xl`
   - 验证: 检查各页面卡片圆角一致性
 
 #### 表格美化
 
-- [ ] **T3.6** 创建现代表格样式类
+- [x] **T3.6** 创建现代表格样式类
   - 文件: `src/index.css`
   - 内容: 添加 `.table-modern` 样式（表头渐变、行 hover、sticky 表头）
   - 验证: 在示例表格应用该类
 
-- [ ] **T3.7** 实现表头 sticky 效果
+- [x] **T3.7** 实现表头 sticky 效果
   - 文件: `src/index.css`
   - 位置: `.table-modern thead th`
   - 内容: 添加 sticky top-0、backdrop-blur
   - 验证: 滚动表格时表头固定
 
-- [ ] **T3.8** 优化表格行 hover 效果
+- [x] **T3.8** 优化表格行 hover 效果
   - 文件: `src/index.css`
   - 位置: `.table-modern tbody tr`
   - 内容: 添加背景色过渡和 hover 变色
   - 验证: hover 表格行有明显背景变化
 
-- [ ] **T3.9** 实现选中行高亮
+- [x] **T3.9** 实现选中行高亮
   - 文件: `src/index.css`
   - 位置: `.table-modern tbody tr[data-selected="true"]`
   - 内容: 选中行显示主色背景
   - 验证: 选中行有蓝色高亮
 
-- [ ] **T3.10** 添加表格斑马纹（可选）
+- [x] **T3.10** 添加表格斑马纹（可选）
   - 文件: `src/index.css`
   - 内容: 创建 `.table-striped` 类
   - 验证: 偶数行有浅色背景
 
-- [ ] **T3.11** 应用现代表格样式到代理列表
+- [x] **T3.11** 应用现代表格样式到代理列表
   - 文件: `src/pages/proxies/index.tsx`
   - 内容: 给 Table 组件添加 `table-modern` 类
   - 验证: 代理列表表格样式更新
@@ -564,8 +564,8 @@
 
 **开始日期**: 2026-10-04  
 **预计完成**: 开始后 7 个工作日  
-**当前阶段**: Phase 2  
-**完成度**: 15% (13/85)
+**当前阶段**: Phase 3  
+**完成度**: 28% (24/85)
 
 ---
 

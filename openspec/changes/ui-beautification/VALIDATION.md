@@ -14,3 +14,10 @@
 - 独立本地验证页通过官方 mockIPC 使用合成代理与状态，页面明确标注模拟数据，不改生产入口、用户数据库或系统代理。实际浅深组件样式、尺寸、渐变、hover背景/阴影/缩放和键盘焦点检查通过；375px验证面板可滚动。全应用响应式及60fps留在后续验收。
 - 深色文字单独使用 primary-text，按钮填充保持白字可读；避免将同一蓝色用作深底文字和底色。16项代理/删除相关测试、lint及typecheck通过。
 - 提交使用 Phase 1 已记录的无关文档格式 hook 例外。
+
+## Phase 3 — 卡片与表格
+
+- T3.1–T3.11：卡片 default/elevated/glass/bordered 保留内部 Header/Content/Footer 间距结构，统一12px圆角；实际组件检查浮起阴影、深色黑30%阴影、12px backdrop blur和2px bordered边框。
+- table-modern拥有渐变表头、背景过渡及默认行高亮；table-striped为可选样式。Table增加可选 containerClassName，让实际代理列表独立控制滚动两轴。
+- 实际应用合成43个代理，表头滚动前后top均226px、scrollTop为300px，证明sticky有效。浅深色检查表头渐变、选中行与斑马纹。10项代理/表格测试、lint及typecheck通过。
+- 阶段格式检查和diff检查通过；hook例外同Phase1。
