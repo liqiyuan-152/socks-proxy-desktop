@@ -28,6 +28,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
@@ -52,6 +53,7 @@ function StatusDot({ running }: { running: boolean }) {
 
 function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
   const isActive = useMatch({ path: to, end: to === "/" }) !== null;
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarMenuItem>
@@ -61,7 +63,7 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
         tooltip={label}
         className="h-11 rounded-lg text-sm font-medium text-sidebar-foreground transition-[background-color,box-shadow,scale] duration-200 motion-reduce:transition-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground motion-safe:hover:scale-[1.02] data-[active=true]:bg-[image:var(--gradient-primary)] data-[active=true]:text-primary-foreground data-[active=true]:shadow-md data-[active=true]:shadow-primary/25"
       >
-        <NavLink to={to} end={to === "/"}>
+        <NavLink to={to} end={to === "/"} onClick={() => isMobile && setOpenMobile(false)}>
           <Icon className="size-5" aria-hidden="true" />
           <span>{label}</span>
         </NavLink>

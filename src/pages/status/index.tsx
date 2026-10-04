@@ -90,8 +90,8 @@ export default function StatusDashboard() {
   return (
     <>
       <PageHeader title="状态" description="当前网络模式和实际运行状态" />
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-        <div className="w-full space-y-6">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="mx-auto w-full max-w-7xl space-y-6">
           {loading && (
             <div role="status" className="space-y-3">
               <p>正在加载运行时状态…</p>
