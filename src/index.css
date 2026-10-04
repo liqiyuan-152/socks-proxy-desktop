@@ -27,6 +27,17 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-light: var(--warning-light);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-light: var(--info-light);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
 }
 
 :root {
@@ -58,6 +69,17 @@
   --sidebar-ring: oklch(0.55 0.2 255);
   --scrollbar-thumb: oklch(0.72 0.015 250);
   --scrollbar-thumb-hover: oklch(0.6 0.02 250);
+  --success: oklch(0.49 0.13 145);
+  --success-foreground: oklch(0.99 0 0);
+  --success-light: oklch(0.95 0.1 145);
+  --warning: oklch(0.72 0.18 70);
+  --warning-foreground: oklch(0.2 0.02 70);
+  --warning-light: oklch(0.96 0.1 70);
+  --info: oklch(0.5 0.13 230);
+  --info-foreground: oklch(0.99 0 0);
+  --info-light: oklch(0.95 0.12 230);
+  --primary-hover: oklch(0.48 0.23 255);
+  --primary-active: oklch(0.43 0.24 255);
 }
 
 * {
@@ -142,4 +164,15 @@ button:not(:disabled),
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
   --scrollbar-thumb: oklch(0.42 0.02 250);
   --scrollbar-thumb-hover: oklch(0.53 0.025 250);
+  --success: oklch(0.72 0.15 145);
+  --success-foreground: oklch(0.15 0.02 145);
+  --success-light: oklch(0.25 0.06 145);
+  --warning: oklch(0.75 0.18 70);
+  --warning-foreground: oklch(0.12 0.02 70);
+  --warning-light: oklch(0.25 0.06 70);
+  --info: oklch(0.72 0.13 230);
+  --info-foreground: oklch(0.15 0.02 230);
+  --info-light: oklch(0.25 0.06 230);
+  --primary-hover: oklch(0.68 0.23 255);
+  --primary-active: oklch(0.63 0.24 255);
 }
