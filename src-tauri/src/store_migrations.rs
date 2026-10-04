@@ -32,6 +32,10 @@ const STEPS: [&str; DATABASE_SCHEMA_VERSION as usize] = [
      WHERE json_valid(summary) AND json_type(summary, '$.context.domain') = 'text'
        AND json_type(summary, '$.context.kind') = 'text';
      CREATE INDEX runtime_diagnostics_error_type ON runtime_diagnostics(error_type, operation, severity);",
+    "CREATE TABLE connection_count_samples (
+        minute INTEGER PRIMARY KEY CHECK (minute >= 0),
+        active_count INTEGER NOT NULL CHECK (active_count >= 0)
+     );",
 ];
 
 pub(super) fn migrate(connection: &Connection) -> Result<(), AppError> {
@@ -146,6 +150,7 @@ mod tests {
                 "selected_mode",
                 "configuration_recovery",
                 "runtime_diagnostics_error_type",
+                "connection_count_samples",
             ][(target - 1) as usize];
             let count: i64 = connection
                 .query_row(

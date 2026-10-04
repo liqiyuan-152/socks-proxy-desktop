@@ -41,6 +41,7 @@ const connections: ActiveConnectionsSnapshot = {
   recent: [],
   diagnostic: null,
   history_available: false,
+  trend: null,
 };
 const primary: ProxyProfile = {
   configuration_revision: 1,

@@ -87,12 +87,18 @@ export type ActiveConnection = {
   matched_rule: string | null;
   outbound_chain: Array<string>;
 };
+export type ConnectionTrend = {
+  yesterday_date: string;
+  yesterday_count_sum: number;
+  yesterday_samples: number;
+};
 export type ActiveConnectionsSnapshot = {
   status: ObservationStatus;
   active_count: number | null;
   recent: Array<ActiveConnection>;
   diagnostic: string | null;
   history_available: boolean;
+  trend: ConnectionTrend | null;
 };
 export type ObservationStatus = "available" | "degraded";
 export type RouteStage = "user_rule" | "china_domain" | "private_ip" | "china_ip" | "final";

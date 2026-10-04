@@ -23,6 +23,7 @@ export function observationActions(api: BackendApi, controller: RequestControlle
             recent: [],
             diagnostic: "活跃连接不可用",
             history_available: false,
+            trend: null,
           },
         });
     }

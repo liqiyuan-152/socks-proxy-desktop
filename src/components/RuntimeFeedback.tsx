@@ -48,7 +48,10 @@ export function RuntimeFeedback() {
   }
 
   return (
-    <section aria-label="运行时反馈" className="space-y-2 rounded-lg border border-border p-4">
+    <section
+      aria-label="运行时反馈"
+      className="animate-fade-in space-y-3 rounded-xl border-2 border-destructive/40 bg-gradient-to-br from-destructive/5 to-destructive/10 p-5 shadow-sm shadow-destructive/10"
+    >
       <div className="space-y-1 text-sm text-destructive">
         {errors.map((reason) => (
           <ErrorAlert
@@ -66,7 +69,7 @@ export function RuntimeFeedback() {
         {snapshot?.applied_mode ? proxyModes[snapshot.applied_mode].label : "未应用"}
         {snapshot?.session_health === "healthy" && "，原内核仍在运行。"}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2 pt-1">
         {capabilities?.proxy_runtime && snapshot && !recoveryRequired && (
           <Button
             variant="outline"

@@ -199,7 +199,7 @@ export default function SettingsPage() {
               }
             />
 
-            <Card className="gap-0 border-border bg-card py-0 shadow-none">
+            <Card variant="elevated" className="gap-0 py-0">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   配置备份
@@ -233,7 +233,7 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-0 border-border bg-card py-0 shadow-none">
+            <Card variant="elevated" className="gap-0 py-0">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   日志

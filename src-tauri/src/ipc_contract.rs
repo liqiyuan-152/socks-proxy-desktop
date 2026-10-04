@@ -11,7 +11,9 @@ use crate::{
         AppSettings, ProxyProtocol, RetentionPolicy, RoutingRule, RuleAction, RuleMatcher,
         RuntimeMode,
     },
-    observability::{ActiveConnection, ActiveConnectionsSnapshot, ObservationStatus},
+    observability::{
+        ActiveConnection, ActiveConnectionsSnapshot, ConnectionTrend, ObservationStatus,
+    },
     route_test::{RouteStage, RouteTestResult},
     runtime::{
         OperationOutcome, OperationResult, RuntimePhase, RuntimeSnapshot, SessionHealth,
@@ -108,6 +110,7 @@ fn public_contract() -> String {
         RetentionPolicy,
         AppSettings,
         ActiveConnection,
+        ConnectionTrend,
         ActiveConnectionsSnapshot,
         ObservationStatus,
         RouteStage,

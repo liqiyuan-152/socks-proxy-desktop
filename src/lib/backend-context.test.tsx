@@ -56,6 +56,7 @@ beforeEach(() => {
         recent: [],
         diagnostic: null,
         history_available: false,
+        trend: null,
       };
     }
   });
@@ -99,6 +100,7 @@ it("does not let an old poll undo a runtime state event", async () => {
       recent: [],
       diagnostic: null,
       history_available: false,
+      trend: null,
     });
   });
   await act(() => vi.advanceTimersByTimeAsync(1000));

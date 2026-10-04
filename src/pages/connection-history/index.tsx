@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/PageHeader";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
@@ -177,7 +178,9 @@ export default function ConnectionLogs() {
                 <TableBody>
                   {active.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>{item.started_at}</TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {item.started_at}
+                      </TableCell>
                       <TableCell>
                         {item.target_host}:{item.target_port}
                       </TableCell>
@@ -233,8 +236,22 @@ export default function ConnectionLogs() {
                 <TableBody>
                   {diagnostics.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>{new Date(item.created_at_ms).toLocaleString()}</TableCell>
-                      <TableCell>{item.severity}</TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {new Date(item.created_at_ms).toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            item.severity === "error"
+                              ? "destructive"
+                              : item.severity === "warning"
+                                ? "warning"
+                                : "info"
+                          }
+                        >
+                          {item.severity.toUpperCase()}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{item.summary}</TableCell>
                     </TableRow>
                   ))}

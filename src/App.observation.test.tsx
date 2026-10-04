@@ -102,6 +102,7 @@ describe("backend-driven desktop UI", () => {
           status: "available",
           active_count: 0,
           history_available: false,
+          trend: null,
           diagnostic: null,
           recent: [],
         });

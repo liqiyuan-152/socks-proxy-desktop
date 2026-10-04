@@ -119,6 +119,7 @@ beforeEach(() => {
           status: "available",
           active_count: 1,
           history_available: false,
+          trend: null,
           diagnostic: null,
           recent: [
             {

@@ -22,7 +22,16 @@ impl RuntimeServiceInterface for RuntimeService {
     }
     #[tracing::instrument(skip_all, level = "debug")]
     fn active_connections(&self) -> ActiveConnectionsSnapshot {
-        self.context.runtime.active_connections()
+        let mut snapshot = self.context.runtime.active_connections();
+        if let Some(count) = snapshot.active_count {
+            snapshot.trend = crate::store::diagnostic_now_ms()
+                .and_then(|now| self.context.store.connection_trend(count, now))
+                .unwrap_or_else(|error| {
+                    tracing::warn!(code = %error.code, "连接趋势采样不可用");
+                    None
+                });
+        }
+        snapshot
     }
     #[tracing::instrument(skip_all, level = "debug")]
     fn set_mode(&self, mode: RuntimeMode) -> Result<RuntimeSnapshot, RuntimeError> {

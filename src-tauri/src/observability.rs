@@ -38,6 +38,15 @@ pub enum ObservationStatus {
     Degraded,
 }
 
+/// 本地昨日有效采样的总和与样本数；不代表已完成连接或全天总流量。
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
+pub struct ConnectionTrend {
+    pub yesterday_date: String,
+    pub yesterday_count_sum: u64,
+    pub yesterday_samples: u32,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 #[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ActiveConnectionsSnapshot {
@@ -46,6 +55,7 @@ pub struct ActiveConnectionsSnapshot {
     pub recent: Vec<ActiveConnection>,
     pub diagnostic: Option<String>,
     pub history_available: bool,
+    pub trend: Option<ConnectionTrend>,
 }
 
 impl ActiveConnectionsSnapshot {
@@ -56,6 +66,7 @@ impl ActiveConnectionsSnapshot {
             recent: Vec::new(),
             diagnostic: Some("内核活跃连接接口不可用，连接观测已降级".into()),
             history_available: false,
+            trend: None,
         }
     }
 
@@ -99,6 +110,7 @@ pub fn parse_connections(value: &Value) -> Result<ActiveConnectionsSnapshot, App
         recent: connections.into_iter().take(RECENT_LIMIT).collect(),
         diagnostic: None,
         history_available: false,
+        trend: None,
     })
 }
 

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/PageHeader";
 import { normalizeError } from "@/lib/error-handler";
 import { ErrorAlert } from "@/components/ErrorAlert";
@@ -137,8 +138,11 @@ export default function RoutingRuleList() {
           {error && !dialogOpen && !deletingRule && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载分流规则…</p>}
 
-          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
-            <Table className="min-w-[760px] text-sm">
+          <Card variant="elevated" className="gap-0 overflow-hidden py-0 hover:border-primary/30">
+            <Table
+              className="table-modern min-w-[760px] text-sm"
+              containerClassName="max-h-[60vh] overflow-auto"
+            >
               <TableHeader className="bg-muted/50 [&_th]:h-12 [&_th]:px-4 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground">
                 <TableRow className="hover:bg-transparent">
                   <TableHead>规则名称</TableHead>
@@ -159,11 +163,21 @@ export default function RoutingRuleList() {
                     <TableRow key={rule.id}>
                       <TableCell className="px-4 py-4 font-medium">{rule.name}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">
-                        {rule.matcher === "ip_cidr"
-                          ? "CIDR"
-                          : rule.matcher === "domain_suffix"
-                            ? "域名后缀"
-                            : "域名"}
+                        <Badge
+                          variant={
+                            rule.matcher === "ip_cidr"
+                              ? "warning"
+                              : rule.matcher === "domain_suffix"
+                                ? "success"
+                                : "info"
+                          }
+                        >
+                          {rule.matcher === "ip_cidr"
+                            ? "CIDR"
+                            : rule.matcher === "domain_suffix"
+                              ? "域名后缀"
+                              : "域名"}
+                        </Badge>
                       </TableCell>
                       <TableCell className="px-4 py-4 font-medium">{rule.target}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">

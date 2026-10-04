@@ -45,7 +45,7 @@ function StatusDot({ running }: { running: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className={`size-2.5 rounded-full ${running ? "bg-emerald-500" : "bg-muted-foreground"}`}
+      className={`size-2.5 rounded-full ${running ? "bg-success" : "bg-muted-foreground"}`}
     />
   );
 }
@@ -140,9 +140,12 @@ export function AppLayout() {
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <Outlet />
           </div>
-          <footer className="hidden shrink-0 items-center gap-4 border-t border-sidebar-border bg-sidebar/50 px-6 py-3 text-xs text-muted-foreground lg:flex">
+          <footer className="hidden shrink-0 items-center gap-4 border-t border-sidebar-border/80 bg-gradient-to-r from-sidebar via-sidebar to-sidebar-accent/30 px-6 py-3.5 backdrop-blur-sm text-xs text-muted-foreground lg:flex">
             <span>
-              当前模式：<strong className="font-semibold text-primary">{activeModeLabel}</strong>
+              当前模式：
+              <strong className="rounded-md bg-primary/10 px-2 py-0.5 font-semibold text-primary-text ring-1 ring-primary/20">
+                {activeModeLabel}
+              </strong>
             </span>
             <Separator orientation="vertical" className="h-4" />
             <span>
@@ -151,7 +154,10 @@ export function AppLayout() {
             <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-2">
               <Activity className="size-3.5" aria-hidden="true" />
-              内核运行状态：{snapshot ? (running ? "健康" : "未运行") : "不可用"}
+              内核运行状态：
+              <span className={running ? "font-medium text-success" : "text-muted-foreground"}>
+                {snapshot ? (running ? "健康" : "未运行") : "不可用"}
+              </span>
             </span>
             <span className="ml-auto flex items-center gap-2">
               <Globe2 className="size-3.5" aria-hidden="true" />

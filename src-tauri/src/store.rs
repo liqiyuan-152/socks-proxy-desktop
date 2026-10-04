@@ -8,7 +8,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const DATABASE_SCHEMA_VERSION: i64 = 5;
+const DATABASE_SCHEMA_VERSION: i64 = 6;
+#[path = "store_connection_samples.rs"]
+mod connection_samples;
 use diagnostics::{now_ms, prune_diagnostics};
 #[path = "store_diagnostic_report.rs"]
 mod diagnostic_report;
@@ -20,6 +22,14 @@ pub fn diagnostic_now_ms() -> Result<i64, AppError> {
 }
 
 pub trait ConfigurationStore: Send + Sync {
+    /// 每分钟至多保存一个有效活跃连接数，并返回本地昨日采样。
+    fn connection_trend(
+        &self,
+        _: usize,
+        _: i64,
+    ) -> Result<Option<crate::observability::ConnectionTrend>, AppError> {
+        Err(AppError::unavailable("此配置存储不支持连接数历史采样"))
+    }
     /// 查询持久化运行时诊断；不支持诊断的适配器明确返回能力错误。
     fn list_diagnostics(
         &self,
@@ -100,6 +110,13 @@ impl SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for SqliteConfigurationStore {
+    fn connection_trend(
+        &self,
+        count: usize,
+        now: i64,
+    ) -> Result<Option<crate::observability::ConnectionTrend>, AppError> {
+        connection_samples::record(self, count, now)
+    }
     fn diagnostic_groups(
         &self,
         filter: &DiagnosticFilter,
@@ -225,6 +242,13 @@ impl ConfigurationStore for SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for Arc<SqliteConfigurationStore> {
+    fn connection_trend(
+        &self,
+        count: usize,
+        now: i64,
+    ) -> Result<Option<crate::observability::ConnectionTrend>, AppError> {
+        self.as_ref().connection_trend(count, now)
+    }
     fn diagnostic_groups(
         &self,
         filter: &DiagnosticFilter,

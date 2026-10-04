@@ -14,7 +14,7 @@ export function LatencyTestCard({ url, busy, onSave }: Props) {
   const [draft, setDraft] = useState(url);
 
   return (
-    <Card className="gap-0 border-border bg-card py-0 shadow-none">
+    <Card variant="elevated" className="gap-0 py-0">
       <CardHeader className="py-5">
         <CardTitle>代理延迟测试</CardTitle>
       </CardHeader>

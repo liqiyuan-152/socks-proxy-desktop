@@ -36,6 +36,7 @@ const connections = {
   recent: [],
   diagnostic: null,
   history_available: false,
+  trend: null,
 };
 function deferred<T>() {
   let resolve!: (value: T) => void;
