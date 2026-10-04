@@ -43,4 +43,3 @@ dist/assets/index-CuDxWiX6.js               449.69 kB │ gzip: 144.98 kB
      Running makensis to produce C:\Users\lqy15\socks-proxy-acceptance\harden-7c25d8c\repo\src-tauri\target\release\bundle\nsis\Socks Proxy_0.1.0_x64-setup.exe
     Finished 1 bundle at:
         C:\Users\lqy15\socks-proxy-acceptance\harden-7c25d8c\repo\src-tauri\target\release\bundle\nsis\Socks Proxy_0.1.0_x64-setup.exe
-
