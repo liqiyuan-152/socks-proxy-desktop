@@ -97,3 +97,51 @@ jobs:
           path: package-artifacts/
           if-no-files-found: error
           retention-days: 30
+
+  release:
+    name: Publish tag release
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: socks-proxy-*-${{ github.ref_name }}-${{ github.sha }}
+          path: downloaded-packages
+      - name: Verify packages and prepare release assets
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_REVISION: ${{ github.sha }}
+        run: node scripts/prepare-release.mjs downloaded-packages release-assets "$RELEASE_TAG" "$RELEASE_REVISION"
+      - name: Create release, upload assets and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            cat > release-notes.md <<'NOTES'
+          自动构建的内测版本，包含 Windows x64 安装包和 macOS Intel / Apple Silicon 通用 DMG。
+
+          Windows 支持实际代理运行；macOS 仅支持界面及部分配置管理，不支持代理内核和系统代理接管。安装包未配置开发者签名及 macOS 公证，自动更新尚未启用。
+
+          SHA256SUMS.txt 为安装包校验清单，SOURCE_REVISION.txt 为对应源码提交。变更详情见本 tag 的 CHANGELOG.md。
+
+          Windows 包含 GPLv3 sing-box 1.14.1 及上游许可证。对应源码：https://github.com/SagerNet/sing-box/tree/1ac1a339cb1223e9c70eae14c44411c75033c02d
+          源码归档：https://github.com/SagerNet/sing-box/archive/1ac1a339cb1223e9c70eae14c44411c75033c02d.tar.gz
+          内核来源和校验记录见本 tag 的 scripts/sing-box-release-manifest.md。
+          NOTES
+            gh release create "$RELEASE_TAG" --verify-tag --draft --prerelease \
+              --title "Socks Proxy $RELEASE_TAG" --notes-file release-notes.md
+          fi
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber
+          if [ "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = true ]; then
+            gh release edit "$RELEASE_TAG" --draft=false
+          fi
