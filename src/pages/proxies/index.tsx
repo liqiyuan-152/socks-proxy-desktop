@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
 import type { AppError } from "@/lib/generated/ipc";
@@ -128,14 +129,9 @@ export default function ProxyList() {
   const isEditing = editingProxy !== null;
   return (
     <>
-      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">代理</h1>
-          <p className="mt-1 text-sm text-muted-foreground">管理多个 SOCKS5 或 HTTP 代理</p>
-        </div>
-      </header>
+      <PageHeader title="代理" description="管理多个 SOCKS5 或 HTTP 代理" />
 
-      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
           <ProxyToolbar
             search={search}

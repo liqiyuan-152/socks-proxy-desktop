@@ -21,3 +21,11 @@
 - table-modern拥有渐变表头、背景过渡及默认行高亮；table-striped为可选样式。Table增加可选 containerClassName，让实际代理列表独立控制滚动两轴。
 - 实际应用合成43个代理，表头滚动前后top均226px、scrollTop为300px，证明sticky有效。浅深色检查表头渐变、选中行与斑马纹。10项代理/表格测试、lint及typecheck通过。
 - 阶段格式检查和diff检查通过；hook例外同Phase1。
+
+## Phase 4 — 布局与动画
+
+- T4.1–T4.15：统一 PageHeader 用于五个实际页面，侧栏 Logo 和激活项使用主题渐变；保留既有底栏分区修复，新增小屏导航入口。
+- 淡入 300ms、滑入 400ms、缩放 200ms；卡片交错间隔 50ms。shimmer 通过伪元素 transform 实现，所有入场动画支持 reduced motion。
+- 实际浅深五页遍历，等待目标标题挂载后核对 header 渐变、内容淡入及统计卡片 0/50ms 交错。首轮探针早于懒加载页面提交，标题与目标错位，改为目标标题挂载后取证，该首轮结果未算作通过。
+- 16 项代理/删除相关测试、lint、typecheck 通过。独立页面测试提供 SidebarProvider，以满足 PageHeader 的 shadcn 导航上下文要求。稳定 60fps 需 Phase 7 性能轨迹证明。
+- 模拟验证独立运行于 5174 端口，重新加载保留官方 mockIPC 模拟；普通 5173 应用不受影响。阶段提交 hook 例外同 Phase 1。

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { normalizeError } from "@/lib/error-handler";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { useState } from "react";
@@ -102,14 +103,9 @@ export default function RoutingRuleList() {
 
   return (
     <>
-      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">分流规则</h1>
-          <p className="mt-1 text-sm text-muted-foreground">定义哪些流量走代理，哪些流量直连。</p>
-        </div>
-      </header>
+      <PageHeader title="分流规则" description="定义哪些流量走代理，哪些流量直连。" />
 
-      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
           <ChinaDirectPreset />
           <RouteTest />

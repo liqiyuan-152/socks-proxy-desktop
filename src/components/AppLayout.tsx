@@ -59,7 +59,7 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
         asChild
         isActive={isActive}
         tooltip={label}
-        className="h-10 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-blue-500/15 data-[active=true]:text-blue-700 data-[active=true]:hover:bg-blue-500/20 data-[active=true]:hover:text-blue-800 dark:data-[active=true]:bg-blue-500/20 dark:data-[active=true]:text-blue-300 dark:data-[active=true]:hover:bg-blue-500/25 dark:data-[active=true]:hover:text-blue-200"
+        className="h-11 rounded-lg text-sm font-medium text-sidebar-foreground transition-[background-color,box-shadow,scale] duration-200 motion-reduce:transition-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground motion-safe:hover:scale-[1.02] data-[active=true]:bg-[image:var(--gradient-primary)] data-[active=true]:text-primary-foreground data-[active=true]:shadow-md data-[active=true]:shadow-primary/25"
       >
         <NavLink to={to} end={to === "/"}>
           <Icon className="size-5" aria-hidden="true" />
@@ -94,7 +94,7 @@ export function AppLayout() {
       <Sidebar collapsible="icon" className="border-sidebar-border">
         <SidebarHeader className="p-3">
           <div className="flex h-10 items-center gap-2 px-1">
-            <div className="grid size-9 shrink-0 place-items-center rounded-md bg-blue-600 text-white shadow-sm shadow-blue-600/30">
+            <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[image:var(--gradient-primary)] text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/20">
               <ShieldCheck className="size-[18px]" aria-hidden="true" />
             </div>
             <span className="truncate text-base font-semibold group-data-[collapsible=icon]:hidden">
@@ -136,9 +136,11 @@ export function AppLayout() {
       </Sidebar>
 
       <SidebarInset className="min-w-0 bg-background">
-        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          <Outlet />
-          <footer className="hidden items-center gap-4 px-6 py-3 text-xs text-muted-foreground lg:flex">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            <Outlet />
+          </div>
+          <footer className="hidden shrink-0 items-center gap-4 border-t border-sidebar-border bg-sidebar/50 px-6 py-3 text-xs text-muted-foreground lg:flex">
             <span>
               当前模式：<strong className="font-semibold text-primary">{activeModeLabel}</strong>
             </span>
@@ -156,7 +158,7 @@ export function AppLayout() {
               {snapshot?.coverage === "system_proxy_apps" ? "系统代理应用流量" : "未接管系统代理"}
             </span>
           </footer>
-        </section>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

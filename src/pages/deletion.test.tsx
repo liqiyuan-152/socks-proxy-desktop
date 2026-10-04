@@ -3,6 +3,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 import type { ProxyProfile } from "@/lib/backend";
 import type { RoutingRule } from "@/lib/generated/ipc";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import ProxyList from "./proxies";
 import RoutingRuleList from "./rules";
 
@@ -103,7 +104,9 @@ it.each(cases)(
   async ({ Page, resource, name, command }) => {
     render(
       <TooltipProvider>
-        <Page />
+        <SidebarProvider>
+          <Page />
+        </SidebarProvider>
       </TooltipProvider>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));
@@ -121,7 +124,9 @@ it.each(cases)(
   async ({ Page, resource, name, command, args }) => {
     render(
       <TooltipProvider>
-        <Page />
+        <SidebarProvider>
+          <Page />
+        </SidebarProvider>
       </TooltipProvider>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));
@@ -144,7 +149,13 @@ it("a referenced proxy stays in the dialog and can be retried after rejection", 
     }
     return undefined;
   });
-  render(<ProxyList />);
+  render(
+    <TooltipProvider>
+      <SidebarProvider>
+        <ProxyList />
+      </SidebarProvider>
+    </TooltipProvider>,
+  );
   fireEvent.click(screen.getByRole("button", { name: `删除${profile.name}` }));
   let dialog = screen.getByRole("alertdialog");
   fireEvent.click(within(dialog).getByRole("button", { name: "确认删除" }));
@@ -183,7 +194,9 @@ it.each(cases)(
     });
     render(
       <TooltipProvider>
-        <Page />
+        <SidebarProvider>
+          <Page />
+        </SidebarProvider>
       </TooltipProvider>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));

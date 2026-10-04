@@ -224,3 +224,114 @@ button:not(:disabled),
     transition: none;
   }
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 300ms ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in-right 400ms ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 200ms ease-out;
+}
+
+.stagger-children > * {
+  animation: fade-in 300ms ease-out backwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+.stagger-children > :nth-child(2) {
+  --stagger-delay: 50ms;
+}
+
+.stagger-children > :nth-child(3) {
+  --stagger-delay: 100ms;
+}
+
+.stagger-children > :nth-child(4) {
+  --stagger-delay: 150ms;
+}
+
+.stagger-children > :nth-child(5) {
+  --stagger-delay: 200ms;
+}
+
+.stagger-children > :nth-child(n + 6) {
+  --stagger-delay: 250ms;
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--foreground) 8%, transparent),
+    transparent
+  );
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-in,
+  .animate-scale-in,
+  .stagger-children > *,
+  .animate-shimmer::after {
+    animation: none;
+  }
+}

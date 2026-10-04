@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { DiagnosticsCard } from "./DiagnosticsCard";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
@@ -168,14 +169,9 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">设置</h1>
-          <p className="mt-1 text-sm text-muted-foreground">管理应用启动、日志和配置选项。</p>
-        </div>
-      </header>
+      <PageHeader title="设置" description="管理应用启动、日志和配置选项。" />
 
-      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
           {error && !pendingAction && <ErrorAlert error={error} />}
           {message && (
