@@ -72,7 +72,9 @@ Windows 本地生成 NSIS 安装包：
 pnpm tauri build --bundles nsis
 ```
 
-也可在 GitHub Actions 手动运行 **Windows test package** 工作流。它会先完成质量检查和内核测试，再生成 NSIS 安装包，并上传安装包、SHA-256 清单及源码提交号，产物保留 14 天。该工作流生成未签名的内测产物，不会创建公开 Release。
+GitHub Actions 的 [Desktop packages](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/package.yml) 工作流会在 `master` 更新、推送 `v*` tag 时自动构建，也支持手动运行。两个平台独立完成质量检查及 Rust 测试，Windows 还执行固定内核测试，然后生成 Windows x64 NSIS 安装包和 macOS 通用 DMG（Intel / Apple Silicon）。macOS 包的平台功能限制与上文一致。
+
+在对应 Actions 运行的 Artifacts 区域下载产物；每个压缩包包含安装包、`SHA256SUMS.txt`、`SOURCE_REVISION.txt` 和 `VERSION.txt`，保留 30 天。tag 必须与应用版本一致，例如 `v0.2.0`。这些是未签名、未公证的内测产物，工作流不创建公开 GitHub Release。
 
 当前未配置应用签名、自动更新或公开发布渠道；“检查更新”不可用。正式发布前需提供签名凭据、确定发布与更新渠道，并完成真实 Windows 桌面验收，以及随包 sing-box 的 GPLv3 对应源代码提供方式、许可证通知和最终安装包内容复核。具体内核分发要求见 `scripts/sing-box-release-manifest.md`。
 
