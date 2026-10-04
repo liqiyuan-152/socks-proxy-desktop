@@ -1,5 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/PageHeader";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
 import type { AppError } from "@/lib/generated/ipc";
@@ -111,15 +109,17 @@ export default function ConnectionLogs() {
 
   return (
     <>
-      <PageHeader
-        title="连接日志"
-        description="活跃连接和运行时诊断。已完成连接历史、成功率与失败详情暂不可用。"
-      />
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mx-auto w-full max-w-7xl space-y-5">
+      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
+        <h1 className="text-2xl font-semibold tracking-tight">连接日志</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          活跃连接和运行时诊断。已完成连接历史、成功率与失败详情暂不可用。
+        </p>
+      </header>
+      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+        <div className="w-full space-y-5">
           {error && <ErrorAlert error={error} />}
           <div className="flex flex-wrap gap-3" aria-label="日志筛选">
-            <div className="relative w-full sm:min-w-48 sm:flex-1">
+            <div className="relative flex-1">
               <Search
                 className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
@@ -178,9 +178,7 @@ export default function ConnectionLogs() {
                 <TableBody>
                   {active.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="font-mono text-xs text-muted-foreground">
-                        {item.started_at}
-                      </TableCell>
+                      <TableCell>{item.started_at}</TableCell>
                       <TableCell>
                         {item.target_host}:{item.target_port}
                       </TableCell>
@@ -236,22 +234,8 @@ export default function ConnectionLogs() {
                 <TableBody>
                   {diagnostics.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="font-mono text-xs text-muted-foreground">
-                        {new Date(item.created_at_ms).toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            item.severity === "error"
-                              ? "destructive"
-                              : item.severity === "warning"
-                                ? "warning"
-                                : "info"
-                          }
-                        >
-                          {item.severity.toUpperCase()}
-                        </Badge>
-                      </TableCell>
+                      <TableCell>{new Date(item.created_at_ms).toLocaleString()}</TableCell>
+                      <TableCell>{item.severity}</TableCell>
                       <TableCell>{item.summary}</TableCell>
                     </TableRow>
                   ))}

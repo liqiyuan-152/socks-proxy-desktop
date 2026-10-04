@@ -1,8 +1,5 @@
-import { ActiveConnectionTrend, ConnectionStatistic } from "./ConnectionStatistic";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/PageHeader";
 import { useEffect } from "react";
-import { ChevronRight, CircleDot, Activity, CheckCircle2, Gauge, AlertCircle } from "lucide-react";
+import { ChevronRight, CircleDot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -88,26 +85,24 @@ export default function StatusDashboard() {
 
   return (
     <>
-      <PageHeader title="状态" description="当前网络模式和实际运行状态" />
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mx-auto w-full max-w-7xl space-y-6">
-          {loading && (
-            <div role="status" className="space-y-3">
-              <p>正在加载运行时状态…</p>
-              <Skeleton className="h-12 w-full" />
-            </div>
-          )}
+      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
+        <h1 className="text-2xl font-semibold tracking-tight">状态</h1>
+        <p className="mt-1 text-sm text-muted-foreground">当前网络模式和实际运行状态</p>
+      </header>
+      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+        <div className="w-full space-y-6">
+          {loading && <p role="status">正在加载运行时状态…</p>}
           <RuntimeFeedback />
           <Tabs
             value={selectedMode ?? snapshot?.selected_mode ?? ""}
             onValueChange={(mode) => selectMode(mode as ProxyMode)}
           >
-            <TabsList className="grid h-14 w-full grid-cols-3 group-data-[orientation=horizontal]/tabs:h-14 rounded-xl border-2 border-border bg-gradient-to-b from-muted/30 to-muted/60 p-1.5 sm:mx-auto sm:max-w-2xl">
+            <TabsList className="grid h-11 w-full grid-cols-3 overflow-hidden rounded-lg border border-border bg-muted/50 p-0 sm:mx-auto sm:max-w-2xl">
               {(Object.keys(proxyModes) as ProxyMode[]).map((mode) => (
                 <TabsTrigger
                   key={mode}
                   value={mode}
-                  className="h-full rounded-lg border-0 bg-transparent text-xs font-semibold text-muted-foreground transition-[background-color,box-shadow,scale] duration-200 hover:bg-accent hover:text-foreground data-[state=active]:!bg-[image:var(--gradient-primary)] data-[state=active]:!text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 motion-reduce:transition-none sm:text-sm"
+                  className="h-full rounded-none border-0 border-r border-border bg-transparent text-xs text-muted-foreground last:border-r-0 hover:bg-muted hover:text-foreground data-[state=active]:!border-transparent data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.18)] sm:text-sm"
                   disabled={loading || !snapshot || !capabilities?.proxy_runtime}
                   onClick={() => {
                     if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
@@ -120,8 +115,8 @@ export default function StatusDashboard() {
               ))}
             </TabsList>
           </Tabs>
-          <div className="stagger-children grid gap-5 lg:grid-cols-2">
-            <Card variant="elevated" className="gap-0 py-0">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="border-b border-border py-5">
                 <CardTitle role="heading" aria-level={2}>
                   默认代理
@@ -142,7 +137,7 @@ export default function StatusDashboard() {
                 </span>
               </CardContent>
             </Card>
-            <Card variant="elevated" className="gap-0 py-0">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="border-b border-border py-5">
                 <CardTitle role="heading" aria-level={2}>
                   内核状态
@@ -203,30 +198,15 @@ export default function StatusDashboard() {
             <h2 id="statistics-heading" className="mb-3 text-base font-semibold">
               连接统计
             </h2>
-            <div className="stagger-children grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <ConnectionStatistic
-                icon={<Activity className="size-5" />}
+            <Card className="grid gap-0 border-border bg-card py-0 shadow-none sm:grid-cols-4">
+              <Statistic
                 label="当前活跃连接"
                 value={connections?.active_count?.toString() ?? "不可用"}
-              >
-                <ActiveConnectionTrend count={connections?.active_count ?? null} />
-              </ConnectionStatistic>
-              <ConnectionStatistic
-                icon={<CheckCircle2 className="size-5" />}
-                label="已完成连接"
-                value="不可用"
               />
-              <ConnectionStatistic
-                icon={<Gauge className="size-5" />}
-                label="成功率"
-                value="不可用"
-              />
-              <ConnectionStatistic
-                icon={<AlertCircle className="size-5" />}
-                label="失败详情"
-                value="不可用"
-              />
-            </div>
+              <Statistic label="已完成连接" value="不可用" />
+              <Statistic label="成功率" value="不可用" />
+              <Statistic label="失败详情" value="不可用" />
+            </Card>
             {connections?.status === "degraded" && (
               <p role="status" className="mt-2 text-sm text-muted-foreground">
                 {connections.diagnostic ?? "活跃连接观测已降级。"}
@@ -289,5 +269,14 @@ export default function StatusDashboard() {
         </div>
       </div>
     </>
+  );
+}
+
+function Statistic({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="p-5 sm:border-r sm:border-border last:border-r-0">
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold">{value}</p>
+    </div>
   );
 }

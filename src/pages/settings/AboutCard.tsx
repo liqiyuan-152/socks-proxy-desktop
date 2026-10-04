@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AboutCard() {
   return (
-    <Card variant="elevated" className="gap-0 py-0">
+    <Card className="gap-0 border-border bg-card py-0 shadow-none">
       <CardHeader className="py-5">
         <CardTitle role="heading" aria-level={2}>
           关于

@@ -28,7 +28,6 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
@@ -46,14 +45,13 @@ function StatusDot({ running }: { running: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className={`size-2.5 rounded-full ${running ? "bg-success" : "bg-muted-foreground"}`}
+      className={`size-2.5 rounded-full ${running ? "bg-emerald-500" : "bg-muted-foreground"}`}
     />
   );
 }
 
 function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
   const isActive = useMatch({ path: to, end: to === "/" }) !== null;
-  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarMenuItem>
@@ -61,9 +59,9 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
         asChild
         isActive={isActive}
         tooltip={label}
-        className="h-11 rounded-lg text-sm font-medium text-sidebar-foreground transition-[background-color,box-shadow,scale] duration-200 motion-reduce:transition-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground motion-safe:hover:scale-[1.02] data-[active=true]:bg-[image:var(--gradient-primary)] data-[active=true]:text-primary-foreground data-[active=true]:shadow-md data-[active=true]:shadow-primary/25"
+        className="h-10 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-blue-500/15 data-[active=true]:text-blue-700 data-[active=true]:hover:bg-blue-500/20 data-[active=true]:hover:text-blue-800 dark:data-[active=true]:bg-blue-500/20 dark:data-[active=true]:text-blue-300 dark:data-[active=true]:hover:bg-blue-500/25 dark:data-[active=true]:hover:text-blue-200"
       >
-        <NavLink to={to} end={to === "/"} onClick={() => isMobile && setOpenMobile(false)}>
+        <NavLink to={to} end={to === "/"}>
           <Icon className="size-5" aria-hidden="true" />
           <span>{label}</span>
         </NavLink>
@@ -96,7 +94,7 @@ export function AppLayout() {
       <Sidebar collapsible="icon" className="border-sidebar-border">
         <SidebarHeader className="p-3">
           <div className="flex h-10 items-center gap-2 px-1">
-            <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[image:var(--gradient-primary)] text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/20">
+            <div className="grid size-9 shrink-0 place-items-center rounded-md bg-blue-600 text-white shadow-sm shadow-blue-600/30">
               <ShieldCheck className="size-[18px]" aria-hidden="true" />
             </div>
             <span className="truncate text-base font-semibold group-data-[collapsible=icon]:hidden">
@@ -138,16 +136,11 @@ export function AppLayout() {
       </Sidebar>
 
       <SidebarInset className="min-w-0 bg-background">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            <Outlet />
-          </div>
-          <footer className="hidden shrink-0 items-center gap-4 border-t border-sidebar-border/80 bg-gradient-to-r from-sidebar via-sidebar to-sidebar-accent/30 px-6 py-3.5 backdrop-blur-sm text-xs text-muted-foreground lg:flex">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <Outlet />
+          <footer className="hidden items-center gap-4 px-6 py-3 text-xs text-muted-foreground lg:flex">
             <span>
-              当前模式：
-              <strong className="rounded-md bg-primary/10 px-2 py-0.5 font-semibold text-primary-text ring-1 ring-primary/20">
-                {activeModeLabel}
-              </strong>
+              当前模式：<strong className="font-semibold text-primary">{activeModeLabel}</strong>
             </span>
             <Separator orientation="vertical" className="h-4" />
             <span>
@@ -156,17 +149,14 @@ export function AppLayout() {
             <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-2">
               <Activity className="size-3.5" aria-hidden="true" />
-              内核运行状态：
-              <span className={running ? "font-medium text-success" : "text-muted-foreground"}>
-                {snapshot ? (running ? "健康" : "未运行") : "不可用"}
-              </span>
+              内核运行状态：{snapshot ? (running ? "健康" : "未运行") : "不可用"}
             </span>
             <span className="ml-auto flex items-center gap-2">
               <Globe2 className="size-3.5" aria-hidden="true" />
               {snapshot?.coverage === "system_proxy_apps" ? "系统代理应用流量" : "未接管系统代理"}
             </span>
           </footer>
-        </div>
+        </section>
       </SidebarInset>
     </SidebarProvider>
   );

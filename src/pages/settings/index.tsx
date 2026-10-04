@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/PageHeader";
 import { DiagnosticsCard } from "./DiagnosticsCard";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
@@ -169,10 +168,15 @@ export default function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="设置" description="管理应用启动、日志和配置选项。" />
+      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">设置</h1>
+          <p className="mt-1 text-sm text-muted-foreground">管理应用启动、日志和配置选项。</p>
+        </div>
+      </header>
 
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mx-auto w-full max-w-7xl space-y-5">
+      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+        <div className="w-full space-y-5">
           {error && !pendingAction && <ErrorAlert error={error} />}
           {message && (
             <p role="status" className="text-muted-foreground">
@@ -199,7 +203,7 @@ export default function SettingsPage() {
               }
             />
 
-            <Card variant="elevated" className="gap-0 py-0">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   配置备份
@@ -233,7 +237,7 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card variant="elevated" className="gap-0 py-0">
+            <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="py-5">
                 <CardTitle role="heading" aria-level={2}>
                   日志
@@ -300,7 +304,7 @@ export default function SettingsPage() {
                 <DialogTitle>{activeAction.title}</DialogTitle>
               </DialogHeader>
               <div className="flex gap-3 px-6 py-5 text-sm text-muted-foreground">
-                <Info className="mt-0.5 size-4 shrink-0 text-primary-text" aria-hidden="true" />
+                <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                 <p>{activeAction.description}</p>
               </div>
               {error && <ErrorAlert error={error} />}

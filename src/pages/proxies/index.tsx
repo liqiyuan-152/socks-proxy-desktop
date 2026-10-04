@@ -1,10 +1,8 @@
-import { ProxyAction } from "./ProxyAction";
-import { PageHeader } from "@/components/PageHeader";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
 import type { AppError } from "@/lib/generated/ipc";
 import { useState } from "react";
-import { Circle, CircleDot, Edit3, Timer, Trash2, Server, SearchX } from "lucide-react";
+import { Circle, CircleDot, Edit3, Timer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -130,10 +128,15 @@ export default function ProxyList() {
   const isEditing = editingProxy !== null;
   return (
     <>
-      <PageHeader title="代理" description="管理多个 SOCKS5 或 HTTP 代理" />
+      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">代理</h1>
+          <p className="mt-1 text-sm text-muted-foreground">管理多个 SOCKS5 或 HTTP 代理</p>
+        </div>
+      </header>
 
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mx-auto w-full max-w-7xl space-y-6">
+      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+        <div className="w-full space-y-5">
           <ProxyToolbar
             search={search}
             onSearch={setSearch}
@@ -159,21 +162,18 @@ export default function ProxyList() {
           {error && !dialogOpen && !deletingProxy && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载代理档案…</p>}
 
-          <Card variant="elevated" className="gap-0 overflow-hidden py-0">
-            <Table
-              className="table-modern table-fixed text-sm"
-              containerClassName="max-h-[60vh] overflow-auto"
-            >
+          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
+            <Table className="table-fixed text-sm">
               <TableHeader className="bg-muted/50 [&_th]:h-12 [&_th]:px-3 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground sm:[&_th]:px-4">
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[40%] sm:w-[22%]">名称</TableHead>
+                  <TableHead className="w-[45%] sm:w-[22%]">名称</TableHead>
                   <TableHead className="hidden w-[12%] sm:table-cell">协议</TableHead>
                   <TableHead className="hidden w-[24%] md:table-cell">服务器</TableHead>
                   <TableHead className="hidden w-[10%] md:table-cell">端口</TableHead>
-                  <TableHead className="w-[20%] sm:w-[16%]">延迟</TableHead>
+                  <TableHead className="w-[25%] sm:w-[16%]">延迟</TableHead>
                   <TableHead className="hidden w-[13%] lg:table-cell">认证</TableHead>
                   <TableHead className="hidden w-[15%] lg:table-cell">状态</TableHead>
-                  <TableHead className="w-[40%] text-right sm:w-44">操作</TableHead>
+                  <TableHead className="w-[30%] text-right sm:w-44">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -182,7 +182,7 @@ export default function ProxyList() {
                   const SelectionIcon = active ? CircleDot : Circle;
 
                   return (
-                    <TableRow key={proxy.id} data-selected={active}>
+                    <TableRow key={proxy.id}>
                       <TableCell className="min-w-0 px-3 py-4 font-medium sm:px-4">
                         <span className="flex items-center gap-3 truncate">
                           <SelectionIcon
@@ -195,12 +195,6 @@ export default function ProxyList() {
                           />
                           <span className="truncate">{proxy.name}</span>
                         </span>
-                        <p
-                          className="mt-1 truncate pl-8 text-xs text-muted-foreground md:hidden"
-                          title={`${proxy.host}:${proxy.port}`}
-                        >
-                          {proxy.protocol.toUpperCase()} · {proxy.host}:{proxy.port}
-                        </p>
                         <div className="mt-1 pl-8 lg:hidden">
                           <div className="flex items-center gap-2">
                             <Switch
@@ -242,7 +236,7 @@ export default function ProxyList() {
                       <TableCell className="px-2 py-4 sm:px-4">
                         <div className="grid grid-cols-2 justify-items-end gap-1 sm:flex sm:justify-end">
                           {!active && (
-                            <ProxyAction
+                            <Button
                               variant="ghost"
                               size="icon-sm"
                               disabled={busy || !proxy.enabled}
@@ -250,9 +244,9 @@ export default function ProxyList() {
                               onClick={() => void changeProfile("select_profile", proxy.id)}
                             >
                               <CircleDot className="size-4" aria-hidden="true" />
-                            </ProxyAction>
+                            </Button>
                           )}
-                          <ProxyAction
+                          <Button
                             variant="ghost"
                             size="icon-sm"
                             aria-label={`测试${proxy.name}延迟`}
@@ -266,8 +260,8 @@ export default function ProxyList() {
                             onClick={() => void latency.test(proxy.id)}
                           >
                             <Timer className="size-4" aria-hidden="true" />
-                          </ProxyAction>
-                          <ProxyAction
+                          </Button>
+                          <Button
                             variant="ghost"
                             size="icon-sm"
                             aria-label={`编辑${proxy.name}`}
@@ -275,8 +269,8 @@ export default function ProxyList() {
                             onClick={() => openDialog(proxy)}
                           >
                             <Edit3 className="size-4" aria-hidden="true" />
-                          </ProxyAction>
-                          <ProxyAction
+                          </Button>
+                          <Button
                             variant="ghost"
                             size="icon-sm"
                             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -288,7 +282,7 @@ export default function ProxyList() {
                             }}
                           >
                             <Trash2 className="size-4" aria-hidden="true" />
-                          </ProxyAction>
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -297,30 +291,7 @@ export default function ProxyList() {
                 {!loading && filtered.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center text-muted-foreground">
-                      <div className="flex flex-col items-center gap-3 px-3 py-8">
-                        {profiles.length ? (
-                          <SearchX className="size-9 text-muted-foreground" aria-hidden="true" />
-                        ) : (
-                          <Server className="size-9 text-primary-text" aria-hidden="true" />
-                        )}
-                        <p className="font-medium text-foreground">
-                          {profiles.length ? "暂无匹配的代理档案" : "还没有代理档案"}
-                        </p>
-                        <p className="text-sm">
-                          {profiles.length
-                            ? "试试其他关键词或协议筛选。"
-                            : "添加一个 SOCKS5 或 HTTP 代理，开始配置你的网络出口。"}
-                        </p>
-                        {!profiles.length && (
-                          <Button
-                            variant="gradient"
-                            onClick={() => openDialog()}
-                            disabled={loading || busy}
-                          >
-                            添加第一个代理
-                          </Button>
-                        )}
-                      </div>
+                      暂无匹配的代理档案
                     </TableCell>
                   </TableRow>
                 )}

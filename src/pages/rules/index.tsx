@@ -1,5 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/PageHeader";
 import { normalizeError } from "@/lib/error-handler";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { useState } from "react";
@@ -104,10 +102,15 @@ export default function RoutingRuleList() {
 
   return (
     <>
-      <PageHeader title="分流规则" description="定义哪些流量走代理，哪些流量直连。" />
+      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">分流规则</h1>
+          <p className="mt-1 text-sm text-muted-foreground">定义哪些流量走代理，哪些流量直连。</p>
+        </div>
+      </header>
 
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mx-auto w-full max-w-7xl space-y-5">
+      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+        <div className="w-full space-y-5">
           <ChinaDirectPreset />
           <RouteTest />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -138,11 +141,8 @@ export default function RoutingRuleList() {
           {error && !dialogOpen && !deletingRule && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载分流规则…</p>}
 
-          <Card variant="elevated" className="gap-0 overflow-hidden py-0 hover:border-primary/30">
-            <Table
-              className="table-modern min-w-[760px] text-sm"
-              containerClassName="max-h-[60vh] overflow-auto"
-            >
+          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
+            <Table className="min-w-[760px] text-sm">
               <TableHeader className="bg-muted/50 [&_th]:h-12 [&_th]:px-4 [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground">
                 <TableRow className="hover:bg-transparent">
                   <TableHead>规则名称</TableHead>
@@ -163,21 +163,11 @@ export default function RoutingRuleList() {
                     <TableRow key={rule.id}>
                       <TableCell className="px-4 py-4 font-medium">{rule.name}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">
-                        <Badge
-                          variant={
-                            rule.matcher === "ip_cidr"
-                              ? "warning"
-                              : rule.matcher === "domain_suffix"
-                                ? "success"
-                                : "info"
-                          }
-                        >
-                          {rule.matcher === "ip_cidr"
-                            ? "CIDR"
-                            : rule.matcher === "domain_suffix"
-                              ? "域名后缀"
-                              : "域名"}
-                        </Badge>
+                        {rule.matcher === "ip_cidr"
+                          ? "CIDR"
+                          : rule.matcher === "domain_suffix"
+                            ? "域名后缀"
+                            : "域名"}
                       </TableCell>
                       <TableCell className="px-4 py-4 font-medium">{rule.target}</TableCell>
                       <TableCell className="px-4 py-4 text-muted-foreground">
@@ -189,9 +179,7 @@ export default function RoutingRuleList() {
                       </TableCell>
                       <TableCell className="px-4 py-4">
                         <span
-                          className={
-                            rule.action === "proxy" ? "text-primary-text" : "text-foreground"
-                          }
+                          className={rule.action === "proxy" ? "text-primary" : "text-foreground"}
                         >
                           {rule.action === "proxy"
                             ? (profiles.find((profile) => profile.id === rule.proxy_profile_id)

@@ -12,7 +12,7 @@ export function NetworkRecoveryCard({
   onRestore: () => void;
 }) {
   return (
-    <Card variant="elevated" className="gap-0 py-0">
+    <Card className="gap-0 border-border bg-card py-0 shadow-none">
       <CardHeader className="py-5">
         <CardTitle role="heading" aria-level={2}>
           网络恢复
