@@ -7,9 +7,9 @@ describe("backend-driven desktop UI", () => {
     fixture.profiles = [];
     fixture.mode = "direct";
     render(<App />);
-    await waitFor(() => expect(screen.getByRole("tab", { name: "规则代理" })).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByRole("radio", { name: "规则代理" })).not.toBeDisabled());
 
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "规则代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }), {
       button: 0,
       ctrlKey: false,
     });
@@ -17,7 +17,7 @@ describe("backend-driven desktop UI", () => {
       expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
     );
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "全局代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "全局代理" }), {
       button: 0,
       ctrlKey: false,
     });
@@ -47,7 +47,7 @@ describe("backend-driven desktop UI", () => {
       await screen.findByText("example.org");
       const label = selectedMode === "direct" ? "全局直连" : "规则代理";
       await waitFor(() =>
-        expect(screen.getByRole("tab", { name: label })).toHaveAttribute("data-state", "active"),
+        expect(screen.getByRole("radio", { name: label })).toHaveAttribute("data-state", "checked"),
       );
       expect(screen.getByText("已应用模式").nextElementSibling).toHaveTextContent("未应用");
       expect(mocks.invoke).not.toHaveBeenCalledWith("set_runtime_mode", expect.anything());
@@ -67,21 +67,27 @@ describe("backend-driven desktop UI", () => {
   it("selects immediately and keeps the target selected after a logged failure", async () => {
     render(<App />);
     await screen.findByText("example.org");
-    await waitFor(() => expect(screen.getByRole("tab", { name: "规则代理" })).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByRole("radio", { name: "规则代理" })).not.toBeDisabled());
     fixture.rejectMode = true;
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "规则代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }), {
       button: 0,
       ctrlKey: false,
     });
-    expect(screen.getByRole("tab", { name: "规则代理" })).toHaveAttribute("data-state", "active");
+    expect(screen.getByRole("radio", { name: "规则代理" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
     await waitFor(() =>
       expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
     );
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
     expect(screen.getByRole("alert")).toHaveTextContent("内核启动失败");
-    expect(screen.getByRole("tab", { name: "规则代理" })).toHaveAttribute("data-state", "active");
+    expect(screen.getByRole("radio", { name: "规则代理" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
     expect(screen.getByText("已应用模式").nextElementSibling).toHaveTextContent("全局代理");
-    fireEvent.click(screen.getByRole("tab", { name: "规则代理" }));
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }));
     await waitFor(() =>
       expect(
         mocks.invoke.mock.calls.filter(([command]) => command === "set_runtime_mode"),
@@ -105,24 +111,30 @@ describe("backend-driven desktop UI", () => {
       }
       return original(command, args);
     });
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "规则代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }), {
       button: 0,
       ctrlKey: false,
     });
     expect(await screen.findByText("正在切换代理模式…")).toBeInTheDocument();
-    const statusContent = screen.getByRole("tablist").closest<HTMLElement>(".content-scroll")!;
+    const statusContent = screen.getByRole("radiogroup").closest<HTMLElement>(".content-scroll")!;
     expect(within(statusContent).queryByText("正在切换代理模式…")).not.toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "规则代理" })).toHaveAttribute("data-state", "active");
-    expect(screen.getByRole("tab", { name: "全局直连" })).not.toBeDisabled();
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "全局直连" }), {
+    expect(screen.getByRole("radio", { name: "规则代理" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
+    expect(screen.getByRole("radio", { name: "全局直连" })).not.toBeDisabled();
+    fireEvent.click(screen.getByRole("radio", { name: "全局直连" }), {
       button: 0,
       ctrlKey: false,
     });
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "全局代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "全局代理" }), {
       button: 0,
       ctrlKey: false,
     });
-    expect(screen.getByRole("tab", { name: "全局代理" })).toHaveAttribute("data-state", "active");
+    expect(screen.getByRole("radio", { name: "全局代理" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
     expect(screen.getAllByText("正在切换代理模式…")).toHaveLength(1);
     fixture.mode = "rules";
     finish?.(runtime());
@@ -134,7 +146,10 @@ describe("backend-driven desktop UI", () => {
     expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "global" });
     expect(mocks.invoke).not.toHaveBeenCalledWith("set_runtime_mode", { mode: "direct" });
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
-    expect(screen.getByRole("tab", { name: "全局代理" })).toHaveAttribute("data-state", "active");
+    expect(screen.getByRole("radio", { name: "全局代理" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
   });
 
   it("continues to the latest selection when an earlier switch fails", async () => {
@@ -153,11 +168,11 @@ describe("backend-driven desktop UI", () => {
       }
       return original(command, args);
     });
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "规则代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }), {
       button: 0,
       ctrlKey: false,
     });
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "全局直连" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "全局直连" }), {
       button: 0,
       ctrlKey: false,
     });
@@ -166,7 +181,10 @@ describe("backend-driven desktop UI", () => {
       expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "direct" }),
     );
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
-    expect(screen.getByRole("tab", { name: "全局直连" })).toHaveAttribute("data-state", "active");
+    expect(screen.getByRole("radio", { name: "全局直连" })).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
@@ -182,7 +200,7 @@ describe("backend-driven desktop UI", () => {
           })
         : original(command, args),
     );
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "规则代理" }), {
+    fireEvent.click(screen.getByRole("radio", { name: "规则代理" }), {
       button: 0,
       ctrlKey: false,
     });

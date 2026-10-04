@@ -119,7 +119,7 @@ it("disables platform-dependent controls when the capability request fails", asy
     return original(name, args);
   });
   render(<App />);
-  await waitFor(() => expect(screen.getByRole("tab", { name: "全局代理" })).toBeDisabled());
+  await waitFor(() => expect(screen.getByRole("radio", { name: "全局代理" })).toBeDisabled());
   fireEvent.click(await screen.findByRole("link", { name: "代理" }));
   expect(await screen.findByRole("button", { name: "测试Primary延迟" })).toBeDisabled();
   fireEvent.click(await screen.findByRole("link", { name: "设置" }));

@@ -114,7 +114,11 @@ export function DiagnosticsCard() {
   }
 
   return (
-    <Card aria-label="诊断信息" className="gap-0 border-border bg-card py-0 shadow-none">
+    <Card
+      role="region"
+      aria-label="诊断信息"
+      className="gap-0 border-border bg-card py-0 shadow-none"
+    >
       <CardHeader className="py-5">
         <CardTitle role="heading" aria-level={2}>
           诊断信息
@@ -176,7 +180,7 @@ export function DiagnosticsCard() {
             ))}
           </section>
         )}
-        <div className="max-h-80 space-y-2 overflow-y-auto" aria-label="诊断记录">
+        <div role="group" className="max-h-80 space-y-2 overflow-y-auto" aria-label="诊断记录">
           {page?.items.map((item) => (
             <details key={item.id} className="rounded-md border border-border p-3 text-sm">
               <summary className="cursor-pointer">

@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useBackendStore } from "@/store/backend-store";
 import { useShallow } from "zustand/react/shallow";
 import { RuntimeFeedback } from "@/components/RuntimeFeedback";
@@ -99,28 +99,29 @@ export default function StatusDashboard() {
             </div>
           )}
           <RuntimeFeedback />
-          <Tabs
+          <RadioGroup
+            aria-label="代理模式"
+            orientation="horizontal"
+            className="grid h-14 w-full grid-cols-3 rounded-xl border-2 border-border bg-gradient-to-b from-muted/30 to-muted/60 p-1.5 sm:mx-auto sm:max-w-2xl"
             value={selectedMode ?? snapshot?.selected_mode ?? ""}
             onValueChange={(mode) => selectMode(mode as ProxyMode)}
           >
-            <TabsList className="grid h-14 w-full grid-cols-3 group-data-[orientation=horizontal]/tabs:h-14 rounded-xl border-2 border-border bg-gradient-to-b from-muted/30 to-muted/60 p-1.5 sm:mx-auto sm:max-w-2xl">
-              {(Object.keys(proxyModes) as ProxyMode[]).map((mode) => (
-                <TabsTrigger
-                  key={mode}
-                  value={mode}
-                  className="h-full rounded-lg border-0 bg-transparent text-xs font-semibold text-muted-foreground transition-[background-color,box-shadow,scale] duration-200 hover:bg-accent hover:text-foreground data-[state=active]:!bg-[image:var(--gradient-primary)] data-[state=active]:!text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 motion-reduce:transition-none sm:text-sm"
-                  disabled={loading || !snapshot || !capabilities?.proxy_runtime}
-                  onClick={() => {
-                    if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
-                      selectMode(mode);
-                    }
-                  }}
-                >
-                  {proxyModes[mode].label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+            {(Object.keys(proxyModes) as ProxyMode[]).map((mode) => (
+              <RadioGroupItem
+                key={mode}
+                value={mode}
+                className="h-full w-full aspect-auto rounded-lg border-0 bg-transparent text-xs font-semibold text-muted-foreground transition-[background-color,box-shadow,scale] duration-200 hover:bg-accent hover:text-foreground data-[state=checked]:!bg-[image:var(--gradient-primary)] data-[state=checked]:!text-primary-foreground data-[state=checked]:shadow-md data-[state=checked]:shadow-primary/25 motion-reduce:transition-none sm:text-sm"
+                disabled={loading || !snapshot || !capabilities?.proxy_runtime}
+                onClick={() => {
+                  if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
+                    selectMode(mode);
+                  }
+                }}
+              >
+                {proxyModes[mode].label}
+              </RadioGroupItem>
+            ))}
+          </RadioGroup>
           <div className="stagger-children grid gap-5 lg:grid-cols-2">
             <Card variant="elevated" className="gap-0 py-0">
               <CardHeader className="border-b border-border py-5">

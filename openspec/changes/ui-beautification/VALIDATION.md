@@ -48,3 +48,14 @@
 - 前端159项、typecheck及lint通过。全量WCAG规则、弹窗状态、浏览器兼容性与动画性能留在Phase7，不把对比度专项扫描替代全面验收。
 - 最终触摸模拟确认Switch透明触摸区44×44px，操作图标按钮44×44px。更新交付文件后隔离目录完整pnpm check再次通过，提交hook例外沿用Phase1。
 - 进入Phase7的首次完整WCAG扫描发现状态页模式Tabs的aria-controls指向不存在的面板（原页面将Tabs当作模式选择器）；该问题纳入Phase7修复，不将对比度专项通过宣称为全面WCAG通过。
+
+## Phase 7 — 测试与验收
+
+- T7.1–T7.3：现有前端测试覆盖代理添加/删除/启用/选择、搜索筛选、模式切换失败回退、设置表单与开关、规则编辑、诊断筛选/清理、连接详情与对话框；本阶段新增模式单选组的交互测试。最终前端 31 个测试文件、159 项测试通过。
+- T7.4–T7.7：Chromium 1366px 浅深主题五页遍历；Safari macOS 原生打开生产验证构建，状态单选、代理表格与操作按钮可见可用；Firefox/Chromium/WebKit 自动化均能挂载状态页、获得3个单选项，document宽度等于视口。Lighthouse desktop/mobile accessibility 均100；完整 axe WCAG2A/2AA 扫描五页在修正模式Tabs错误后无 violations。渐变端点与插值对比度按 Phase6记录验证。
+- T7.8：Chromium Performance trace 覆盖约6秒、5页反复切换和动画；759帧，帧间隔中位数7ms、P95 7.8ms，平均计算帧率126fps；10帧超过34ms峰值69.1ms，视为偶发导航/测试调度尖峰，未发现持续动画掉帧。动画属性限制为transform/opacity/颜色和阴影，shimmer使用transform。
+- T7.9：生产构建成功。当前美化 CSS 97.87kB（gzip14.47kB），基线构建记录85.76kB（gzip12.81kB），增加12.11kB，低于设计约束20kB；Lighthouse导航审计 desktop/mobile分别通过51/48项，Accessibility均100。审计不包含性能分数，已用性能trace补充。
+- T7.10：路由循环20次后根节点无残留额外挂载，稳定等待后1366px document宽度回到1366。DevTools heap snapshot保存接口受当前工作区工具路径策略拒绝，未伪造快照结果；以React根节点、重复路由与性能trace检查替代，后续可在本地DevTools Memory面板复核。
+- T7.11–T7.14：375/768/1366/1920px五页遍历均无body横向溢出；375px头部20px、16px内边距、代理只显示核心列并显示协议/地址摘要，统计卡片单列；768px两列统计，1920px内容宽度上限1280px。
+- T7.15–T7.17：Chromium（Chrome/Edge内核）、Firefox、WebKit自动化与macOS Safari生产验证均通过页面挂载、模式切换/表格读取和无溢出检查。Windows主机SSH可登录并返回 Windows 10/11 版本，但未安装可控浏览器，不将其虚报为浏览器验收。
+- T7.18–T7.19：修复模式Tabs无效aria-controls、触摸Tooltip按钮尺寸、浅色胶囊对比度、移动路由循环探针问题；typecheck/lint、前端测试、生产构建、隔离交付完整pnpm check通过。剩余0个已知UI bug；内存快照工具限制已记录。
