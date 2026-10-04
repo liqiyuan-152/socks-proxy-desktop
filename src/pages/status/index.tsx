@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useBackend } from "@/lib/backend-state";
+import { RuntimeFeedback } from "@/components/RuntimeFeedback";
 import { proxyModes, type ProxyMode } from "@/lib/proxy-mode";
 
 const phaseLabels = {
@@ -36,7 +37,6 @@ export default function StatusDashboard() {
     loading,
     pending,
     selectedMode,
-    error,
     switchMode,
   } = useBackend();
   const navigate = useNavigate();
@@ -80,11 +80,7 @@ export default function StatusDashboard() {
       <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-6">
           {loading && <p role="status">正在加载运行时状态…</p>}
-          {error && (
-            <p role="alert" className="text-destructive">
-              {error}
-            </p>
-          )}
+          <RuntimeFeedback />
           <Tabs
             value={selectedMode ?? snapshot?.selected_mode ?? ""}
             onValueChange={(mode) => selectMode(mode as ProxyMode)}
@@ -138,6 +134,32 @@ export default function StatusDashboard() {
               <CardContent className="grid gap-y-4 py-5 text-sm sm:grid-cols-[132px_1fr]">
                 <span className="text-muted-foreground">运行阶段</span>
                 <span>{snapshot ? phaseLabels[snapshot.phase] : "不可用"}</span>
+                <span className="text-muted-foreground">会话健康</span>
+                <span>
+                  {snapshot
+                    ? (
+                        {
+                          inactive: "未运行",
+                          healthy: "健康",
+                          exited: "已退出",
+                          recovery_required: "恢复未完成",
+                        } as const
+                      )[snapshot.session_health]
+                    : "不可用"}
+                </span>
+                <span className="text-muted-foreground">最近操作</span>
+                <span>
+                  {snapshot
+                    ? (
+                        {
+                          idle: "无",
+                          pending: "处理中",
+                          succeeded: "成功",
+                          failed: "失败",
+                        } as const
+                      )[snapshot.last_operation.outcome]
+                    : "不可用"}
+                </span>
                 <span className="text-muted-foreground">已应用模式</span>
                 <span>
                   {snapshot?.applied_mode ? proxyModes[snapshot.applied_mode].label : "未应用"}
@@ -175,7 +197,7 @@ export default function StatusDashboard() {
             </Card>
             {connections?.status === "degraded" && (
               <p role="status" className="mt-2 text-sm text-muted-foreground">
-                活跃连接观测已降级。
+                {connections.diagnostic ?? "活跃连接观测已降级。"}
               </p>
             )}
           </section>

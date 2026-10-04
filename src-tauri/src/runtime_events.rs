@@ -94,6 +94,8 @@ mod tests {
     fn emits_only_state_transitions_not_uptime_ticks_or_sensitive_diagnostics() {
         let mut tracker = SnapshotTracker::default();
         let mut snapshot = RuntimeSnapshot {
+            configuration_revision: 0,
+            runtime_plan_revision: 0,
             revision: 1,
             selected_mode: RuntimeMode::Global,
             desired_mode: RuntimeMode::Global,
@@ -104,11 +106,15 @@ mod tests {
             system_proxy_enabled: true,
             tun_enabled: false,
             coverage: TrafficCoverage::SystemProxyApps,
+            session_health: crate::runtime::SessionHealth::Healthy,
+            last_operation: crate::runtime::OperationResult::default(),
             last_error: None,
         };
         assert!(tracker.changed(&snapshot));
         snapshot.runtime_uptime_ms = Some(1_000);
         assert!(!tracker.changed(&snapshot));
+        snapshot.configuration_revision += 1;
+        assert!(tracker.changed(&snapshot));
         snapshot.phase = RuntimePhase::Failed;
         snapshot.applied_mode = None;
         assert!(tracker.changed(&snapshot));

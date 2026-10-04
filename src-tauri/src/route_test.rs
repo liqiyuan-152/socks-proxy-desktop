@@ -7,9 +7,24 @@ use crate::{
 use serde::Serialize;
 use std::{net::IpAddr, path::Path};
 
+#[derive(Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
+pub enum RouteStage {
+    UserRule,
+    ChinaDomain,
+    PrivateIp,
+    ChinaIp,
+    Final,
+}
+
 #[derive(Debug, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct RouteTestResult {
-    pub stage: &'static str,
+    pub target: String,
+    pub port: u16,
+    pub configuration_revision: u64,
+    pub stage: RouteStage,
     pub action: RuleAction,
     pub proxy_profile_id: Option<String>,
     pub proxy_name: Option<String>,
@@ -54,6 +69,9 @@ pub fn evaluate(
                   reason: &str| {
         let profile = proxy_id.and_then(|id| configuration.profiles.iter().find(|p| p.id == id));
         RouteTestResult {
+            target: host.clone(),
+            port,
+            configuration_revision: 0,
             stage,
             action,
             proxy_profile_id: proxy_id.map(str::to_owned),
@@ -66,7 +84,7 @@ pub fn evaluate(
     };
     if let Some(rule) = rules.matching_rule(&host, port) {
         return Ok(decide(
-            "user_rule",
+            RouteStage::UserRule,
             rule.action,
             rule.proxy_profile_id.as_deref(),
             Some(&rule.id),
@@ -76,7 +94,7 @@ pub fn evaluate(
     }
     let Some(sets) = sets.as_ref() else {
         return Ok(decide(
-            "final",
+            RouteStage::Final,
             RuleAction::Direct,
             None,
             None,
@@ -87,7 +105,7 @@ pub fn evaluate(
     if let Some(ip) = ip {
         if is_private(ip) {
             return Ok(decide(
-                "private_ip",
+                RouteStage::PrivateIp,
                 RuleAction::Direct,
                 None,
                 None,
@@ -102,7 +120,7 @@ pub fn evaluate(
         };
         if sets.matches(name, &host)? {
             return Ok(decide(
-                "china_ip",
+                RouteStage::ChinaIp,
                 RuleAction::Direct,
                 None,
                 None,
@@ -112,7 +130,7 @@ pub fn evaluate(
         }
     } else if sets.matches("china-domains.srs", &host)? {
         return Ok(decide(
-            "china_domain",
+            RouteStage::ChinaDomain,
             RuleAction::Direct,
             None,
             None,
@@ -126,7 +144,7 @@ pub fn evaluate(
         "域名集外不按解析 IP 判断"
     };
     Ok(decide(
-        "final",
+        RouteStage::Final,
         RuleAction::Proxy,
         configuration.active_profile_id.as_deref(),
         None,

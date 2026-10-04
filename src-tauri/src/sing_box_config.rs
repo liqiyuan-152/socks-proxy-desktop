@@ -3,7 +3,7 @@ use crate::{
     credentials::ProxyCredential,
     error::{AppError, FieldError},
     models::{PersistedConfiguration, ProxyProtocol, RuleAction, RuleMatcher, RuntimeMode},
-    routing::CompiledRules,
+    runtime_plan::RuntimePlan,
 };
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -51,24 +51,15 @@ pub fn render_with_rules(
     if control_secret.is_empty() {
         return Err(field_error("control_secret", "控制接口密钥不能为空"));
     }
-    let compiled = CompiledRules::compile(configuration)?;
-    if mode == RuntimeMode::Rules {
-        configuration.validate_runtime_rules()?;
-    }
-    let default_tag = configuration
-        .active_profile_id
-        .as_ref()
-        .map(|id| proxy_tag(id));
-    if mode == RuntimeMode::Global && default_tag.is_none() {
-        return Err(field_error("default_profile_id", "全局代理需要默认代理"));
-    }
+    let plan = RuntimePlan::build(configuration, mode, &HashMap::new())?;
+    let default_tag = plan.default_profile_id.as_ref().map(|id| proxy_tag(id));
     let mut outbounds = Vec::new();
-    for (index, profile) in configuration
-        .profiles
-        .iter()
-        .enumerate()
-        .filter(|(_, p)| p.enabled)
-    {
+    for profile in &plan.exits {
+        let index = configuration
+            .profiles
+            .iter()
+            .position(|p| p.id == profile.id)
+            .expect("planned profile exists");
         let credential = credentials.get(&profile.id);
         if profile.authentication_enabled != credential.is_some() {
             return Err(field_error(
@@ -98,8 +89,7 @@ pub fn render_with_rules(
     outbounds.push(json!({ "type": "direct", "tag": "direct" }));
 
     let mut rules: Vec<Value> = if mode == RuntimeMode::Rules {
-        compiled
-            .ordered_rules()
+        plan.rules
             .iter()
             .filter(|rule| rule.enabled)
             .map(|rule| {
@@ -140,7 +130,7 @@ pub fn render_with_rules(
     } else {
         Vec::new()
     };
-    let preset = mode == RuntimeMode::Rules && configuration.china_direct_enabled;
+    let preset = plan.china_direct_enabled;
     if preset {
         china_rules.ok_or_else(|| AppError::unavailable("国内直连规则集未通过校验"))?;
         let default = default_tag

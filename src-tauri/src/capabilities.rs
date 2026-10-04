@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct Capabilities {
     pub platform: &'static str,
     pub proxy_runtime: bool,

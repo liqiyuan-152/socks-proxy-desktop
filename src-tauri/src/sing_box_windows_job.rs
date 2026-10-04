@@ -115,4 +115,75 @@ mod tests {
         unrelated.kill().unwrap();
         unrelated.wait().unwrap();
     }
+
+    #[test]
+    #[ignore = "isolated process owner invoked by abrupt-exit test"]
+    fn crashed_job_owner_child() {
+        let binary = std::env::var("CRASH_JOB_BINARY").unwrap();
+        let directory = std::path::PathBuf::from(std::env::var("CRASH_JOB_DIRECTORY").unwrap());
+        let child = Command::new(binary).arg("idle").spawn().unwrap();
+        let job = CoreJob::new().unwrap();
+        job.attach(&child).unwrap();
+        std::fs::write(directory.join("pid.tmp"), child.id().to_string()).unwrap();
+        std::fs::rename(directory.join("pid.tmp"), directory.join("pid")).unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while !directory.join("exit").exists() {
+            assert!(Instant::now() < deadline, "parent did not release owner");
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        // The OS must close the job handle: neither Child nor CoreJob drops.
+        std::process::exit(85);
+    }
+
+    #[test]
+    fn abrupt_owner_exit_kills_job_child_without_rust_destructors() {
+        use windows_sys::Win32::System::Threading::{OpenProcess, WaitForSingleObject};
+        let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/fake-sing-box.rs");
+        let directory = tempfile::tempdir().unwrap();
+        let binary = directory.path().join("fake-sing-box.exe");
+        assert!(Command::new("rustc")
+            .arg("--edition=2021")
+            .arg(fixture)
+            .arg("-o")
+            .arg(&binary)
+            .status()
+            .unwrap()
+            .success());
+        let mut unrelated = Command::new(&binary).arg("idle").spawn().unwrap();
+        let mut owner = Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "sing_box_windows_job::tests::crashed_job_owner_child",
+                "--ignored",
+            ])
+            .env("CRASH_JOB_BINARY", &binary)
+            .env("CRASH_JOB_DIRECTORY", directory.path())
+            .spawn()
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while !directory.path().join("pid").exists() {
+            assert!(
+                Instant::now() < deadline,
+                "owner did not create protected child"
+            );
+            assert!(owner.try_wait().unwrap().is_none());
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        let pid = std::fs::read_to_string(directory.path().join("pid"))
+            .unwrap()
+            .parse()
+            .unwrap();
+        // Hold a handle before the crash, so PID reuse cannot fake success.
+        let process = unsafe { OpenProcess(0x0010_0000, 0, pid) }; // SYNCHRONIZE
+        assert!(!process.is_null());
+        std::fs::write(directory.path().join("exit"), b"").unwrap();
+        assert_eq!(owner.wait().unwrap().code(), Some(85));
+        let result = unsafe { WaitForSingleObject(process, 10_000) };
+        unsafe { CloseHandle(process) };
+        assert_eq!(result, 0, "protected child survived owner crash");
+        assert!(unrelated.try_wait().unwrap().is_none());
+        unrelated.kill().unwrap();
+        unrelated.wait().unwrap();
+    }
 }

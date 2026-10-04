@@ -32,11 +32,11 @@ fn user_rule_takes_precedence_and_disabled_preset_keeps_direct_fallback() {
         enabled: true,
     });
     let matched = evaluate(&config, None, "api.example.org", 443).unwrap();
-    assert_eq!(matched.stage, "user_rule");
+    assert_eq!(matched.stage, RouteStage::UserRule);
     assert_eq!(matched.matched_rule_name.as_deref(), Some("Selected"));
     assert_eq!(matched.proxy_name.as_deref(), Some("Primary"));
     let fallback = evaluate(&config, None, "other.invalid", 443).unwrap();
-    assert_eq!(fallback.stage, "final");
+    assert_eq!(fallback.stage, RouteStage::Final);
     assert_eq!(fallback.action, RuleAction::Direct);
     assert_eq!(
         evaluate(&config, None, "bad host", 443).unwrap_err().fields[0].field,
@@ -58,12 +58,12 @@ fn bundled_rule_sets_explain_domains_and_literal_ipv4_ipv6() {
     let mut config = config();
     config.china_direct_enabled = true;
     for (target, stage, action) in [
-        ("baidu.com", "china_domain", RuleAction::Direct),
-        ("unknown.invalid", "final", RuleAction::Proxy),
-        ("1.0.1.1", "china_ip", RuleAction::Direct),
-        ("240e::1", "china_ip", RuleAction::Direct),
-        ("127.0.0.1", "private_ip", RuleAction::Direct),
-        ("192.0.2.1", "final", RuleAction::Proxy),
+        ("baidu.com", RouteStage::ChinaDomain, RuleAction::Direct),
+        ("unknown.invalid", RouteStage::Final, RuleAction::Proxy),
+        ("1.0.1.1", RouteStage::ChinaIp, RuleAction::Direct),
+        ("240e::1", RouteStage::ChinaIp, RuleAction::Direct),
+        ("127.0.0.1", RouteStage::PrivateIp, RuleAction::Direct),
+        ("192.0.2.1", RouteStage::Final, RuleAction::Proxy),
     ] {
         let result = evaluate(&config, Some(&root), target, 443).unwrap();
         assert_eq!(result.stage, stage, "{target}");
@@ -85,7 +85,7 @@ fn bundled_rule_sets_explain_domains_and_literal_ipv4_ipv6() {
         evaluate(&config, Some(&root), "baidu.com", 443)
             .unwrap()
             .stage,
-        "user_rule"
+        RouteStage::UserRule
     );
     let missing = tempfile::tempdir().unwrap();
     assert!(evaluate(&config, Some(missing.path()), "baidu.com", 443).is_err());

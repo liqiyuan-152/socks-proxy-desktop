@@ -1,0 +1,10 @@
+{
+  "installer": "Socks Proxy_0.1.0_x64-setup.exe",
+  "windows": "10.0.26200.0",
+  "install_exit_code": 0,
+  "installer_sha256": "43b34e644ea5dfbb00e2c499ee6203be145ca8add2ae857600128d5b545c88d3",
+  "source": "00e72c0e1f849f859ad046abc75cd898c59de7ff",
+  "webview2": "154.0.4258.53",
+  "installed_exe_sha256": "2a20e17a17d2a33c83f68349a754dcf7d28b3a349ad7d5991c2f3fe871dbb1cf",
+  "installed_core_hash_verified": true
+}

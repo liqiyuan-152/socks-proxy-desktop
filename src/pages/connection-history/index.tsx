@@ -1,3 +1,4 @@
+import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Copy, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,12 +26,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { command, errorMessage, type ActiveConnection } from "@/lib/backend";
+import { errorMessage, type ActiveConnection } from "@/lib/backend";
 import { useBackend } from "@/lib/backend-state";
 
-type Diagnostic = { id: string; created_at_ms: number; severity: string; summary: string };
-type DiagnosticPage = { items: Diagnostic[]; total: number; next_offset: number | null };
-type Filter = { from_ms: number | null; until_ms: number | null; severity: string | null };
+import type { DiagnosticPage, DiagnosticFilter as Filter } from "@/lib/generated/ipc";
 
 export default function ConnectionLogs() {
   const { connections } = useBackend();
@@ -55,9 +54,7 @@ export default function ConnectionLogs() {
 
   const refresh = useCallback(async () => {
     try {
-      setPage(
-        await command<DiagnosticPage>("get_runtime_diagnostics", { filter, offset: 0, limit: 100 }),
-      );
+      setPage(await ipc("get_runtime_diagnostics", { filter, offset: 0, limit: 100 }));
       setError(null);
     } catch (reason) {
       setError(errorMessage(reason));
@@ -72,7 +69,7 @@ export default function ConnectionLogs() {
     setBusy(true);
     setError(null);
     try {
-      const text = await command<string>("copy_active_connection_detail", { id });
+      const text = await ipc("copy_active_connection_detail", { id });
       await navigator.clipboard.writeText(text);
     } catch (reason) {
       setError(errorMessage(reason));
@@ -85,7 +82,7 @@ export default function ConnectionLogs() {
     setBusy(true);
     setError(null);
     try {
-      await command<number>("clear_runtime_diagnostics", { filter, confirmed: true });
+      await ipc("clear_runtime_diagnostics", { filter, confirmed: true });
       setClearOpen(false);
       await refresh();
     } catch (reason) {

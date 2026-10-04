@@ -1,6 +1,7 @@
 use super::*;
 use crate::models::{ProxyProfile, ProxyProtocol, RoutingRule, RuleAction, RuleMatcher};
 use std::collections::HashMap;
+use std::io::Read;
 use std::{
     net::{TcpListener, UdpSocket},
     thread,
@@ -8,7 +9,7 @@ use std::{
 
 #[test]
 fn fixed_core_exposes_verified_active_connection_fields_on_loopback() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let binary = Path::new(&binary);
@@ -126,9 +127,11 @@ fn fixed_core_exposes_verified_active_connection_fields_on_loopback() {
     server.join().unwrap();
 }
 
+// Prediction verifies the pinned Windows executable; this capability is Windows-only.
+#[cfg(windows)]
 #[test]
 fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let binary = Path::new(&binary);
@@ -238,23 +241,30 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
     let count = client.read(&mut payload).unwrap();
     assert_eq!(&payload[..count], b"direct");
     let requests = observed.join().unwrap();
-    assert!(requests[0].contains("CONNECT unknown.invalid:443"));
-    assert!(requests[1].contains("CONNECT 192.0.2.1:443"));
+    // The inbound acknowledges CONNECT before upstream dialing completes;
+    // upstream arrival order is not the order of local acknowledgements.
+    assert!(requests
+        .iter()
+        .any(|request| request.contains("CONNECT unknown.invalid:443")));
+    assert!(requests
+        .iter()
+        .any(|request| request.contains("CONNECT 192.0.2.1:443")));
     direct.join().unwrap();
 }
 
+// Prediction verifies the pinned Windows executable; this capability is Windows-only.
+#[cfg(windows)]
 #[test]
 fn china_preset_keeps_domain_exit_on_retry_and_routes_literal_ipv6() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let binary = Path::new(&binary);
     let mut hasher = Sha256::new();
     std::io::copy(&mut File::open(binary).unwrap(), &mut hasher).unwrap();
     let checksum = hex::encode(hasher.finalize());
-    let Ok(ipv6) = TcpListener::bind(("::1", 0)) else {
-        return;
-    };
+    let ipv6 = TcpListener::bind(("::1", 0))
+        .expect("Windows real-core IPv6 scenario requires an IPv6 loopback listener");
     let direct_port = ipv6.local_addr().unwrap().port();
     let upstream = TcpListener::bind(("127.0.0.1", 0)).unwrap();
     let upstream_port = upstream.local_addr().unwrap().port();

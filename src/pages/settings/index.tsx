@@ -1,3 +1,4 @@
+import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArchiveX, Download, Info, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { command, errorMessage, type BackendError } from "@/lib/backend";
+import { errorMessage, type BackendError } from "@/lib/backend";
 import { useBackend } from "@/lib/backend-state";
 import { AboutCard } from "./AboutCard";
 import { LatencyTestCard } from "./LatencyTestCard";
@@ -27,7 +28,6 @@ import { StartupCard } from "./StartupCard";
 import type { Retention, Settings } from "./settingsTypes";
 
 type SettingsAction = "clear" | "restore" | null;
-type NetworkRecoveryResult = { completed_at_ms: number };
 
 export default function SettingsPage() {
   const { refresh, capabilities } = useBackend();
@@ -42,7 +42,7 @@ export default function SettingsPage() {
   const load = useCallback(async () => {
     const version = ++settingsRequest.current;
     try {
-      const next = await command<Settings>("get_settings");
+      const next = await ipc("get_settings");
       if (!active.current || version !== settingsRequest.current) return;
       setSettings(next);
       setError(null);
@@ -66,7 +66,7 @@ export default function SettingsPage() {
     setMessage(null);
     const version = ++settingsRequest.current;
     try {
-      const updated = await command<Settings>("update_settings", { settings: next });
+      const updated = await ipc("update_settings", { settings: next });
       if (active.current && version === settingsRequest.current) setSettings(updated);
     } catch (reason) {
       if (!active.current || version !== settingsRequest.current) return;
@@ -81,7 +81,7 @@ export default function SettingsPage() {
     setBusy(true);
     setError(null);
     try {
-      const json = await command<string>("export_configuration");
+      const json = await ipc("export_configuration");
       const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -125,7 +125,7 @@ export default function SettingsPage() {
       setBusy(true);
       setError(null);
       try {
-        const count = await command<number>("clear_runtime_diagnostics", {
+        const count = await ipc("clear_runtime_diagnostics", {
           filter: { from_ms: null, until_ms: null, severity: null },
           confirmed: true,
         });
@@ -141,7 +141,7 @@ export default function SettingsPage() {
       setBusy(true);
       setError(null);
       try {
-        const result = await command<NetworkRecoveryResult>("recover_network", { confirmed: true });
+        const result = await ipc("recover_network", { confirmed: true });
         setMessage(
           `网络恢复检查完成：${new Date(result.completed_at_ms).toLocaleString()}。仅处理本应用可确认拥有的设置。`,
         );

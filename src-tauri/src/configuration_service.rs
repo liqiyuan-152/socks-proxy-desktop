@@ -1,9 +1,9 @@
+#[cfg(test)]
+use crate::models::PersistedConfiguration;
 use crate::{
-    credentials::{apply_credential_update, CredentialStore, CredentialUpdate},
+    credentials::{prepare_credential_update, CredentialStore, CredentialUpdate},
     error::{AppError, FieldError},
-    models::{
-        AppSettings, PersistedConfiguration, ProxyProfile, ProxyProtocol, RoutingRule, RuntimeMode,
-    },
+    models::{AppSettings, ProxyProfile, ProxyProtocol, RoutingRule, RuntimeMode},
     observability::ActiveConnectionsSnapshot,
     runtime::{RuntimeCoordinator, RuntimeSnapshot},
     startup::StartupAdapter,
@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     path::PathBuf,
     sync::{
-        atomic::{AtomicU64, Ordering},
+        atomic::{AtomicBool, Ordering},
         Mutex,
     },
 };
@@ -25,6 +25,7 @@ mod china;
 pub use china::ChinaDirectStatus;
 
 #[derive(Deserialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ProfileInput {
     pub id: Option<String>,
     pub name: String,
@@ -37,6 +38,7 @@ pub struct ProfileInput {
 }
 
 #[derive(Clone, Debug, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ProfileView {
     pub configuration_revision: u64,
     pub id: String,
@@ -49,6 +51,7 @@ pub struct ProfileView {
 }
 
 #[derive(Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ProfileCredentialView {
     pub username: String,
     pub password: String,
@@ -76,7 +79,8 @@ pub struct ConfigurationService {
     runtime: Box<dyn RuntimeCoordinator>,
     china_rule_root: Option<PathBuf>,
     serial: Mutex<()>,
-    configuration_revision: AtomicU64,
+    startup_recovery_pending: AtomicBool,
+    latency_tasks: Mutex<Option<std::sync::Arc<crate::latency_tasks::LatencyTaskRegistry>>>,
 }
 
 impl ConfigurationService {
@@ -93,13 +97,20 @@ impl ConfigurationService {
             runtime,
             china_rule_root: None,
             serial: Mutex::new(()),
-            configuration_revision: AtomicU64::new(0),
+            startup_recovery_pending: AtomicBool::new(false),
+            latency_tasks: Mutex::new(None),
         }
+    }
+
+    pub(crate) fn with_startup_recovery_pending(self, pending: bool) -> Self {
+        self.startup_recovery_pending
+            .store(pending, Ordering::Relaxed);
+        self
     }
 
     pub fn list_profiles(&self) -> Result<Vec<ProfileView>, AppError> {
         let _guard = self.lock()?;
-        let revision = self.configuration_revision.load(Ordering::Relaxed);
+        let revision = self.store.recovery_revision()?;
         Ok(self
             .store
             .load()?
@@ -132,7 +143,7 @@ impl ConfigurationService {
     }
 
     pub fn request_mode(&self, mode: RuntimeMode) -> Result<RuntimeSnapshot, AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         self.store.save_mode(mode)?;
         self.runtime.request_mode(mode)
     }
@@ -148,10 +159,9 @@ impl ConfigurationService {
         if !profile.authentication_enabled {
             return Err(AppError::unavailable("此代理未启用认证"));
         }
-        let credential = self
-            .credentials
-            .get(id)?
-            .ok_or_else(|| AppError::unavailable("认证凭据缺失，请重新配置"))?;
+        let credential =
+            crate::credentials::read_profile_credential(self.credentials.as_ref(), profile)?
+                .ok_or_else(|| AppError::unavailable("认证凭据缺失，请重新配置"))?;
         Ok(ProfileCredentialView {
             username: credential.username,
             password: credential.password,
@@ -159,18 +169,36 @@ impl ConfigurationService {
     }
 
     pub fn stop_runtime(&self) -> Result<RuntimeSnapshot, AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         self.store.save_mode(RuntimeMode::Direct)?;
         self.runtime.stop()
     }
 
     pub fn recover_network(&self) -> Result<RuntimeSnapshot, AppError> {
         let _guard = self.lock()?;
-        self.runtime.recover_network()
+        let recovery =
+            (|| {
+                self.runtime.recover_network()?;
+                crate::configuration_startup_recovery::recover_configuration_after_network_recovery(
+                self.store.as_ref(), self.credentials.as_ref(), self.startup.as_ref(),
+            )?;
+                self.store.save_mode(RuntimeMode::Direct)?;
+                Ok(self.runtime.snapshot())
+            })();
+        match &recovery {
+            Ok(_) => self
+                .startup_recovery_pending
+                .store(false, Ordering::Relaxed),
+            Err(error) => {
+                self.startup_recovery_pending.store(true, Ordering::Relaxed);
+                self.report_configuration_recovery_issue(error);
+            }
+        }
+        recovery
     }
 
     pub fn save_profile(&self, input: ProfileInput) -> Result<ProfileView, AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         let mut candidate = current.clone();
         let editing = input.id.is_some();
@@ -196,7 +224,11 @@ impl ConfigurationService {
             return Err(not_found("代理档案不存在"));
         }
         let mut profile = ProxyProfile {
-            credential_ref: input.authentication_enabled.then(|| id.clone()),
+            credential_ref: input.authentication_enabled.then(|| {
+                existing_index
+                    .and_then(|index| current.profiles[index].credential_ref.clone())
+                    .unwrap_or_else(|| id.clone())
+            }),
             id: id.clone(),
             name: input.name,
             protocol: input.protocol,
@@ -211,13 +243,8 @@ impl ConfigurationService {
             candidate.profiles.push(profile.clone());
         }
         candidate.validate()?;
-        let previous_credential = self.credentials.get(&id)?;
-        let changed_credential = !input.authentication_enabled
-            || !matches!(
-                input.credential.as_ref(),
-                None | Some(CredentialUpdate::Preserve)
-            );
-        apply_credential_update(self.credentials.as_ref(), &mut profile, input.credential)?;
+        let staged_secret =
+            prepare_credential_update(self.credentials.as_ref(), &mut profile, input.credential)?;
         if let Some(index) = existing_index {
             candidate.profiles[index] = profile.clone();
         } else {
@@ -226,19 +253,23 @@ impl ConfigurationService {
                 .last_mut()
                 .expect("new profile was appended") = profile.clone();
         }
-        self.commit_with_rollback(&current, &candidate, || {
-            if changed_credential {
-                self.restore_credential(&id, previous_credential)?;
-            }
-            Ok(())
-        })?;
+        let staged = staged_secret
+            .map(|secret| {
+                (
+                    profile.credential_ref.clone().expect("staged reference"),
+                    secret,
+                )
+            })
+            .into_iter()
+            .collect();
+        self.commit_effects(&current, &candidate, staged, None)?;
         let mut view = ProfileView::from(&profile);
-        view.configuration_revision = self.configuration_revision.load(Ordering::Relaxed);
+        view.configuration_revision = self.store.recovery_revision()?;
         Ok(view)
     }
 
     pub fn delete_profile(&self, id: &str) -> Result<(), AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         let mut candidate = current.clone();
         let Some(index) = candidate
@@ -269,16 +300,12 @@ impl ConfigurationService {
         }
         candidate.profiles.remove(index);
         candidate.validate()?;
-        let previous_credential = self.credentials.get(id)?;
-        self.credentials.delete(id)?;
-        self.commit_with_rollback(&current, &candidate, || {
-            self.restore_credential(id, previous_credential)
-        })?;
+        self.commit(&current, &candidate)?;
         Ok(())
     }
 
     pub fn select_profile(&self, id: Option<String>) -> Result<(), AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         let mut candidate = current.clone();
         candidate.active_profile_id = id;
@@ -287,29 +314,27 @@ impl ConfigurationService {
     }
 
     pub fn update_settings(&self, settings: AppSettings) -> Result<AppSettings, AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
-        let previous_startup = self.startup.is_enabled()?;
-        let startup_changed = settings.launch_at_login != previous_startup;
-        if startup_changed {
-            self.startup.set_enabled(settings.launch_at_login)?;
-        }
+        let startup = self.startup_change(settings.launch_at_login)?;
         let mut candidate = current.clone();
         candidate.settings = settings;
-        self.commit_with_rollback(&current, &candidate, || {
-            if startup_changed {
-                self.startup
-                    .set_enabled(previous_startup)
-                    .map_err(|_| rollback_failed())
-            } else {
-                Ok(())
-            }
-        })?;
+        self.commit_effects(&current, &candidate, vec![], startup)?;
         self.settings()
     }
 
     pub fn export(&self) -> Result<String, AppError> {
         export_configuration_json(&self.store.load()?)
+    }
+
+    fn mutation_lock(&self) -> Result<std::sync::MutexGuard<'_, ()>, AppError> {
+        let guard = self.lock()?;
+        if self.startup_recovery_pending.load(Ordering::Relaxed)
+            || self.store.recovery_record()?.is_some()
+        {
+            return Err(crate::configuration_recovery::recovery_error());
+        }
+        Ok(guard)
     }
 
     fn lock(&self) -> Result<std::sync::MutexGuard<'_, ()>, AppError> {
@@ -354,3 +379,6 @@ mod import;
 #[cfg(test)]
 #[path = "configuration_service_tests.rs"]
 mod tests;
+
+#[path = "configuration_latency.rs"]
+mod latency;

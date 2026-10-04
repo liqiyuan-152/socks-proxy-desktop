@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { ipc } from "@/lib/ipc";
+import { useState } from "react";
 import { Circle, CircleDot, Edit3, Timer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,105 +12,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  command,
-  errorMessage,
-  type BackendError,
-  type ProfileCredential,
-  type ProxyProfile,
-} from "@/lib/backend";
+import { errorMessage, type BackendError, type ProxyProfile } from "@/lib/backend";
 import { useBackend } from "@/lib/backend-state";
-import type { ProxyDraft } from "./ProxyAuthenticationFields";
 import { ProxyFormDialog } from "./ProxyFormDialog";
 import { ProxyStatus } from "./ProxyStatus";
 import { ProxyToolbar } from "./ProxyToolbar";
 import { useProxyLatency } from "./useProxyLatency";
 import { LatencyCell } from "./LatencyCell";
-import { createProxyDraft } from "./proxyDraft";
-import { parseProxyLink } from "./parseProxyLink";
+import { useProxyEditor } from "./useProxyEditor";
 
 export default function ProxyList() {
   const { profiles, snapshot, refresh, loading, capabilities } = useBackend();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProxy, setEditingProxy] = useState<ProxyProfile | null>(null);
-  const [draft, setDraft] = useState<ProxyDraft>(() => createProxyDraft());
-  const [proxyLink, setProxyLink] = useState("");
-  const [linkError, setLinkError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [protocolFilter, setProtocolFilter] = useState("all");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [credentialLoading, setCredentialLoading] = useState(false);
-  const [credentialError, setCredentialError] = useState<string | null>(null);
-  const [originalCredential, setOriginalCredential] = useState<ProfileCredential | null>(null);
-  const credentialRequest = useRef(0);
   const latency = useProxyLatency(profiles, capabilities?.proxy_latency ?? false);
-  useEffect(
-    () => () => {
-      credentialRequest.current++;
-    },
-    [],
-  );
-
-  async function loadCredential(id: string) {
-    const request = ++credentialRequest.current;
-    setCredentialLoading(true);
-    setCredentialError(null);
-    try {
-      const credential = await command<ProfileCredential>("get_profile_credential", { id });
-      if (request !== credentialRequest.current) return;
-      setOriginalCredential(credential);
-      setDraft((current) => ({ ...current, ...credential }));
-    } catch (reason) {
-      if (request === credentialRequest.current) setCredentialError(errorMessage(reason));
-    } finally {
-      if (request === credentialRequest.current) setCredentialLoading(false);
-    }
-  }
+  const {
+    dialogOpen,
+    editingProxy,
+    draft,
+    setDraft,
+    proxyLink,
+    setProxyLink,
+    linkError,
+    setLinkError,
+    credentialLoading,
+    credentialError,
+    loadCredential,
+    openDialog,
+    closeDialog,
+    applyProxyLink,
+    saveProfile,
+  } = useProxyEditor({
+    busy,
+    setBusy,
+    setError,
+    refresh,
+    clearLatency: latency.clear,
+  });
 
   const filtered = profiles.filter(
     (profile) =>
       (protocolFilter === "all" || profile.protocol === protocolFilter) &&
       `${profile.name} ${profile.host}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
   );
-  async function saveProfile() {
-    if (credentialLoading || credentialError || busy) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const credential = !draft.authentication
-        ? { action: "delete" }
-        : originalCredential &&
-            draft.username === originalCredential.username &&
-            draft.password === originalCredential.password
-          ? { action: "preserve" }
-          : { action: "replace", username: draft.username, password: draft.password };
-      await command("save_profile", {
-        input: {
-          id: editingProxy?.id ?? null,
-          name: draft.name,
-          protocol: draft.protocol,
-          host: draft.server,
-          port: Number(draft.port),
-          authentication_enabled: draft.authentication,
-          enabled: editingProxy?.enabled ?? true,
-          credential,
-        },
-      });
-      if (editingProxy) latency.clear(editingProxy.id);
-      closeDialog();
-      await refresh();
-    } catch (reason) {
-      const typed = reason as Partial<BackendError>;
-      setError(
-        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
-          errorMessage(reason),
-      );
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function changeProfile(
     commandName: "select_profile" | "delete_profile",
     id: string | null,
@@ -117,7 +64,12 @@ export default function ProxyList() {
     setBusy(true);
     setError(null);
     try {
-      await command(commandName, { id });
+      if (commandName === "delete_profile") {
+        if (id === null) return;
+        await ipc("delete_profile", { id });
+      } else {
+        await ipc("select_profile", { id });
+      }
       if (commandName === "delete_profile" && id) latency.clear(id);
       await refresh();
     } catch (reason) {
@@ -131,7 +83,7 @@ export default function ProxyList() {
     setBusy(true);
     setError(null);
     try {
-      await command("save_profile", {
+      await ipc("save_profile", {
         input: {
           id: proxy.id,
           name: proxy.name,
@@ -155,39 +107,6 @@ export default function ProxyList() {
       setBusy(false);
     }
   }
-
-  const openDialog = (proxy?: ProxyProfile) => {
-    credentialRequest.current++;
-    setEditingProxy(proxy ?? null);
-    setDraft(createProxyDraft(proxy));
-    setOriginalCredential(null);
-    setCredentialError(null);
-    setCredentialLoading(false);
-    setProxyLink("");
-    setLinkError(null);
-    setDialogOpen(true);
-    if (proxy?.authentication_enabled) void loadCredential(proxy.id);
-  };
-
-  const closeDialog = () => {
-    credentialRequest.current++;
-    setDialogOpen(false);
-    setEditingProxy(null);
-    setOriginalCredential(null);
-    setDraft(createProxyDraft());
-    setCredentialError(null);
-    setCredentialLoading(false);
-  };
-
-  const applyProxyLink = () => {
-    try {
-      setDraft(parseProxyLink(proxyLink));
-      setProxyLink("");
-      setLinkError(null);
-    } catch (reason) {
-      setLinkError(reason instanceof Error ? reason.message : "代理链接格式无效");
-    }
-  };
 
   const isEditing = editingProxy !== null;
   return (

@@ -1,7 +1,7 @@
 use super::{rollback_failed, ConfigurationService};
 use crate::{
-    china_rules::ChinaRuleSets, credentials::ProxyCredential, error::AppError,
-    models::PersistedConfiguration,
+    china_rules::ChinaRuleSets, configuration_recovery::StartupChange,
+    credentials::ProxyCredential, error::AppError, models::PersistedConfiguration,
 };
 
 impl ConfigurationService {
@@ -10,63 +10,57 @@ impl ConfigurationService {
         current: &PersistedConfiguration,
         candidate: &PersistedConfiguration,
     ) -> Result<(), AppError> {
-        self.commit_with_rollback(current, candidate, || Ok(()))
+        self.commit_durable(current, candidate, vec![], None)
     }
 
-    pub(super) fn commit_with_rollback(
+    pub(super) fn commit_effects(
         &self,
         current: &PersistedConfiguration,
         candidate: &PersistedConfiguration,
-        rollback_side_effects: impl FnOnce() -> Result<(), AppError>,
+        staged: Vec<(String, ProxyCredential)>,
+        startup: Option<StartupChange>,
     ) -> Result<(), AppError> {
-        let validation = (|| {
-            candidate.validate()?;
-            if candidate.china_direct_enabled {
-                let root = self
-                    .china_rule_root
-                    .as_deref()
-                    .ok_or_else(|| AppError::unavailable("此平台未提供国内直连规则集"))?;
-                ChinaRuleSets::verify(root)?;
-            }
-            Ok(())
-        })();
-        if let Err(error) = validation {
-            rollback_side_effects()?;
-            return Err(error);
-        }
-        let previous_snapshot = self.runtime.snapshot();
-        if let Err(error) = self.runtime.apply_configuration(current, candidate) {
-            rollback_side_effects()?;
-            return Err(error);
-        }
-        if let Err(error) = self.store.save(candidate) {
-            // Each recovery must run even if the other one fails.
-            let effects = rollback_side_effects();
-            let runtime = self
-                .runtime
-                .restore_configuration(current, &previous_snapshot);
-            if effects.is_err() || runtime.is_err() {
-                return Err(rollback_failed());
-            }
-            return Err(error);
-        }
-        self.configuration_revision
-            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        self.runtime.confirm_configuration();
-        Ok(())
+        self.commit_durable(current, candidate, staged, startup)
     }
 
-    pub(super) fn restore_credential(
-        &self,
-        id: &str,
-        previous: Option<ProxyCredential>,
-    ) -> Result<(), AppError> {
-        let result = match previous {
-            Some(secret) => self
-                .credentials
-                .replace(id, &secret.username, &secret.password),
-            None => self.credentials.delete(id),
-        };
-        result.map_err(|_| rollback_failed())
+    pub(crate) fn report_configuration_recovery_issue(&self, error: &AppError) {
+        self.runtime.report_configuration_recovery_issue(error);
+    }
+
+    pub(crate) fn upgrade_legacy_credentials(&self) -> Result<(), AppError> {
+        let _guard = self.mutation_lock()?;
+        let current = self.store.load()?;
+        let mut candidate = current.clone();
+        let mut staged = Vec::new();
+        for profile in &mut candidate.profiles {
+            if profile.authentication_enabled
+                && profile.credential_ref.as_deref() == Some(profile.id.as_str())
+            {
+                let secret = crate::credentials::prepare_credential_update(
+                    self.credentials.as_ref(),
+                    profile,
+                    None,
+                )?
+                .expect("legacy credential is staged");
+                staged.push((
+                    profile.credential_ref.clone().expect("staged reference"),
+                    secret,
+                ));
+            }
+        }
+        if staged.is_empty() {
+            return Ok(());
+        }
+        self.commit_effects(&current, &candidate, staged, None)
+    }
+
+    pub(super) fn startup_change(&self, enabled: bool) -> Result<Option<StartupChange>, AppError> {
+        if self.startup.is_enabled()? == enabled {
+            return Ok(None);
+        }
+        self.startup.prepare_change(enabled).map(Some)
     }
 }
+
+#[path = "configuration_durable_commit.rs"]
+mod durable;

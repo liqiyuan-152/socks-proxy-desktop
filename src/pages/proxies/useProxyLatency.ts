@@ -1,9 +1,11 @@
+import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { command, errorMessage, type ProxyProfile } from "@/lib/backend";
+import { errorMessage, type ProxyProfile } from "@/lib/backend";
+
+import { createLatencyRequest } from "./latencyTask";
 
 type LatencyState = { latency?: number; error?: string; at?: number; pending?: boolean };
-type TestSettings = { latency_test_url: string };
 
 export function useProxyLatency(profiles: ProxyProfile[], available = true) {
   const [results, setResults] = useState<Record<string, LatencyState>>({});
@@ -14,9 +16,12 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
   const signatures = useRef(new Map<string, string>());
   const testUrl = useRef<string | null>(null);
   const running = useRef(new Set<string>());
+  const requests = useRef(new Map<string, ReturnType<typeof createLatencyRequest>>());
   const batchRunning = useRef(false);
 
   const clear = useCallback((id: string) => {
+    requests.current.get(id)?.cancel();
+    requests.current.delete(id);
     tokens.current.set(id, (tokens.current.get(id) ?? 0) + 1);
     toast.dismiss(`proxy-latency-${id}`);
     setResults((current) => {
@@ -29,8 +34,11 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
   useEffect(() => {
     active.current = true;
     const currentTokens = tokens.current;
+    const currentRequests = requests.current;
     return () => {
       active.current = false;
+      for (const request of currentRequests.values()) request.cancel();
+      currentRequests.clear();
       generation.current += 1;
       for (const id of currentTokens.keys()) {
         currentTokens.set(id, (currentTokens.get(id) ?? 0) + 1);
@@ -75,7 +83,7 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
     async function checkUrl() {
       const version = ++request;
       try {
-        const settings = await command<TestSettings>("get_settings");
+        const settings = await ipc("get_settings");
         if (!settingsActive || request !== version) return;
         if (testUrl.current !== null && testUrl.current !== settings.latency_test_url) {
           generation.current += 1;
@@ -111,8 +119,12 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
       setResults((current) => ({ ...current, [id]: { pending: true } }));
       toast.loading(`正在测试 ${name} 的延迟…`, { id: toastId });
       try {
-        const result = await command<{ latency_ms: number }>("test_proxy_latency", { id });
-        if (active.current && tokens.current.get(id) === token) {
+        const revision = profiles.find((profile) => profile.id === id)!.configuration_revision;
+        const request = createLatencyRequest(id, revision);
+        requests.current.set(id, request);
+        const result = await request.result;
+        if (!result && active.current && tokens.current.get(id) === token) clear(id);
+        if (result && active.current && tokens.current.get(id) === token) {
           setResults((current) => ({
             ...current,
             [id]: { latency: result.latency_ms, at: Date.now() },
@@ -129,10 +141,11 @@ export function useProxyLatency(profiles: ProxyProfile[], available = true) {
           toast.error(`${name} 延迟测试失败：${message}`, { id: toastId });
         }
       } finally {
+        if (tokens.current.get(id) === token) requests.current.delete(id);
         running.current.delete(id);
       }
     },
-    [profiles, available],
+    [profiles, available, clear],
   );
 
   async function testAll() {

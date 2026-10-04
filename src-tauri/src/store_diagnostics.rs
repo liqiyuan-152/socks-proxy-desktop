@@ -7,6 +7,7 @@ const PERMANENT_DIAGNOSTIC_LIMIT: i64 = 100_000;
 const PAGE_LIMIT: usize = 100;
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct RuntimeDiagnostic {
     pub id: String,
     pub created_at_ms: i64,
@@ -15,6 +16,7 @@ pub struct RuntimeDiagnostic {
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct DiagnosticFilter {
     pub from_ms: Option<i64>,
     pub until_ms: Option<i64>,
@@ -22,6 +24,7 @@ pub struct DiagnosticFilter {
 }
 
 #[derive(Clone, Debug, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct DiagnosticPage {
     pub items: Vec<RuntimeDiagnostic>,
     pub total: u64,

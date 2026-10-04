@@ -5,6 +5,7 @@ vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke: mocks.invo
 vi.mock("@tauri-apps/api/event", () => ({ listen: mocks.listen }));
 
 export type Profile = {
+  configuration_revision: number;
   id: string;
   name: string;
   protocol: string;
@@ -39,6 +40,8 @@ export const fixture = {} as {
 export function runtime() {
   return {
     revision: 1,
+    configuration_revision: 0,
+    runtime_plan_revision: 1,
     selected_mode: fixture.mode,
     desired_mode: fixture.mode,
     applied_mode: fixture.mode,
@@ -48,6 +51,8 @@ export function runtime() {
     system_proxy_enabled: fixture.mode !== "direct",
     tun_enabled: false,
     coverage: fixture.mode === "direct" ? "none" : "system_proxy_apps",
+    session_health: "healthy",
+    last_operation: { id: 1, outcome: "succeeded", error: null },
     last_error: null,
   };
 }
@@ -57,6 +62,7 @@ beforeEach(() => {
   fixture.profiles = [
     {
       id: "primary",
+      configuration_revision: 1,
       name: "Primary",
       protocol: "socks5",
       host: "proxy.example.org",
@@ -165,8 +171,21 @@ beforeEach(() => {
         return null;
       case "get_settings":
         return fixture.settings;
-      case "test_proxy_latency":
-        return { latency_ms: 42 };
+      case "start_proxy_latency_task":
+        return {
+          subscription_id: `subscription-${args.id}`,
+          task: {
+            task_id: `task-${args.id}`,
+            profile_id: args.id,
+            configuration_revision: fixture.profiles.find((profile) => profile.id === args.id)
+              ?.configuration_revision,
+            state: "succeeded",
+            result: { latency_ms: 42 },
+            error: null,
+          },
+        };
+      case "release_proxy_latency_task":
+        return undefined;
       case "update_settings":
         fixture.settings = args.settings as typeof fixture.settings;
         return fixture.settings;

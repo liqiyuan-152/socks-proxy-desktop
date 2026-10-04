@@ -1,5 +1,6 @@
 use crate::{
     china_rules::{resource_root, ChinaRuleSets},
+    core_control::CoreControlClient,
     credentials::ProxyCredential,
     error::AppError,
     models::{PersistedConfiguration, RuntimeMode},
@@ -10,7 +11,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::HashMap,
     fs::File,
-    io::{Read, Write},
+    io::Write,
     net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     process::{Child, Command, Stdio},
@@ -28,8 +29,9 @@ pub struct SingBoxProcess {
     #[cfg(windows)]
     _job: crate::sing_box_windows_job::CoreJob,
     _config: tempfile::NamedTempFile,
-    control_secret: String,
+    control_client: CoreControlClient,
     pub proxy_port: u16,
+    #[cfg(test)]
     pub control_port: u16,
     _private_dir: PrivateRuntimeDir,
 }
@@ -53,6 +55,29 @@ impl SingBoxProcess {
         mode: RuntimeMode,
         credentials: &HashMap<String, ProxyCredential>,
     ) -> Result<Self, AppError> {
+        Self::start_cancellable(
+            binary,
+            expected_sha256,
+            runtime_root,
+            configuration,
+            mode,
+            credentials,
+            &std::sync::atomic::AtomicBool::new(false),
+        )
+    }
+
+    pub(crate) fn start_cancellable(
+        binary: &Path,
+        expected_sha256: &str,
+        runtime_root: &Path,
+        configuration: &PersistedConfiguration,
+        mode: RuntimeMode,
+        credentials: &HashMap<String, ProxyCredential>,
+        cancelled: &std::sync::atomic::AtomicBool,
+    ) -> Result<Self, AppError> {
+        if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+            return Err(process_error("测速已取消"));
+        }
         verify_binary(binary, expected_sha256)?;
         #[cfg(windows)]
         if expected_sha256 == WINDOWS_AMD64_EXE_SHA256 {
@@ -133,12 +158,13 @@ impl SingBoxProcess {
             #[cfg(windows)]
             _job: job,
             _config: config,
-            control_secret,
+            control_client: CoreControlClient::new(control_port, control_secret)?,
             proxy_port,
+            #[cfg(test)]
             control_port,
             _private_dir: private_dir,
         };
-        if let Err(error) = process.await_ready(Duration::from_secs(8)) {
+        if let Err(error) = process.await_ready(Duration::from_secs(8), cancelled) {
             process.stop();
             return Err(error);
         }
@@ -161,17 +187,24 @@ impl SingBoxProcess {
             .map_err(|_| process_error("无法检查受管内核进程"))
     }
 
+    #[cfg(test)]
     pub fn connections_json(&mut self) -> Result<serde_json::Value, AppError> {
         if !self.is_running()? {
             return Err(process_error("受管内核已退出"));
         }
-        let response = self.request_connections(true)?;
-        serde_json::from_slice(&response).map_err(|_| process_error("内核活跃连接响应无法解析"))
+        self.control_client.connections()
     }
 
-    fn await_ready(&mut self, timeout: Duration) -> Result<(), AppError> {
+    fn await_ready(
+        &mut self,
+        timeout: Duration,
+        cancelled: &std::sync::atomic::AtomicBool,
+    ) -> Result<(), AppError> {
         let deadline = Instant::now() + timeout;
         while Instant::now() < deadline {
+            if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+                return Err(process_error("测速已取消"));
+            }
             if !self.is_running()? {
                 return Err(process_error("代理内核在监听就绪前退出"));
             }
@@ -180,7 +213,7 @@ impl SingBoxProcess {
                 Duration::from_millis(100),
             )
             .is_ok()
-                && self.request_connections(true).is_ok()
+                && self.control_client.connections().is_ok()
             {
                 return Ok(());
             }
@@ -189,39 +222,13 @@ impl SingBoxProcess {
         Err(process_error("代理内核监听和控制接口健康检查超时"))
     }
 
-    fn request_connections(&self, authorized: bool) -> Result<Vec<u8>, AppError> {
-        let mut stream = TcpStream::connect_timeout(
-            &([127, 0, 0, 1], self.control_port).into(),
-            Duration::from_millis(200),
-        )
-        .map_err(|_| process_error("内核控制接口不可访问"))?;
-        stream
-            .set_read_timeout(Some(Duration::from_millis(500)))
-            .map_err(|_| process_error("无法设置控制接口超时"))?;
-        let auth = if authorized {
-            format!("Authorization: Bearer {}\r\n", self.control_secret)
-        } else {
-            String::new()
-        };
-        let request = format!(
-            "GET /connections HTTP/1.1\r\nHost: 127.0.0.1\r\n{auth}Connection: close\r\n\r\n"
-        );
-        stream
-            .write_all(request.as_bytes())
-            .map_err(|_| process_error("无法读取内核控制接口"))?;
-        let mut response = Vec::new();
-        stream
-            .take(1024 * 1024)
-            .read_to_end(&mut response)
-            .map_err(|_| process_error("无法读取内核控制接口"))?;
-        let separator = response
-            .windows(4)
-            .position(|window| window == b"\r\n\r\n")
-            .ok_or_else(|| process_error("内核控制接口响应格式错误"))?;
-        if !response.starts_with(b"HTTP/1.1 200 ") && !response.starts_with(b"HTTP/1.0 200 ") {
-            return Err(process_error("内核控制接口未通过授权或健康检查"));
-        }
-        Ok(response[separator + 4..].to_vec())
+    pub(crate) fn control_client(&self) -> CoreControlClient {
+        self.control_client.clone()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn replace_test_control_client(&mut self, client: CoreControlClient) {
+        self.control_client = client;
     }
 
     pub fn stop(&mut self) {

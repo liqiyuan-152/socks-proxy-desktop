@@ -6,6 +6,7 @@ use std::net::IpAddr;
 const RECENT_LIMIT: usize = 20;
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ActiveConnection {
     pub id: String,
     pub started_at: String,
@@ -31,12 +32,14 @@ impl ActiveConnection {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum ObservationStatus {
     Available,
     Degraded,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ActiveConnectionsSnapshot {
     pub status: ObservationStatus,
     pub active_count: Option<usize>,

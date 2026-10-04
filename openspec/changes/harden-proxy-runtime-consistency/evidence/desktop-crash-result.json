@@ -1,0 +1,15 @@
+{
+  "ports_released": true,
+  "abandoned_proxy_observed": true,
+  "actual_core_job_exit": true,
+  "core_pid": 7004,
+  "observed_ports": [61493, 61492],
+  "stale_runtime_directory_observed": true,
+  "host_killed": true,
+  "host_pid": 22600,
+  "startup_proxy_restored": true,
+  "stale_runtime_files_cleaned": true,
+  "no_new_core_before_recovery": true,
+  "saved_profile_preserved": true,
+  "restart_pid": 12756
+}

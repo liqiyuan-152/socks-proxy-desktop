@@ -34,9 +34,8 @@ fn rule_set_validation_failure_restores_replaced_credentials() {
     assert_eq!(fixture.store.load().unwrap(), before);
     assert_eq!(
         fixture
-            .credentials
-            .get(&profile.id)
-            .unwrap()
+            .service
+            .profile_credential(&profile.id)
             .unwrap()
             .password,
         "old-secret"
@@ -95,9 +94,8 @@ fn imported_preset_validation_failure_restores_credentials_and_startup() {
     assert!(!fixture.startup.is_enabled().unwrap());
     assert_eq!(
         fixture
-            .credentials
-            .get(&profile.id)
-            .unwrap()
+            .service
+            .profile_credential(&profile.id)
             .unwrap()
             .password,
         "old-secret"
@@ -115,6 +113,21 @@ impl StartupAdapter for FailingStartupRestore {
             return Err(AppError::unavailable("restore failed"));
         }
         self.0.set_enabled(enabled)
+    }
+    fn read_entry(&self) -> Result<Option<crate::configuration_recovery::StartupEntry>, AppError> {
+        self.0.read_entry()
+    }
+    fn expected_entry(&self) -> Result<crate::configuration_recovery::StartupEntry, AppError> {
+        self.0.expected_entry()
+    }
+    fn write_entry(
+        &self,
+        entry: Option<&crate::configuration_recovery::StartupEntry>,
+    ) -> Result<(), AppError> {
+        if entry.is_none() {
+            return Err(AppError::unavailable("restore failed"));
+        }
+        self.0.write_entry(entry)
     }
 }
 
@@ -198,9 +211,8 @@ fn storage_failure_restores_old_credentials_and_runtime_revision() {
     assert!(fixture.service.save_profile(update).is_err());
     assert_eq!(
         fixture
-            .credentials
-            .get(&created.id)
-            .unwrap()
+            .service
+            .profile_credential(&created.id)
             .unwrap()
             .password,
         "old-secret"
@@ -286,9 +298,8 @@ fn import_requires_fresh_credentials_and_rolls_back_rejected_revision() {
     );
     assert_eq!(
         fixture
-            .credentials
-            .get(&created.id)
-            .unwrap()
+            .service
+            .profile_credential(&created.id)
             .unwrap()
             .password,
         "old-secret"
@@ -309,9 +320,8 @@ fn import_requires_fresh_credentials_and_rolls_back_rejected_revision() {
     );
     assert_eq!(
         fixture
-            .credentials
-            .get(&created.id)
-            .unwrap()
+            .service
+            .profile_credential(&created.id)
             .unwrap()
             .password,
         "old-secret"
@@ -332,9 +342,8 @@ fn import_requires_fresh_credentials_and_rolls_back_rejected_revision() {
     );
     assert_eq!(
         fixture
-            .credentials
-            .get(&created.id)
-            .unwrap()
+            .service
+            .profile_credential(&created.id)
             .unwrap()
             .password,
         "new-secret"

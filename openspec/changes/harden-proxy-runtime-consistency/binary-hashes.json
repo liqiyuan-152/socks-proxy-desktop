@@ -1,0 +1,102 @@
+{
+  "baseline": "1a073c309eb6a9e77cf255deb2dd3393c2048ae3",
+  "platform": "Darwin arm64",
+  "scope": "local tracked binary resources, not Windows checkout acceptance",
+  "files": [
+    {
+      "path": "src-tauri/icons/128x128.png",
+      "sha256": "eeebf55d8ffe07348786b9057af253e3ca08c56b6a8f8893826381430e3c0b7b",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/128x128@2x.png",
+      "sha256": "2998b41d0c9278b08e8b3874e094920034fe983a46053c9d62764225f58ab7b0",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/32x32.png",
+      "sha256": "aaa96d0c53b756b77c7f46aeb72290f42256c786c69be68f6bcdeb9c7492a48e",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square107x107Logo.png",
+      "sha256": "33446a858d982a529554e562114673f8b15620588137cf0bf6c56a7441c78cd7",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square142x142Logo.png",
+      "sha256": "633d6dba504faa844b309e01272386e4523cddd4a3639c77c0eb5d2ce3eac752",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square150x150Logo.png",
+      "sha256": "d90061ad71e6f5882b759d80cf58cc16aa5021fa29ba4b2614adea982a4d7ee5",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square284x284Logo.png",
+      "sha256": "5feaa4f18f404843551756dd2791d7654ef471b6b007767ae40f60c7aebcad5b",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square30x30Logo.png",
+      "sha256": "68bc1b585f5685e0922f14b1ca7eb2d618213c684c89e759c6a5eb8578c3fe8d",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square310x310Logo.png",
+      "sha256": "5df8d779ab57c63ee06ed237b94c3c0954711e88117dccfa72b2aec5d83b0d80",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square44x44Logo.png",
+      "sha256": "c46208286b1ea1b4841b714972f3cb0a8abc6d3bfa71a29238f7b4d62f511f89",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square71x71Logo.png",
+      "sha256": "cb0ea93cbd13509d32c6bc06da71687e73d673d166fde91b23061771abe16b86",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/Square89x89Logo.png",
+      "sha256": "2208da1d741a20e902a59d7c39a5e58af74ec823db13113bf8ac6f555fa25bca",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/StoreLogo.png",
+      "sha256": "9f84d0ce09df51bac0a4855042b3e49b190cc2b9761cd5eab61ebec5cd343820",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/icon.icns",
+      "sha256": "1535d355994f8ee82da91384d2a29e04d5b4440f3e6051b5c8b06e7a62283693",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/icon.ico",
+      "sha256": "e38ca88e1d5490f3dcbc3c3fa525f7fcb7b80fff3cb2f3a4eb1b2d018c0915c1",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/icons/icon.png",
+      "sha256": "6413bfe9d546e5225fc9256a0ecec48df3a1272ea4bdc91c15b8e000222a95d3",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/resources/china-rules/china-domains.srs",
+      "sha256": "c60ec8261ed3e7375e4add4c93c7f2bee9ab8ab7d70421712c2c4c799d3d4442",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/resources/china-rules/china-ipv4.srs",
+      "sha256": "1155c3f5d6f0a4d0617fb036d046f266faa9c9006aa7bffff26d5e922c0c9ab1",
+      "matches_head": true
+    },
+    {
+      "path": "src-tauri/resources/china-rules/china-ipv6.srs",
+      "sha256": "2239b50d69b204cbd1028a8e68946af6db1fe177e9b737e9bb989f64b3978b9f",
+      "matches_head": true
+    }
+  ]
+}

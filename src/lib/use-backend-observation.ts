@@ -1,6 +1,6 @@
+import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  command,
   errorMessage,
   type ActiveConnectionsSnapshot,
   type BackendCapabilities,
@@ -54,14 +54,14 @@ export function useBackendObservation() {
   const readSnapshot = useCallback(async () => {
     if (transitions.current > 0) return;
     const isCurrent = beginRequest("snapshot");
-    const next = await command<RuntimeSnapshot>("get_runtime_snapshot");
+    const next = await ipc("get_runtime_snapshot");
     if (isCurrent()) setSnapshot(next);
   }, [beginRequest]);
 
   const refreshConnections = useCallback(async () => {
     const isCurrent = beginRequest("connections");
     try {
-      const next = await command<ActiveConnectionsSnapshot>("get_active_connections");
+      const next = await ipc("get_active_connections");
       if (isCurrent()) setConnections(next);
     } catch {
       if (isCurrent())
@@ -77,14 +77,14 @@ export function useBackendObservation() {
 
   const readProfiles = useCallback(async () => {
     const isCurrent = beginRequest("profiles");
-    const next = await command<ProxyProfile[]>("list_profiles");
+    const next = await ipc("list_profiles");
     if (isCurrent()) setProfiles(next);
   }, [beginRequest]);
 
   const readCapabilities = useCallback(async () => {
     const isCurrent = beginRequest("capabilities");
     try {
-      const next = await command<BackendCapabilities>("get_capabilities");
+      const next = await ipc("get_capabilities");
       if (isCurrent()) setCapabilities(next ?? null);
     } catch {
       if (isCurrent()) setCapabilities(null);

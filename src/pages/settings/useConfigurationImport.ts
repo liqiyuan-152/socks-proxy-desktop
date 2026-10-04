@@ -1,5 +1,6 @@
+import { ipc } from "@/lib/ipc";
 import { useEffect, useRef, useState } from "react";
-import { command, errorMessage } from "@/lib/backend";
+import { errorMessage } from "@/lib/backend";
 import { parseImportProfiles, type ImportProfile } from "./parseImportProfiles";
 
 type Credential = { username: string; password: string };
@@ -83,7 +84,7 @@ export function useConfigurationImport(onImported: () => Promise<void>) {
     setError(null);
     const version = epoch.current;
     try {
-      await command("import_configuration", {
+      await ipc("import_configuration", {
         json: json.current,
         updates: Object.fromEntries(updates),
       });

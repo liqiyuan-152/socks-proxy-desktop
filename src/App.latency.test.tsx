@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { fixture, mocks } from "./test/app-fixture";
 import App from "./App";
+import type { LatencyTask } from "./pages/proxies/latencyTask";
 
 describe("backend-driven desktop UI", () => {
   it("tests one profile on demand and clears its result after editing", async () => {
@@ -12,7 +13,7 @@ describe("backend-driven desktop UI", () => {
     fireEvent.click(test);
     await screen.findByText("42 ms");
     expect(await screen.findByText("Primary：42 ms")).toBeInTheDocument();
-    expect(mocks.invoke).toHaveBeenCalledWith("test_proxy_latency", { id: "primary" });
+    expect(mocks.invoke).toHaveBeenCalledWith("start_proxy_latency_task", { id: "primary" });
     fireEvent.click(screen.getByRole("button", { name: "编辑Primary" }));
     await waitFor(() => expect(screen.getByLabelText("密码")).toHaveValue("stored-secret"));
     fireEvent.change(screen.getByLabelText("服务器*"), { target: { value: "other.example.org" } });
@@ -23,7 +24,7 @@ describe("backend-driven desktop UI", () => {
   it("shows test failures without fabricating a latency", async () => {
     const original = mocks.invoke.getMockImplementation()!;
     mocks.invoke.mockImplementation((command: string, args: Record<string, unknown>) =>
-      command === "test_proxy_latency"
+      command === "start_proxy_latency_task"
         ? Promise.reject({ code: "unavailable", message: "代理测试超时（5 秒）", fields: [] })
         : original(command, args),
     );
@@ -44,9 +45,20 @@ describe("backend-driven desktop UI", () => {
     const original = mocks.invoke.getMockImplementation()!;
     let finish: ((result: { latency_ms: number }) => void) | undefined;
     mocks.invoke.mockImplementation((command: string, args: Record<string, unknown>) =>
-      command === "test_proxy_latency"
-        ? new Promise<{ latency_ms: number }>((resolve) => {
-            finish = resolve;
+      command === "start_proxy_latency_task"
+        ? new Promise<{ subscription_id: string; task: LatencyTask }>((resolve) => {
+            finish = (result) =>
+              resolve({
+                subscription_id: "subscription-primary",
+                task: {
+                  task_id: "task-primary",
+                  profile_id: "primary",
+                  configuration_revision: fixture.profiles[0].configuration_revision,
+                  state: "succeeded",
+                  result,
+                  error: null,
+                },
+              });
           })
         : original(command, args),
     );
@@ -74,13 +86,23 @@ describe("backend-driven desktop UI", () => {
     let maximum = 0;
     const pending: Array<() => void> = [];
     mocks.invoke.mockImplementation((command: string, args: Record<string, unknown>) => {
-      if (command !== "test_proxy_latency") return original(command, args);
+      if (command !== "start_proxy_latency_task") return original(command, args);
       active++;
       maximum = Math.max(maximum, active);
       return new Promise((resolve) =>
         pending.push(() => {
           active--;
-          resolve({ latency_ms: 30 });
+          resolve({
+            subscription_id: `subscription-${args.id}`,
+            task: {
+              task_id: `task-${args.id}`,
+              profile_id: args.id,
+              configuration_revision: fixture.profiles[0].configuration_revision,
+              state: "succeeded",
+              result: { latency_ms: 30 },
+              error: null,
+            },
+          });
         }),
       );
     });

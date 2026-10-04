@@ -11,6 +11,8 @@ export default defineConfig({
   },
   test: {
     environment: "happy-dom",
+    // Bound DOM workers so Windows hosts do not exhaust CPU during async UI assertions.
+    maxWorkers: 2,
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
   },

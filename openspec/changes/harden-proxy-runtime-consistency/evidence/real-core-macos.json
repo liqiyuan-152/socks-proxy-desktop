@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-04",
+  "platform": "Darwin arm64",
+  "source_head": "1a073c309eb6a9e77cf255deb2dd3393c2048ae3",
+  "source_state": "uncommitted worktree",
+  "implementation_fingerprint_sha256": "49359b248d4dbc028eeebf56f08468a45b7e1499f01203cac84c5cf50fab0d79",
+  "core_version": "1.14.1",
+  "official_archive_sha256": "b9024642ef7b4848252df5469b7f60ef3c18bb5e217a16a0934f0174f8ad11b4",
+  "executable_sha256": "602bce530f540146e8e2feace24a81bdaf7873456203db0cda162811eb44f338",
+  "command": "SING_BOX_TEST_BIN=<verified staged darwin-arm64 core> REQUIRE_SING_BOX_TEST_BIN=1 cargo test --manifest-path src-tauri/Cargo.toml --locked",
+  "exit_code": 0,
+  "passed": 154,
+  "ignored_auxiliary_child_tests": 3,
+  "windows_desktop_acceptance": false
+}

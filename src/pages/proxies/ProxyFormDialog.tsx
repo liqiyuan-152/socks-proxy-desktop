@@ -100,7 +100,10 @@ export function ProxyFormDialog({
               <Field label="协议" required htmlFor="proxy-protocol">
                 <Select
                   value={draft.protocol}
-                  onValueChange={(protocol) => setDraft((current) => ({ ...current, protocol }))}
+                  onValueChange={(protocol) => {
+                    if (protocol === "socks5" || protocol === "http")
+                      setDraft((current) => ({ ...current, protocol }));
+                  }}
                 >
                   <SelectTrigger id="proxy-protocol">
                     <SelectValue />

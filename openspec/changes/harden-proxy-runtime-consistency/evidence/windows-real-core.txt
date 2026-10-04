@@ -1,0 +1,192 @@
+真实内核前置检查通过: 1.14.1 / b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running unittests src\lib.rs (src-tauri\target\debug\deps\socks_proxy_lib-595306a75a4eba58.exe)
+
+running 170 tests
+test capabilities::tests::capabilities_describe_the_compiled_platform ... ok
+test china_rules::tests::verifies_bundled_data_and_rejects_missing_or_corrupt_files ... ok
+test configuration_crash_tests::interrupted_configuration_child ... ignored, isolated process child invoked by cross-resource crash test
+test china_rules_tests::bundled_china_rules_check_and_load_offline_with_pinned_core ... ok
+test configuration_crash_tests::upgrade::previous_database_and_matching_credentials_are_required_for_safe_backout ... ok
+test configuration_service::tests::china_preset_requires_default_and_valid_bundled_rules_before_commit ... ok
+test configuration_service::tests::credentials_are_read_only_for_existing_authenticated_profiles ... ok
+test configuration_service::tests::deleting_active_profile_waits_for_runtime_and_rolls_back_secret_on_failure ... ok
+test configuration_service::tests::durable_tests::credential_read_uses_saved_reference_and_export_hides_it ... ok
+test configuration_service::tests::durable_tests::latency_snapshot_reads_exact_secret_and_revision_then_commit_invalidates_task ... ok
+test configuration_service::tests::durable_tests::pending_durable_intent_blocks_all_mutations_before_external_effects ... ok
+test configuration_service::tests::durable_tests::predecessor_recovery_failure_blocks_mutations_even_without_config_journal ... ok
+test configuration_service::tests::durable_tests::pure_configuration_commit_uses_atomic_revision_and_clears_durable_intent ... ok
+test configuration_service::tests::durable_tests::route_prediction_returns_normalized_input_and_durable_committed_revision ... ok
+test configuration_service::tests::invalid_china_rules_reject_revision_without_changing_stored_configuration ... ok
+test configuration_crash_tests::interrupted_cross_resource_commit_recovers_exact_durable_boundary ... ok
+test configuration_service::tests::runtime_combination::credential_only_updates_reach_real_coordinator_and_backend ... ok
+test configuration_service::tests::runtime_combination::identical_import_with_replaced_credentials_reaches_backend ... ok
+test configuration_service::tests::runtime_combination::plan_tests::configuration_recovery_failure_is_visible_without_abandoning_healthy_session ... ok
+test configuration_service::tests::runtime_combination::plan_tests::failed_metadata_commit_preserves_display_process_and_revisions ... ok
+test configuration_service::tests::runtime_combination::plan_tests::rejected_credential_plan_restores_version_and_retry_advances_only_once ... ok
+test configuration_service::tests::runtime_combination::plan_tests::rename_and_unrelated_settings_commit_without_replacing_actual_process ... ok
+test configuration_service::tests::runtime_combination::startup_and_storage_failure_retain_old_secret_and_actual_session ... ok
+test configuration_service::tests::staging_tests::external_startup_change_retains_original_config_and_recovery_evidence ... ok
+test configuration_service::tests::staging_tests::legacy_reference_upgrade_preserves_secret_and_retry_after_rejected_commit ... ok
+test configuration_service::tests::staging_tests::partial_stage_runtime_and_database_failures_preserve_old_secret_and_reference ... ok
+test configuration_service::tests::staging_tests::postcommit_cleanup_failure_retains_new_configuration_and_committed_marker ... ok
+test configuration_service::tests::staging_tests::secret_replacement_and_delete_follow_durable_boundary ... ok
+test configuration_service::tests::transaction::failed_startup_rollback_does_not_skip_runtime_rollback ... ok
+test configuration_service::tests::transaction::import_requires_fresh_credentials_and_rolls_back_rejected_revision ... ok
+test configuration_service::tests::transaction::imported_preset_validation_failure_restores_credentials_and_startup ... ok
+test configuration_service::tests::transaction::invalid_settings_restore_startup_before_runtime_is_touched ... ok
+test configuration_service::tests::transaction::public_configuration_revision_tracks_credentials_and_only_successful_commits ... ok
+test configuration_service::tests::transaction::referenced_rule_blocks_disable_and_delete_without_changing_configuration ... ok
+test configuration_service::tests::transaction::rule_reorder_and_settings_reflect_applied_state ... ok
+test configuration_service::tests::transaction::rule_set_validation_failure_restores_replaced_credentials ... ok
+test configuration_service::tests::transaction::storage_failure_restores_old_credentials_and_runtime_revision ... ok
+test configuration_service::tests::validates_profile_inputs_before_writing_and_returns_field_errors ... ok
+test configuration_startup_recovery::tests::external_startup_value_is_preserved_until_ownership_is_resolved ... ok
+test configuration_startup_recovery::tests::failed_cleanup_retains_journal_and_retries_same_commit_after_reopen ... ok
+test configuration_startup_recovery::tests::missing_committed_replacement_does_not_destroy_old_secret_or_evidence ... ok
+test configuration_startup_recovery::tests::reopened_database_recovers_selected_commit_and_repeat_is_idempotent ... ok
+test configuration_startup_recovery::windows_acceptance::actual_keyring_and_startup_recover_both_commit_sides_and_preserve_external_value ... ignored, explicit acceptance in an interactive Windows session; touches current-user startup
+test core_control::tests::decodes_chunked_responses_and_accepts_exact_limit ... ok
+test core_control::tests::rejects_oversize_authentication_redirect_and_invalid_json_without_secret_details ... ok
+test core_control::tests::trickled_body_stops_at_total_deadline ... ok
+test credentials::tests::disabling_authentication_leaves_old_secret_until_commit ... ok
+test credentials::tests::editing_non_secret_fields_preserves_password_and_hides_it_from_config ... ok
+test credentials::tests::imported_authenticated_profiles_require_new_passwords ... ok
+test credentials::tests::reads_exact_versioned_reference_and_never_falls_back_to_retired_id ... ok
+test credentials::tests::update_dto_does_not_serialize_credentials_or_include_them_in_errors ... ok
+test ipc::tests::actual_tauri_commands_validate_and_persist_configuration ... ok
+test ipc_contract::generate_ipc_contract ... ok
+test ipc_contract::public_wire_values_match_generated_enums_numbers_and_error_shape ... ok
+test ipc_latency_tests::actual_task_ipc_subscribes_reuses_reports_and_releases ... ok
+test latency::tests::cancellation_stops_stalled_request_without_waiting_for_http_timeout ... ok
+test latency::tests::cancelled_actual_probe_core_is_removed_before_executor_returns ... ok
+test latency::tests::latency_probe_does_not_inherit_unrelated_routes_or_china_preset ... ok
+test latency::tests::measures_success_and_rejects_redirect_through_local_proxy ... ok
+test latency::tests::reads_credentials_without_switching_selection_or_system_proxy ... ok
+test latency::tests::reports_proxy_failure_without_exposing_target_or_credentials ... ok
+test latency::tests::statuses_only_accept_2xx ... ok
+test configuration_service::tests::real_core_tests::fixed_core_applies_password_username_import_and_preserves_credentials_after_failure ... ok
+test latency::tests::timeout_reports_failure_and_does_not_return_a_measurement ... ok
+test latency_tasks::tests::application_limit_queue_capacity_and_shared_subscribers ... ok
+test latency_tasks::tests::last_subscriber_and_revision_invalidation_cancel_without_early_slot_release ... ok
+test models::tests::accepts_stable_profile_ids_and_valid_configuration ... ok
+test models::tests::rejects_duplicate_profile_names_and_invalid_ports ... ok
+test models::tests::validates_domain_and_cidr_targets_by_matcher ... ok
+test models::tests::validates_latency_test_url_and_reads_old_settings ... ok
+test observability::tests::limits_recent_items_without_claiming_historical_results ... ok
+test observability::tests::parses_only_verified_active_fields_and_copies_without_secrets ... ok
+test observability::tests::rejects_unverifiable_or_unsafe_fields_instead_of_guessing ... ok
+test observability::tests::unavailable_interface_degrades_without_leaking_errors_or_inventing_history ... ok
+test latency::tests::temporary_core_is_cleaned_after_failed_request_without_changing_saved_selection ... ok
+test route_test::tests::user_rule_takes_precedence_and_disabled_preset_keeps_direct_fallback ... ok
+test routing::tests::matches_domain_boundaries_ports_and_cidr ... ok
+test routing::tests::rejects_invalid_rule_before_compiling ... ok
+test routing::tests::respects_display_order_and_falls_back_to_direct ... ok
+test rule_match_process::tests::captures_matches_rejects_failures_and_reaps_timed_out_processes ... ok
+test runtime::manager::tests::candidate_failure_keeps_previous_configuration_and_mode ... ok
+test runtime::manager::tests::commit_tests::in_flight_switch_exposes_stage_without_prematurely_committing_mode ... ok
+test runtime::manager::tests::commit_tests::persistence_failure_restores_runtime_revision_and_previous_rules ... ok
+test runtime::manager::tests::direct_and_stop_clear_running_session_and_uptime ... ok
+test runtime::manager::tests::hot_switch_failure_keeps_previous_mode_and_uptime ... ok
+test runtime::manager::tests::recovery_tests::coordinator_acquires_exclusive_session_before_a_second_instance_can_start ... ok
+test runtime::manager::tests::recovery_tests::direct_without_session_must_retry_unresolved_startup_recovery ... ok
+test runtime::manager::tests::recovery_tests::exited_session_does_not_rewrite_successful_operation_result ... ok
+test runtime::manager::tests::recovery_tests::explicit_network_recovery_stops_owned_runtime_before_restoring ... ok
+test runtime::manager::tests::recovery_tests::failed_exit_recovery_clears_stale_applied_session ... ok
+test runtime::manager::tests::recovery_tests::failed_switch_keeps_monitoring_old_session_and_restores_after_its_exit ... ok
+test runtime::manager::tests::recovery_tests::retained_session_recovery_failure_is_distinct_from_failed_operation ... ok
+test runtime::manager::tests::recovery_tests::transition_events_include_short_lived_stages_and_rollback ... ok
+test runtime::manager::tests::removing_default_while_global_is_running_is_rejected ... ok
+test runtime::manager::tests::revision_tests::credential_versions_and_plan_commit_only_after_persistence_confirmation ... ok
+test runtime::manager::tests::revision_tests::global_unrelated_secret_commit_is_metadata_but_next_rules_plan_uses_new_version ... ok
+test runtime::manager::tests::revision_tests::startup_uses_durable_configuration_revision_and_next_commit_advances_it ... ok
+test runtime::manager::tests::rules_without_default_start_and_china_preset_change_restarts_candidate ... ok
+test runtime::manager::tests::selected_mode_is_restored_without_starting_proxy_and_survives_configuration_changes ... ok
+test runtime::manager::tests::settings_only_update_keeps_running_core_and_can_roll_back ... ok
+test runtime::manager::tests::startup_failure_keeps_mode_unapplied_and_clears_uptime ... ok
+test runtime::manager::tests::unexpected_exit_invalidates_applied_mode_and_uptime ... ok
+test runtime_events::tests::emits_only_state_transitions_not_uptime_ticks_or_sensitive_diagnostics ... ok
+test runtime_plan::tests::effective_exit_fields_and_opaque_credential_versions_change_plan ... ok
+test runtime_plan::tests::global_isolates_unrelated_exits_rules_and_preset ... ok
+test runtime_plan::tests::ignores_presentation_settings_profile_order_and_disabled_rule_inputs ... ok
+test runtime_plan::tests::rule_order_matcher_ports_target_action_exit_enable_and_preset_change_plan ... ok
+test runtime_session::tests::second_instance_cannot_own_the_same_session ... ok
+test sing_box_backend::tests::observation::fixed_core_failed_switch_retains_old_process_then_recovers_after_exit ... ok
+test route_test::tests::bundled_rule_sets_explain_domains_and_literal_ipv4_ipv6 ... ok
+test sing_box_backend::tests::observation::global_core_starts_without_unrelated_exit_secret_but_rules_rejects_it ... ok
+test sing_box_backend::tests::observation::slow_control_request_does_not_lock_switch_or_stop_and_old_success_is_discarded ... ok
+test sing_box_config::tests::china_preset_keeps_domains_before_literal_ip_rules ... ok
+test sing_box_config::tests::enabled_exits_keep_stable_distinct_tags_and_per_profile_secrets ... ok
+test sing_box_config::tests::fixed_sing_box_accepts_rendered_rule_and_global_configs_when_available ... ok
+test sing_box_config::tests::global_ignores_rules_and_authentication_is_only_in_kernel_config ... ok
+test sing_box_config::tests::missing_credential_for_any_enabled_exit_rejects_config ... ok
+test sing_box_config::tests::missing_profile_or_credentials_never_produces_config ... ok
+test sing_box_config::tests::rules_preserve_first_match_and_default_to_direct ... ok
+test sing_box_process::integration_tests::china_preset_keeps_domain_exit_on_retry_and_routes_literal_ipv6 ... ok
+test sing_box_backend::tests::real_core_retains_old_process_until_commit_and_can_revert_candidate ... ok
+test sing_box_process::integration_tests::fixed_core_exposes_verified_active_connection_fields_on_loopback ... ok
+test sing_box_process::integration_tests::china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct ... ok
+test sing_box_process::tests::fake_core_exit_and_cleanup_only_affect_the_owned_process ... ok
+test sing_box_process::tests::refuses_unverified_binary_without_launching_it ... ok
+test sing_box_process::tests::startup_cleanup_only_removes_owned_runtime_directories ... ok
+
+running 1 test
+test sing_box_windows_job::tests::abrupt_owner_exit_kills_job_child_without_rust_destructors ... ok
+test sing_box_windows_job::tests::closing_job_kills_only_assigned_child ... ok
+test sing_box_windows_job::tests::crashed_job_owner_child ... ignored, isolated process owner invoked by abrupt-exit test
+test startup::tests::disabling_owned_value_can_restore_its_exact_original ... ok
+test startup::tests::exact_original_and_expected_survive_serialization_and_repeatable_restore ... ok
+test startup::tests::external_bytes_or_type_block_apply_restore_and_both_boolean_writes ... ok
+test store::diagnostics::tests::filters_pages_and_clears_only_confirmed_diagnostics ... ok
+test store::diagnostics::tests::rejects_invalid_filters_and_retains_permanent_cap ... ok
+test store::migrations::tests::future_database_is_rejected_without_mutation ... ok
+test store::migrations::tests::interrupted_ddl_rolls_back_each_step_and_reopens_without_losing_configuration ... ok
+test store::migrations::tests::interrupted_migration_child ... ignored, invoked by migration interruption test in an isolated process
+test store::ownership::tests::migrates_existing_version_one_database_and_keeps_ownership_after_reopen ... ok
+test store::recovery::tests::durable_intent_commit_and_cleanup_survive_reopen_and_are_idempotent ... ok
+test store::recovery::tests::interrupted_commit_child ... ignored, isolated process child, invoked by commit interruption test
+test store::recovery::tests::interrupted_commit_does_not_split_configuration_references_revision_and_marker ... ok
+test store::recovery::tests::rejects_stale_and_unsafe_cleanup_records_and_credential_fields ... ok
+test store::recovery::tests::returned_commit_failure_keeps_intent_and_old_configuration ... ok
+test store::tests::invalid_save_preserves_existing_configuration ... ok
+test store::tests::migrates_empty_database_and_persists_configuration_across_reopen ... ok
+test store::tests::migration_sets_supported_schema_version_and_defaults_settings ... ok
+test store::tests::permanent_retention_caps_records_during_insert ... ok
+test store::tests::reads_v1_document_and_binds_ordered_proxy_rules_to_old_active_profile ... ok
+test store::tests::retention_applies_time_windows_and_permanent_capacity ... ok
+test store::tests::selected_mode_defaults_to_direct_and_survives_reopen ... ok
+test store::tests::upgrades_existing_v2_database_without_changing_configuration ... ok
+test store::tests::v1_without_active_profile_keeps_proxy_rule_pending_until_repaired ... ok
+test system_proxy::tests::a_new_instance_restores_abandoned_or_pending_owned_settings ... ok
+test system_proxy::tests::applying_switching_and_restoring_preserves_all_original_values ... ok
+test system_proxy::tests::enabling_proxy_preserves_absent_auto_detect_in_expected_journal ... ok
+test system_proxy::tests::external_change_is_never_overwritten_and_keeps_recovery_evidence ... ok
+test system_proxy::tests::failed_write_rolls_back_journal_without_losing_previous_session ... ok
+test system_proxy::tests::failing_during_partial_write_keeps_pending_journal_and_blocks_takeover ... ok
+test system_proxy::tests::interrupted_partial_write_is_never_overwritten_even_after_restart ... ok
+test system_proxy::tests::pending_write_with_unchanged_original_clears_journal_without_writing ... ok
+test system_proxy_windows::tests::absent_auto_detect_survives_registry_takeover_and_restart_recovery ... ok
+test system_proxy_windows::tests::interrupted_registry_write_recovers_only_complete_owned_values ... ok
+test system_proxy_windows::tests::registry_adapter_recovers_only_an_identified_complete_write ... ok
+test system_proxy_windows::tests::restart_recovers_durable_registry_ownership_and_manual_restore ... ok
+test transfer::tests::export_omits_credential_references_and_import_requires_replacement ... ok
+test transfer::tests::import_rejects_embedded_password_and_wrong_schema ... ok
+test transfer::tests::old_export_defaults_test_url_and_new_export_preserves_it ... ok
+test transfer::tests::v1_import_binds_proxy_rule_and_exports_v2_without_secrets ... ok
+test tray::tests::tray_never_checks_a_requested_mode_before_backend_commit_or_after_failure ... ok
+test sing_box_process::tests::real_core_starts_with_private_config_and_cleans_up_when_available ... ok
+
+test result: ok. 165 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 53.74s
+
+     Running unittests src\main.rs (src-tauri\target\debug\deps\socks_proxy-12ec1d22ba125f21.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests socks_proxy_lib
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

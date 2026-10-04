@@ -1,14 +1,22 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
 import { RouteTest } from "./RouteTest";
 
-const invoke = vi.hoisted(() => vi.fn());
+const { invoke, listen } = vi.hoisted(() => ({ invoke: vi.fn(), listen: vi.fn() }));
+vi.mock("@tauri-apps/api/event", () => ({ listen }));
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke }));
 
-beforeEach(() => invoke.mockReset());
+beforeEach(() => {
+  invoke.mockReset();
+  listen.mockReset();
+  listen.mockResolvedValue(vi.fn());
+});
 
 it("shows the predicted exit and user-rule explanation without implying a connection", async () => {
   invoke.mockResolvedValue({
+    target: "example.com",
+    port: 443,
+    configuration_revision: 1,
     stage: "user_rule",
     action: "proxy",
     proxy_profile_id: "primary",
@@ -33,6 +41,9 @@ it("shows the predicted exit and user-rule explanation without implying a connec
 
 it("explains that an unlisted domain uses the default exit without DNS inference", async () => {
   invoke.mockResolvedValue({
+    target: "example.com",
+    port: 443,
+    configuration_revision: 1,
     stage: "final",
     action: "proxy",
     proxy_profile_id: "primary",
@@ -54,6 +65,9 @@ it("explains that an unlisted domain uses the default exit without DNS inference
 
 it("rejects invalid input and clears stale results after a backend failure", async () => {
   invoke.mockResolvedValue({
+    target: "example.com",
+    port: 443,
+    configuration_revision: 1,
     stage: "china_ip",
     action: "direct",
     reason: "字面 IP 命中中国地址集",
@@ -70,4 +84,73 @@ it("rejects invalid input and clears stale results after a backend failure", asy
   fireEvent.click(screen.getByRole("button", { name: "测试" }));
   await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("规则集损坏"));
   expect(screen.queryByRole("status")).not.toBeInTheDocument();
+});
+
+const prediction = {
+  target: "a.example",
+  port: 443,
+  configuration_revision: 1,
+  stage: "final",
+  action: "direct",
+  reason: "预测",
+  data_date: null,
+};
+
+it.each(["target", "port"])("discards a delayed prediction after changing %s", async (field) => {
+  let resolve!: (value: typeof prediction) => void;
+  invoke.mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  render(<RouteTest />);
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: "a.example" } });
+  fireEvent.click(screen.getByRole("button", { name: "测试" }));
+  fireEvent.change(screen.getByRole(field === "target" ? "textbox" : "spinbutton"), {
+    target: { value: field === "target" ? "b.example" : "80" },
+  });
+  await act(async () => resolve(prediction));
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+});
+
+it("invalidates saved results on configuration revision changes, ignoring uptime events", async () => {
+  invoke.mockResolvedValue(prediction);
+  render(<RouteTest />);
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: "a.example" } });
+  fireEvent.click(screen.getByRole("button", { name: "测试" }));
+  await screen.findByRole("status");
+  const callback = listen.mock.calls[0][1];
+  act(() => callback({ payload: { configuration_revision: 1 } }));
+  expect(screen.getByRole("status")).toHaveTextContent("配置版本：1");
+  act(() => callback({ payload: { configuration_revision: 2 } }));
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+});
+
+it("rejects a delayed old revision after a configuration event", async () => {
+  let resolve!: (value: typeof prediction) => void;
+  invoke.mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  render(<RouteTest />);
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: "a.example" } });
+  fireEvent.click(screen.getByRole("button", { name: "测试" }));
+  act(() => listen.mock.calls[0][1]({ payload: { configuration_revision: 2 } }));
+  await act(async () => resolve(prediction));
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
+});
+
+it("releases a delayed event subscription after unmount", async () => {
+  let resolve!: (value: () => void) => void;
+  const unlisten = vi.fn();
+  listen.mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  const view = render(<RouteTest />);
+  view.unmount();
+  await act(async () => resolve(unlisten));
+  expect(unlisten).toHaveBeenCalledOnce();
 });

@@ -39,7 +39,7 @@ fn refuses_unverified_binary_without_launching_it() {
 
 #[test]
 fn real_core_starts_with_private_config_and_cleans_up_when_available() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let binary = Path::new(&binary);

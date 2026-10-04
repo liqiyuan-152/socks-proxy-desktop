@@ -19,18 +19,20 @@ type ServiceState<'a> = State<'a, Arc<ConfigurationService>>;
 type StoreState<'a> = State<'a, Arc<SqliteConfigurationStore>>;
 
 #[derive(Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct HistoryUnavailable {
     pub available: bool,
     pub reason: &'static str,
 }
 
 #[derive(Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct NetworkRecoveryResult {
     pub completed_at_ms: i64,
     pub snapshot: RuntimeSnapshot,
 }
 
-async fn run_blocking<T: Send + 'static>(
+pub(crate) async fn run_blocking<T: Send + 'static>(
     action: impl FnOnce() -> CommandResult<T> + Send + 'static,
 ) -> CommandResult<T> {
     tauri::async_runtime::spawn_blocking(action)
@@ -187,22 +189,6 @@ pub async fn get_profile_credential(
 ) -> CommandResult<ProfileCredentialView> {
     let service = Arc::clone(&service);
     run_blocking(move || service.profile_credential(&id)).await
-}
-
-#[cfg(windows)]
-#[tauri::command]
-pub async fn test_proxy_latency(
-    tester: State<'_, Arc<crate::latency::LatencyTester>>,
-    id: String,
-) -> CommandResult<crate::latency::LatencyResult> {
-    let tester = Arc::clone(&tester);
-    run_blocking(move || tester.test(&id)).await
-}
-
-#[cfg(not(windows))]
-#[tauri::command]
-pub async fn test_proxy_latency(_id: String) -> CommandResult<serde_json::Value> {
-    Err(AppError::unavailable("当前平台不支持代理延迟测试"))
 }
 
 #[tauri::command]

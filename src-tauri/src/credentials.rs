@@ -9,6 +9,7 @@ const KEYRING_SERVICE: &str = "com.socks-proxy.desktop.profile";
 
 #[derive(Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum CredentialUpdate {
     Preserve,
     Replace { username: String, password: String },
@@ -30,6 +31,23 @@ pub trait CredentialStore: Send + Sync {
     fn get(&self, profile_id: &str) -> Result<Option<ProxyCredential>, AppError>;
     fn replace(&self, profile_id: &str, username: &str, password: &str) -> Result<(), AppError>;
     fn delete(&self, profile_id: &str) -> Result<(), AppError>;
+}
+
+/// Resolve only the persisted reference. Falling back to the profile ID would
+/// silently use retired credentials after a versioned replacement.
+pub fn read_profile_credential(
+    store: &dyn CredentialStore,
+    profile: &ProxyProfile,
+) -> Result<Option<ProxyCredential>, AppError> {
+    if !profile.authentication_enabled {
+        return Ok(None);
+    }
+    let reference = profile
+        .credential_ref
+        .as_deref()
+        .filter(|reference| !reference.trim().is_empty())
+        .ok_or_else(credential_error)?;
+    store.get(reference)
 }
 
 pub struct OsCredentialStore;
@@ -87,20 +105,29 @@ fn credential_error() -> AppError {
     }
 }
 
-pub fn apply_credential_update(
+/// Build a candidate reference and return a secret to stage after the durable
+/// intent. This function never writes or deletes a keyring entry.
+pub fn prepare_credential_update(
     store: &dyn CredentialStore,
     profile: &mut ProxyProfile,
     update: Option<CredentialUpdate>,
-) -> Result<(), AppError> {
+) -> Result<Option<ProxyCredential>, AppError> {
     match update.unwrap_or(CredentialUpdate::Preserve) {
         CredentialUpdate::Preserve if profile.authentication_enabled => {
-            if store.get(&profile.id)?.is_none() {
-                return Err(AppError::validation(vec![FieldError {
+            let secret = read_profile_credential(store, profile)?.ok_or_else(|| {
+                AppError::validation(vec![FieldError {
                     field: "credential".into(),
                     message: "认证凭据缺失，请重新输入".into(),
-                }]));
+                }])
+            })?;
+            // Copy legacy entries to a new opaque key; keep the original until
+            // the new configuration reference has committed durably.
+            if profile.credential_ref.as_deref() == Some(profile.id.as_str()) {
+                profile.credential_ref = Some(format!("credential-v1-{}", uuid::Uuid::new_v4()));
+                Ok(Some(secret))
+            } else {
+                Ok(None)
             }
-            profile.credential_ref = Some(profile.id.clone());
         }
         CredentialUpdate::Replace { username, password } => {
             if username.trim().is_empty() || password.is_empty() {
@@ -109,17 +136,16 @@ pub fn apply_credential_update(
                     message: "用户名和密码不能为空".into(),
                 }]));
             }
-            store.replace(&profile.id, &username, &password)?;
             profile.authentication_enabled = true;
-            profile.credential_ref = Some(profile.id.clone());
+            profile.credential_ref = Some(format!("credential-v1-{}", uuid::Uuid::new_v4()));
+            Ok(Some(ProxyCredential { username, password }))
         }
         CredentialUpdate::Delete | CredentialUpdate::Preserve => {
-            store.delete(&profile.id)?;
             profile.authentication_enabled = false;
             profile.credential_ref = None;
+            Ok(None)
         }
     }
-    Ok(())
 }
 
 pub fn validate_import_credentials(
@@ -212,7 +238,7 @@ mod tests {
     fn editing_non_secret_fields_preserves_password_and_hides_it_from_config() {
         let store = MemoryCredentials::default();
         let mut profile = profile();
-        apply_credential_update(
+        let staged = prepare_credential_update(
             &store,
             &mut profile,
             Some(CredentialUpdate::Replace {
@@ -220,11 +246,22 @@ mod tests {
                 password: "secret-value".into(),
             }),
         )
+        .unwrap()
         .unwrap();
+        store
+            .replace(
+                profile.credential_ref.as_deref().unwrap(),
+                &staged.username,
+                &staged.password,
+            )
+            .unwrap();
         profile.host = "changed.example.com".into();
-        apply_credential_update(&store, &mut profile, None).unwrap();
+        prepare_credential_update(&store, &mut profile, None).unwrap();
         assert_eq!(
-            store.get(&profile.id).unwrap().unwrap().password,
+            read_profile_credential(&store, &profile)
+                .unwrap()
+                .unwrap()
+                .password,
             "secret-value"
         );
         let serialized = serde_json::to_string(&profile).unwrap();
@@ -234,10 +271,10 @@ mod tests {
     }
 
     #[test]
-    fn disabling_authentication_deletes_stored_credentials() {
+    fn disabling_authentication_leaves_old_secret_until_commit() {
         let store = MemoryCredentials::default();
         let mut profile = profile();
-        apply_credential_update(
+        let staged = prepare_credential_update(
             &store,
             &mut profile,
             Some(CredentialUpdate::Replace {
@@ -245,10 +282,18 @@ mod tests {
                 password: "secret-value".into(),
             }),
         )
+        .unwrap()
         .unwrap();
+        let reference = profile.credential_ref.clone().unwrap();
+        store
+            .replace(&reference, &staged.username, &staged.password)
+            .unwrap();
         profile.authentication_enabled = false;
-        apply_credential_update(&store, &mut profile, None).unwrap();
-        assert!(store.get(&profile.id).unwrap().is_none());
+        prepare_credential_update(&store, &mut profile, None).unwrap();
+        assert_eq!(
+            store.get(&reference).unwrap().unwrap().password,
+            "secret-value"
+        );
         assert_eq!(profile.credential_ref, None);
     }
 
@@ -285,10 +330,10 @@ mod tests {
         .unwrap();
         let store = MemoryCredentials::default();
         let mut profile = profile();
-        apply_credential_update(&store, &mut profile, Some(update)).unwrap();
+        prepare_credential_update(&store, &mut profile, Some(update)).unwrap();
         let display = serde_json::to_string(&profile).unwrap();
         assert!(!display.contains("secret-value"));
-        let error = apply_credential_update(
+        let error = prepare_credential_update(
             &store,
             &mut profile,
             Some(CredentialUpdate::Replace {
@@ -296,9 +341,40 @@ mod tests {
                 password: String::new(),
             }),
         )
-        .unwrap_err();
+        .err()
+        .unwrap();
         assert!(!serde_json::to_string(&error)
             .unwrap()
             .contains("secret-value"));
+    }
+
+    #[test]
+    fn reads_exact_versioned_reference_and_never_falls_back_to_retired_id() {
+        let store = MemoryCredentials::default();
+        let mut profile = profile();
+        profile.authentication_enabled = true;
+        profile.credential_ref = Some("credential-v1-new".into());
+        store
+            .replace(&profile.id, "old-user", "old-secret")
+            .unwrap();
+        assert!(read_profile_credential(&store, &profile).unwrap().is_none());
+        store
+            .replace("credential-v1-new", "new-user", "new-secret")
+            .unwrap();
+        let credential = read_profile_credential(&store, &profile).unwrap().unwrap();
+        assert_eq!(credential.username, "new-user");
+        assert_eq!(credential.password, "new-secret");
+        profile.credential_ref = Some(profile.id.clone());
+        assert_eq!(
+            read_profile_credential(&store, &profile)
+                .unwrap()
+                .unwrap()
+                .password,
+            "old-secret"
+        );
+        profile.credential_ref = None;
+        assert!(read_profile_credential(&store, &profile).is_err());
+        profile.authentication_enabled = false;
+        assert!(read_profile_credential(&store, &profile).unwrap().is_none());
     }
 }

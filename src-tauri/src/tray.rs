@@ -1,7 +1,7 @@
 use crate::{
     configuration_service::ConfigurationService,
     models::RuntimeMode,
-    runtime::{RuntimePhase, RuntimeSnapshot},
+    runtime::{RuntimeSnapshot, SessionHealth},
 };
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -15,21 +15,30 @@ use tauri::{
 const MAIN_WINDOW_LABEL: &str = "main";
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct TrayPresentation {
-    title: &'static str,
+    title: String,
     checked: Option<RuntimeMode>,
 }
 
 impl From<&RuntimeSnapshot> for TrayPresentation {
     fn from(snapshot: &RuntimeSnapshot) -> Self {
-        let title = if snapshot.phase == RuntimePhase::Failed {
-            "Socks Proxy · 异常（打开主窗口查看）"
+        let applied = match snapshot.applied_mode {
+            Some(RuntimeMode::Rules) => "规则代理",
+            Some(RuntimeMode::Global) => "全局代理",
+            Some(RuntimeMode::Direct) => "全局直连",
+            None => "未运行",
+        };
+        let title = if snapshot.session_health == SessionHealth::RecoveryRequired {
+            format!("Socks Proxy · {applied} · 恢复未完成（打开主窗口查看）")
+        } else if let Some(error) = snapshot
+            .last_operation
+            .error
+            .as_ref()
+            .or(snapshot.last_error.as_ref())
+        {
+            let error: String = error.chars().take(120).collect();
+            format!("Socks Proxy · {applied} · {error}（打开主窗口查看）")
         } else {
-            match snapshot.applied_mode {
-                Some(RuntimeMode::Rules) => "Socks Proxy · 规则代理",
-                Some(RuntimeMode::Global) => "Socks Proxy · 全局代理",
-                Some(RuntimeMode::Direct) => "Socks Proxy · 全局直连",
-                None => "Socks Proxy · 未运行",
-            }
+            format!("Socks Proxy · {applied}")
         };
         Self {
             title,
@@ -161,11 +170,13 @@ pub fn install<R: Runtime>(app: &tauri::App<R>) -> tauri::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::runtime::TrafficCoverage;
+    use crate::runtime::{RuntimePhase, TrafficCoverage};
 
     #[test]
     fn tray_never_checks_a_requested_mode_before_backend_commit_or_after_failure() {
         let mut snapshot = RuntimeSnapshot {
+            configuration_revision: 0,
+            runtime_plan_revision: 0,
             revision: 1,
             selected_mode: RuntimeMode::Rules,
             desired_mode: RuntimeMode::Rules,
@@ -176,6 +187,8 @@ mod tests {
             system_proxy_enabled: true,
             tun_enabled: false,
             coverage: TrafficCoverage::SystemProxyApps,
+            session_health: crate::runtime::SessionHealth::Healthy,
+            last_operation: crate::runtime::OperationResult::default(),
             last_error: None,
         };
         assert_eq!(
@@ -187,6 +200,12 @@ mod tests {
         let failed = TrayPresentation::from(&snapshot);
         assert_eq!(failed.checked, Some(RuntimeMode::Global));
         assert!(failed.title.contains("打开主窗口"));
+        assert!(failed.title.contains("全局代理"));
+        assert!(failed.title.contains("模拟内核错误"));
+        snapshot.session_health = SessionHealth::RecoveryRequired;
+        assert!(TrayPresentation::from(&snapshot)
+            .title
+            .contains("恢复未完成"));
         snapshot.applied_mode = None;
         assert_eq!(TrayPresentation::from(&snapshot).checked, None);
     }

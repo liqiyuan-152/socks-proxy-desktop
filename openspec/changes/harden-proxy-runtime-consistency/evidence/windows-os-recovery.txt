@@ -1,0 +1,6 @@
+
+running 1 test
+test configuration_startup_recovery::windows_acceptance::actual_keyring_and_startup_recover_both_commit_sides_and_preserve_external_value ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 169 filtered out; finished in 0.14s
+

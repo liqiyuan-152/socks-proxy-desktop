@@ -9,6 +9,8 @@ permissions:
 jobs:
   package:
     runs-on: windows-latest
+    env:
+      RUST_TEST_THREADS: "2"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -20,12 +22,20 @@ jobs:
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
-      - run: pnpm check
-      - run: pnpm prepare:core
-      - run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+      - name: Static checks and frontend unit tests
+        run: pnpm check
+      - name: Rust unit tests (without real core)
+        run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+      - name: Real-core gate regression tests
+        run: node --test scripts/test-real-core-checks.mjs
+      - name: Prepare pinned Windows core
+        run: pnpm prepare:core
+      - name: Verify pinned core and run real-core tests
+        run: node scripts/test-real-core.mjs
         env:
           SING_BOX_TEST_BIN: ${{ github.workspace }}\src-tauri\resources\sing-box\windows-amd64\sing-box.exe
-      - run: pnpm tauri build --bundles nsis
+      - name: NSIS package build
+        run: pnpm tauri build --bundles nsis
       - name: Record package checksums and source revision
         shell: pwsh
         run: |

@@ -13,6 +13,7 @@ struct MemoryStore {
     value: Mutex<PersistedConfiguration>,
     mode: Mutex<RuntimeMode>,
     fail_save: Mutex<bool>,
+    recovery: Mutex<(u64, Option<crate::configuration_recovery::RecoveryRecord>)>,
 }
 
 impl Default for MemoryStore {
@@ -21,33 +22,22 @@ impl Default for MemoryStore {
             value: Mutex::new(PersistedConfiguration::default()),
             mode: Mutex::new(RuntimeMode::Direct),
             fail_save: Mutex::new(false),
+            recovery: Mutex::new((0, None)),
         }
     }
 }
 
-impl ConfigurationStore for Arc<MemoryStore> {
-    fn load(&self) -> Result<PersistedConfiguration, AppError> {
-        Ok(self.value.lock().unwrap().clone())
-    }
+#[path = "configuration_memory_recovery.rs"]
+mod memory_recovery;
 
-    fn save(&self, candidate: &PersistedConfiguration) -> Result<(), AppError> {
-        if *self.fail_save.lock().unwrap() {
-            return Err(AppError::storage("测试写入失败"));
-        }
-        *self.value.lock().unwrap() = candidate.clone();
-        Ok(())
-    }
-    fn load_mode(&self) -> Result<RuntimeMode, AppError> {
-        Ok(*self.mode.lock().unwrap())
-    }
-    fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError> {
-        if *self.fail_save.lock().unwrap() {
-            return Err(AppError::storage("测试写入失败"));
-        }
-        *self.mode.lock().unwrap() = mode;
-        Ok(())
-    }
-}
+#[path = "configuration_real_core_tests.rs"]
+mod real_core_tests;
+
+#[path = "configuration_durable_tests.rs"]
+mod durable_tests;
+
+#[path = "configuration_staging_tests.rs"]
+mod staging_tests;
 
 #[derive(Default)]
 struct MemoryCredentials(Mutex<HashMap<String, ProxyCredential>>);
@@ -86,17 +76,36 @@ impl StartupAdapter for Arc<MemoryStartup> {
         *self.0.lock().unwrap() = enabled;
         Ok(())
     }
+    fn read_entry(&self) -> Result<Option<crate::configuration_recovery::StartupEntry>, AppError> {
+        Ok((*self.0.lock().unwrap()).then(|| self.expected_entry().unwrap()))
+    }
+    fn expected_entry(&self) -> Result<crate::configuration_recovery::StartupEntry, AppError> {
+        Ok(crate::configuration_recovery::StartupEntry {
+            value_type: 1,
+            bytes: vec![65, 0, 0, 0],
+        })
+    }
+    fn write_entry(
+        &self,
+        entry: Option<&crate::configuration_recovery::StartupEntry>,
+    ) -> Result<(), AppError> {
+        *self.0.lock().unwrap() = entry.is_some();
+        Ok(())
+    }
 }
 
 #[derive(Default)]
 struct FakeRuntime {
     reject_next: Mutex<bool>,
     committed_active_ids: Mutex<Vec<Option<String>>>,
+    recoveries: Mutex<usize>,
 }
 
 impl RuntimeCoordinator for Arc<FakeRuntime> {
     fn snapshot(&self) -> RuntimeSnapshot {
         RuntimeSnapshot {
+            configuration_revision: 0,
+            runtime_plan_revision: 0,
             revision: 0,
             selected_mode: RuntimeMode::Direct,
             desired_mode: RuntimeMode::Direct,
@@ -107,6 +116,8 @@ impl RuntimeCoordinator for Arc<FakeRuntime> {
             system_proxy_enabled: false,
             tun_enabled: false,
             coverage: crate::runtime::TrafficCoverage::None,
+            session_health: crate::runtime::SessionHealth::Healthy,
+            last_operation: crate::runtime::OperationResult::default(),
             last_error: None,
         }
     }
@@ -114,6 +125,10 @@ impl RuntimeCoordinator for Arc<FakeRuntime> {
         Ok(self.snapshot())
     }
     fn stop(&self) -> Result<RuntimeSnapshot, AppError> {
+        Ok(self.snapshot())
+    }
+    fn recover_network(&self) -> Result<RuntimeSnapshot, AppError> {
+        *self.recoveries.lock().unwrap() += 1;
         Ok(self.snapshot())
     }
     fn apply_configuration(
@@ -275,7 +290,11 @@ fn credentials_are_read_only_for_existing_authenticated_profiles() {
             .code,
         "unavailable"
     );
-    fixture.credentials.delete(&created.id).unwrap();
+    let reference = fixture.store.load().unwrap().profiles[0]
+        .credential_ref
+        .clone()
+        .unwrap();
+    fixture.credentials.delete(&reference).unwrap();
     assert_eq!(
         fixture
             .service
@@ -337,9 +356,8 @@ fn deleting_active_profile_waits_for_runtime_and_rolls_back_secret_on_failure() 
     assert_eq!(fixture.store.load().unwrap().active_profile_id, None);
     assert_eq!(
         fixture
-            .credentials
-            .get(&created.id)
-            .unwrap()
+            .service
+            .profile_credential(&created.id)
             .unwrap()
             .password,
         "secret-value"
@@ -355,3 +373,6 @@ fn deleting_active_profile_waits_for_runtime_and_rolls_back_secret_on_failure() 
 
 #[path = "configuration_transaction_tests.rs"]
 mod transaction;
+
+#[path = "configuration_runtime_tests.rs"]
+mod runtime_combination;

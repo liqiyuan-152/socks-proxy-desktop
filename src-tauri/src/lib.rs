@@ -2,12 +2,24 @@ mod capabilities;
 mod china_rules;
 #[cfg(test)]
 mod china_rules_tests;
+#[cfg(test)]
+mod configuration_crash_tests;
+mod configuration_recovery;
 mod configuration_service;
+mod configuration_startup_recovery;
+#[cfg(any(windows, test))]
+mod core_control;
 mod credentials;
 mod error;
 mod ipc;
+#[cfg(test)]
+mod ipc_contract;
+mod ipc_latency;
+#[cfg(test)]
+mod ipc_latency_tests;
 #[cfg(any(windows, test))]
 mod latency;
+mod latency_tasks;
 mod models;
 mod observability;
 mod route_test;
@@ -15,6 +27,7 @@ mod routing;
 mod rule_match_process;
 mod runtime;
 mod runtime_events;
+mod runtime_plan;
 mod runtime_session;
 #[cfg(not(windows))]
 mod runtime_unavailable;
@@ -34,6 +47,8 @@ mod store;
 mod system_proxy;
 #[cfg(windows)]
 mod system_proxy_windows;
+#[cfg(test)]
+mod test_core;
 mod transfer;
 mod tray;
 
@@ -93,7 +108,10 @@ pub fn run() {
             capabilities::get_capabilities,
             ipc::list_profiles,
             ipc::get_profile_credential,
-            ipc::test_proxy_latency,
+            ipc_latency::test_proxy_latency,
+            ipc_latency::start_proxy_latency_task,
+            ipc_latency::get_proxy_latency_task,
+            ipc_latency::release_proxy_latency_task,
             ipc::save_profile,
             ipc::delete_profile,
             ipc::select_profile,
@@ -133,14 +151,27 @@ pub fn run() {
             let store = Arc::new(SqliteConfigurationStore::open(
                 app_data.join("config.sqlite3"),
             )?);
-            let initial = store.load()?;
             let selected_mode = store.load_mode()?;
             #[cfg(windows)]
             let (backend, recovery_issue) = windows_backend(app, store.clone(), &app_data)?;
             #[cfg(not(windows))]
             let backend: Box<dyn RuntimeBackend> = Box::new(UnavailableRuntimeBackend);
-            let runtime = ManagedRuntime::from_lease(initial, backend, ownership, selected_mode)?;
-            #[cfg(windows)]
+            #[cfg(not(windows))]
+            let recovery_issue: Option<String> = None;
+            let recovery_issue = recovery_issue.or_else(|| {
+                configuration_startup_recovery::recover_configuration_on_startup(
+                    &ownership,
+                    store.as_ref(),
+                    &OsCredentialStore,
+                    &SystemStartupAdapter,
+                )
+                .err()
+                .map(|error| error.message)
+            });
+            let initial = store.load()?;
+            let runtime = ManagedRuntime::from_lease(initial, backend, ownership, selected_mode)?
+                .with_configuration_revision(store.recovery_revision()?);
+            let recovery_pending = recovery_issue.is_some();
             if let Some(message) = recovery_issue {
                 runtime.report_startup_recovery_issue(message);
             }
@@ -150,30 +181,34 @@ pub fn run() {
                 Box::new(OsCredentialStore),
                 Box::new(SystemStartupAdapter),
                 Box::new(runtime),
-            );
+            )
+            .with_startup_recovery_pending(recovery_pending);
             #[cfg(windows)]
             let service = service.with_china_rule_root(
                 app.path()
                     .resolve("china-rules", tauri::path::BaseDirectory::Resource)?,
             );
-            app.manage(Arc::new(service));
-            app.manage(store.clone());
-
+            if !recovery_pending {
+                if let Err(error) = service.upgrade_legacy_credentials() {
+                    service.report_configuration_recovery_issue(&error);
+                }
+            }
             #[cfg(windows)]
-            {
+            let service = {
                 use tauri::path::BaseDirectory;
                 let binary = app.path().resolve(
                     "sing-box/windows-amd64/sing-box.exe",
                     BaseDirectory::Resource,
                 )?;
-                app.manage(Arc::new(latency::LatencyTester::new(
-                    store.clone(),
-                    Arc::new(OsCredentialStore),
+                let executor = Arc::new(latency::LatencyTester::for_runtime(
                     binary,
                     sing_box_process::WINDOWS_AMD64_EXE_SHA256.into(),
                     app_data.join("runtime"),
-                )));
-            }
+                ));
+                service.with_latency_tasks(latency_tasks::LatencyTaskRegistry::new(executor))
+            };
+            app.manage(Arc::new(service));
+            app.manage(store.clone());
 
             tray::install(app)?;
             runtime_events::start(app.handle().clone(), store, runtime_updates);

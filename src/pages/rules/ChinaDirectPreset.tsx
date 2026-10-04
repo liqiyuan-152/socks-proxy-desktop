@@ -1,13 +1,10 @@
+import { ipc } from "@/lib/ipc";
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { command, errorMessage } from "@/lib/backend";
+import { errorMessage } from "@/lib/backend";
 import { useBackend } from "@/lib/backend-state";
 
-type ChinaDirectStatus = {
-  enabled: boolean;
-  available: boolean;
-  data_date: string | null;
-};
+import type { ChinaDirectStatus } from "@/lib/generated/ipc";
 
 export function ChinaDirectPreset() {
   const { snapshot, refresh } = useBackend();
@@ -18,7 +15,7 @@ export function ChinaDirectPreset() {
 
   useEffect(() => {
     let active = true;
-    void command<ChinaDirectStatus>("get_china_direct_status")
+    void ipc("get_china_direct_status")
       .then((value) => {
         if (active) setStatus(value);
       })
@@ -34,7 +31,7 @@ export function ChinaDirectPreset() {
     setBusy(true);
     setError(null);
     try {
-      setStatus(await command<ChinaDirectStatus>("set_china_direct_enabled", { enabled }));
+      setStatus(await ipc("set_china_direct_enabled", { enabled }));
       await refresh();
     } catch (reason) {
       setError(errorMessage(reason));

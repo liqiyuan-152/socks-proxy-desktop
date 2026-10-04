@@ -38,6 +38,25 @@ impl StartupAdapter for Arc<Startup> {
         self.0.store(enabled, Ordering::SeqCst);
         Ok(())
     }
+    fn read_entry(&self) -> CommandResult<Option<crate::configuration_recovery::StartupEntry>> {
+        Ok(self
+            .0
+            .load(Ordering::SeqCst)
+            .then(|| self.expected_entry().unwrap()))
+    }
+    fn expected_entry(&self) -> CommandResult<crate::configuration_recovery::StartupEntry> {
+        Ok(crate::configuration_recovery::StartupEntry {
+            value_type: 1,
+            bytes: vec![65, 0, 0, 0],
+        })
+    }
+    fn write_entry(
+        &self,
+        entry: Option<&crate::configuration_recovery::StartupEntry>,
+    ) -> CommandResult<()> {
+        self.0.store(entry.is_some(), Ordering::SeqCst);
+        Ok(())
+    }
 }
 
 #[derive(Default)]

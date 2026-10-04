@@ -8,7 +8,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const DATABASE_SCHEMA_VERSION: i64 = 3;
+const DATABASE_SCHEMA_VERSION: i64 = 4;
 use diagnostics::{now_ms, prune_diagnostics};
 pub use diagnostics::{DiagnosticFilter, DiagnosticPage, RuntimeDiagnostic};
 
@@ -18,9 +18,30 @@ pub fn diagnostic_now_ms() -> Result<i64, AppError> {
 
 pub trait ConfigurationStore: Send + Sync {
     fn load(&self) -> Result<PersistedConfiguration, AppError>;
+    #[cfg(test)]
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError>;
     fn load_mode(&self) -> Result<RuntimeMode, AppError>;
     fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError>;
+    fn recovery_revision(&self) -> Result<u64, AppError> {
+        Err(AppError::unavailable("此配置存储不支持持久化恢复"))
+    }
+    fn recovery_record(
+        &self,
+    ) -> Result<Option<crate::configuration_recovery::RecoveryRecord>, AppError> {
+        Err(AppError::unavailable("此配置存储不支持持久化恢复"))
+    }
+    fn begin_recovery(
+        &self,
+        _: &crate::configuration_recovery::RecoveryIntent,
+    ) -> Result<(), AppError> {
+        Err(AppError::unavailable("此配置存储不支持持久化恢复"))
+    }
+    fn commit_recovery(&self, _: &str) -> Result<(), AppError> {
+        Err(AppError::unavailable("此配置存储不支持持久化恢复"))
+    }
+    fn clear_recovery(&self, _: &str) -> Result<(), AppError> {
+        Err(AppError::unavailable("此配置存储不支持持久化恢复"))
+    }
 }
 
 pub struct SqliteConfigurationStore {
@@ -51,6 +72,26 @@ impl SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for SqliteConfigurationStore {
+    fn recovery_revision(&self) -> Result<u64, AppError> {
+        SqliteConfigurationStore::recovery_revision(self)
+    }
+    fn recovery_record(
+        &self,
+    ) -> Result<Option<crate::configuration_recovery::RecoveryRecord>, AppError> {
+        SqliteConfigurationStore::recovery_record(self)
+    }
+    fn begin_recovery(
+        &self,
+        intent: &crate::configuration_recovery::RecoveryIntent,
+    ) -> Result<(), AppError> {
+        SqliteConfigurationStore::begin_recovery(self, intent)
+    }
+    fn commit_recovery(&self, id: &str) -> Result<(), AppError> {
+        SqliteConfigurationStore::commit_recovery(self, id)
+    }
+    fn clear_recovery(&self, id: &str) -> Result<(), AppError> {
+        SqliteConfigurationStore::clear_recovery(self, id)
+    }
     fn load(&self) -> Result<PersistedConfiguration, AppError> {
         let connection = self
             .connection
@@ -59,27 +100,24 @@ impl ConfigurationStore for SqliteConfigurationStore {
         read_configuration(&connection)
     }
 
+    #[cfg(test)]
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError> {
         configuration.validate()?;
-        let json = serde_json::to_string(configuration)
-            .map_err(|_| AppError::storage("配置无法序列化"))?;
         let mut connection = self
             .connection
             .lock()
             .map_err(|_| AppError::storage("配置存储锁不可用"))?;
         let transaction = connection.transaction().map_err(storage_error)?;
+        if recovery::read_record(&transaction)?.is_some() {
+            return Err(crate::configuration_recovery::recovery_error());
+        }
+        write_configuration(&transaction, configuration)?;
         transaction
             .execute(
-                "INSERT INTO configuration (id, document_json) VALUES (1, ?1)
-             ON CONFLICT(id) DO UPDATE SET document_json = excluded.document_json",
-                [json],
+                "UPDATE configuration_commit SET revision = revision + 1 WHERE id = 1",
+                [],
             )
             .map_err(storage_error)?;
-        prune_diagnostics(
-            &transaction,
-            configuration.settings.diagnostic_retention,
-            now_ms()?,
-        )?;
         transaction.commit().map_err(storage_error)?;
         Ok(())
     }
@@ -114,6 +152,9 @@ impl ConfigurationStore for SqliteConfigurationStore {
             .connection
             .lock()
             .map_err(|_| AppError::storage("配置存储锁不可用"))?;
+        if recovery::read_record(&connection)?.is_some() {
+            return Err(crate::configuration_recovery::recovery_error());
+        }
         connection
             .execute(
                 "INSERT INTO selected_mode (id, mode) VALUES (1, ?1)
@@ -126,9 +167,30 @@ impl ConfigurationStore for SqliteConfigurationStore {
 }
 
 impl ConfigurationStore for Arc<SqliteConfigurationStore> {
+    fn recovery_revision(&self) -> Result<u64, AppError> {
+        self.as_ref().recovery_revision()
+    }
+    fn recovery_record(
+        &self,
+    ) -> Result<Option<crate::configuration_recovery::RecoveryRecord>, AppError> {
+        self.as_ref().recovery_record()
+    }
+    fn begin_recovery(
+        &self,
+        intent: &crate::configuration_recovery::RecoveryIntent,
+    ) -> Result<(), AppError> {
+        self.as_ref().begin_recovery(intent)
+    }
+    fn commit_recovery(&self, id: &str) -> Result<(), AppError> {
+        self.as_ref().commit_recovery(id)
+    }
+    fn clear_recovery(&self, id: &str) -> Result<(), AppError> {
+        self.as_ref().clear_recovery(id)
+    }
     fn load(&self) -> Result<PersistedConfiguration, AppError> {
         self.as_ref().load()
     }
+    #[cfg(test)]
     fn save(&self, configuration: &PersistedConfiguration) -> Result<(), AppError> {
         self.as_ref().save(configuration)
     }
@@ -139,6 +201,28 @@ impl ConfigurationStore for Arc<SqliteConfigurationStore> {
         self.as_ref().save_mode(mode)
     }
 }
+
+fn write_configuration(
+    connection: &Connection,
+    configuration: &PersistedConfiguration,
+) -> Result<(), AppError> {
+    configuration.validate()?;
+    let json =
+        serde_json::to_string(configuration).map_err(|_| AppError::storage("配置无法序列化"))?;
+    connection.execute(
+        "INSERT INTO configuration (id, document_json) VALUES (1, ?1) ON CONFLICT(id) DO UPDATE SET document_json = excluded.document_json",
+        [json],
+    ).map_err(storage_error)?;
+    prune_diagnostics(
+        connection,
+        configuration.settings.diagnostic_retention,
+        now_ms()?,
+    )
+    .map(|_| ())
+}
+
+#[path = "store_recovery.rs"]
+mod recovery;
 
 fn read_configuration(connection: &Connection) -> Result<PersistedConfiguration, AppError> {
     let json: Option<String> = connection
@@ -158,57 +242,11 @@ fn read_configuration(connection: &Connection) -> Result<PersistedConfiguration,
     Ok(configuration)
 }
 
-fn migrate(connection: &Connection) -> Result<(), AppError> {
-    let version: i64 = connection
-        .pragma_query_value(None, "user_version", |row| row.get(0))
-        .map_err(storage_error)?;
-    if version > DATABASE_SCHEMA_VERSION {
-        return Err(AppError::storage("数据库版本高于当前应用支持的版本"));
-    }
-    if version == 0 {
-        let transaction = connection.unchecked_transaction().map_err(storage_error)?;
-        transaction
-            .execute_batch(
-                "CREATE TABLE configuration (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                document_json TEXT NOT NULL
-            );
-            CREATE TABLE runtime_diagnostics (
-                id TEXT PRIMARY KEY,
-                created_at_ms INTEGER NOT NULL,
-                severity TEXT NOT NULL,
-                summary TEXT NOT NULL
-            );
-            CREATE INDEX runtime_diagnostics_created_at ON runtime_diagnostics(created_at_ms DESC);
-            PRAGMA user_version = 1;",
-            )
-            .map_err(storage_error)?;
-        transaction.commit().map_err(storage_error)?;
-    }
-    if version <= 1 {
-        connection
-            .execute_batch(
-                "CREATE TABLE proxy_ownership (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                record_json TEXT NOT NULL
-            );
-            PRAGMA user_version = 2;",
-            )
-            .map_err(storage_error)?;
-    }
-    if version <= 2 {
-        connection
-            .execute_batch(
-                "CREATE TABLE selected_mode (
-                    id INTEGER PRIMARY KEY CHECK (id = 1),
-                    mode TEXT NOT NULL CHECK (mode IN ('rules', 'global', 'direct'))
-                );
-                PRAGMA user_version = 3;",
-            )
-            .map_err(storage_error)?;
-    }
-    Ok(())
-}
+#[path = "store_migrations.rs"]
+mod migrations;
+use migrations::migrate;
+#[cfg(test)]
+pub(crate) use migrations::migrate_with_limit;
 
 #[path = "store_diagnostics.rs"]
 mod diagnostics;

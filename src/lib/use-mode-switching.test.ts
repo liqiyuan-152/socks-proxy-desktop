@@ -8,6 +8,8 @@ vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke }));
 
 const snapshot: RuntimeSnapshot = {
   revision: 1,
+  configuration_revision: 0,
+  runtime_plan_revision: 1,
   selected_mode: "global",
   desired_mode: "global",
   applied_mode: "global",
@@ -17,6 +19,8 @@ const snapshot: RuntimeSnapshot = {
   system_proxy_enabled: true,
   tun_enabled: false,
   coverage: "system_proxy_apps",
+  session_health: "healthy",
+  last_operation: { id: 1, outcome: "succeeded", error: null },
   last_error: null,
 };
 
@@ -80,6 +84,33 @@ it("preserves a failed selection and last snapshot when recovery also fails", as
   expect(result.current.pending).toBe(false);
   expect(applySnapshot).not.toHaveBeenCalled();
   expect(endTransition).toHaveBeenCalledTimes(1);
+  expect(result.current.operationError).toBe("backend unavailable");
+});
+
+it("preserves the command error when the recovery snapshot succeeds and clears it after retry", async () => {
+  invoke.mockRejectedValueOnce({ message: "内核启动失败" }).mockResolvedValue(snapshot);
+  const { result, applySnapshot } = setup();
+  await act(() => result.current.switchMode("rules"));
+  expect(applySnapshot).toHaveBeenCalledWith(snapshot);
+  expect(result.current.operationError).toBe("内核启动失败");
+  act(() => result.current.observeSnapshot(snapshot));
+  expect(result.current.operationError).toBe("内核启动失败");
+  expect(result.current.selectedMode).toBe("rules");
+  await act(() => result.current.switchMode("rules"));
+  expect(result.current.operationError).toBeNull();
+});
+
+it("clears a prior command failure after a newer successful backend operation", async () => {
+  invoke.mockRejectedValueOnce({ message: "failed" }).mockResolvedValue(snapshot);
+  const { result } = setup();
+  await act(() => result.current.switchMode("rules"));
+  act(() =>
+    result.current.observeSnapshot({
+      ...snapshot,
+      last_operation: { id: 2, outcome: "succeeded", error: null },
+    }),
+  );
+  expect(result.current.operationError).toBeNull();
 });
 
 it("does not execute queued mutations or publish snapshots after unmount", async () => {

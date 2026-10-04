@@ -8,6 +8,8 @@ vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke }));
 
 const running: RuntimeSnapshot = {
   revision: 1,
+  configuration_revision: 0,
+  runtime_plan_revision: 1,
   selected_mode: "global",
   desired_mode: "global",
   applied_mode: "global",
@@ -17,6 +19,8 @@ const running: RuntimeSnapshot = {
   system_proxy_enabled: true,
   tun_enabled: false,
   coverage: "system_proxy_apps",
+  session_health: "healthy",
+  last_operation: { id: 1, outcome: "succeeded", error: null },
   last_error: null,
 };
 const connections: ActiveConnectionsSnapshot = {
@@ -27,6 +31,7 @@ const connections: ActiveConnectionsSnapshot = {
   history_available: false,
 };
 const primary: ProxyProfile = {
+  configuration_revision: 1,
   id: "primary",
   name: "Primary",
   protocol: "socks5",

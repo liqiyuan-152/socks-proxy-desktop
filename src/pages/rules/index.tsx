@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Edit3, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,23 +14,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { command, errorMessage, type BackendError } from "@/lib/backend";
+import { useRoutingRules, type RoutingRule } from "./useRoutingRules";
 import { useBackend } from "@/lib/backend-state";
 import { RuleForm, type RuleDraft } from "./RuleForm";
 import { ChinaDirectPreset } from "./ChinaDirectPreset";
 import { RouteTest } from "./RouteTest";
-
-type RoutingRule = {
-  id: string;
-  name: string;
-  matcher: "domain" | "domain_suffix" | "ip_cidr";
-  target: string;
-  port_start: number | null;
-  port_end: number | null;
-  action: "proxy" | "direct";
-  proxy_profile_id: string | null;
-  enabled: boolean;
-};
 
 function createRuleDraft(rule?: RoutingRule, defaultProfileId = ""): RuleDraft {
   const action = rule?.action === "direct" ? "直连" : "代理";
@@ -48,49 +36,12 @@ function createRuleDraft(rule?: RoutingRule, defaultProfileId = ""): RuleDraft {
 
 export default function RoutingRuleList() {
   const { profiles, snapshot } = useBackend();
-  const [routingRules, setRoutingRules] = useState<RoutingRule[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { routingRules, loading, busy, error, setError, replace, moveRule } = useRoutingRules();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<RoutingRule | null>(null);
   const [draft, setDraft] = useState<RuleDraft>(() => createRuleDraft());
   const isEditing = editingRule !== null;
-
-  const refresh = useCallback(async () => {
-    try {
-      setRoutingRules(await command<RoutingRule[]>("list_rules"));
-      setError(null);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-  useEffect(() => {
-    const timer = window.setTimeout(() => void refresh(), 0);
-    return () => window.clearTimeout(timer);
-  }, [refresh]);
-
-  async function replace(next: RoutingRule[]): Promise<boolean> {
-    setBusy(true);
-    setError(null);
-    try {
-      await command("replace_rules", { rules: next });
-      await refresh();
-      return true;
-    } catch (reason) {
-      const typed = reason as Partial<BackendError>;
-      setError(
-        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
-          errorMessage(reason),
-      );
-      return false;
-    } finally {
-      setBusy(false);
-    }
-  }
 
   async function saveRule() {
     const start = draft.port ? Number(draft.port) : null;
@@ -105,7 +56,7 @@ export default function RoutingRuleList() {
     const rule: RoutingRule = {
       id: editingRule?.id ?? crypto.randomUUID(),
       name: draft.name,
-      matcher: draft.targetType as RoutingRule["matcher"],
+      matcher: draft.targetType,
       target: draft.target,
       port_start: start,
       port_end: end,
@@ -119,23 +70,6 @@ export default function RoutingRuleList() {
         : [...routingRules, rule],
     );
     if (saved) closeDialog();
-  }
-
-  async function moveRule(index: number, delta: number) {
-    const next = [...routingRules];
-    const target = index + delta;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    setBusy(true);
-    setError(null);
-    try {
-      await command("reorder_rules", { ids: next.map((rule) => rule.id) });
-      await refresh();
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setBusy(false);
-    }
   }
 
   function openDialog(rule?: RoutingRule) {

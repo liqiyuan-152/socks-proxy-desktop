@@ -1,0 +1,12 @@
+{
+  "original_roaming_restored": true,
+  "original_database_present": true,
+  "original_database_backup_present": true,
+  "original_local_webview_restored": true,
+  "system_proxy_exact_snapshot_match": true,
+  "acceptance_host_exited": true,
+  "acceptance_core_exited": true,
+  "isolated_package_uninstalled": true,
+  "temporary_task_removed": true,
+  "user_data_retained_on_windows": true
+}

@@ -26,7 +26,11 @@ impl ConfigurationStore for Store {
 
 struct Credentials(Mutex<usize>);
 impl CredentialStore for Credentials {
-    fn get(&self, _: &str) -> Result<Option<crate::credentials::ProxyCredential>, AppError> {
+    fn get(
+        &self,
+        reference: &str,
+    ) -> Result<Option<crate::credentials::ProxyCredential>, AppError> {
+        assert_eq!(reference, "credential-v1-probe");
         *self.0.lock().unwrap() += 1;
         Ok(Some(crate::credentials::ProxyCredential {
             username: "alice".into(),
@@ -50,7 +54,7 @@ fn configuration(authenticated: bool) -> PersistedConfiguration {
         host: "127.0.0.1".into(),
         port: 1080,
         authentication_enabled: authenticated,
-        credential_ref: authenticated.then(|| "test".into()),
+        credential_ref: authenticated.then(|| "credential-v1-probe".into()),
         enabled: true,
     });
     config
@@ -201,21 +205,26 @@ fn timeout_reports_failure_and_does_not_return_a_measurement() {
 #[test]
 fn temporary_core_is_cleaned_after_failed_request_without_changing_saved_selection() {
     let directory = tempfile::tempdir().unwrap();
-    let binary = directory.path().join(if cfg!(windows) {
-        "fake-core.exe"
+    let binary = if let Some(binary) = crate::test_core::binary() {
+        std::path::PathBuf::from(binary)
     } else {
-        "fake-core"
-    });
-    let fixture =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/fake-sing-box.rs");
-    let output = Command::new("rustc")
-        .arg("--edition=2021")
-        .arg(fixture)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(output.status.success());
+        let binary = directory.path().join(if cfg!(windows) {
+            "fake-core.exe"
+        } else {
+            "fake-core"
+        });
+        let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/fake-sing-box.rs");
+        let output = Command::new("rustc")
+            .arg("--edition=2021")
+            .arg(fixture)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        binary
+    };
     let mut hasher = sha2::Sha256::new();
     use sha2::Digest;
     std::io::copy(&mut std::fs::File::open(&binary).unwrap(), &mut hasher).unwrap();
@@ -233,4 +242,112 @@ fn temporary_core_is_cleaned_after_failed_request_without_changing_saved_selecti
     assert_eq!(*credentials.0.lock().unwrap(), 1);
     assert_eq!(store.load().unwrap().active_profile_id, None);
     assert_eq!(std::fs::read_dir(runtime_root).unwrap().count(), 0);
+}
+
+#[test]
+fn cancellation_stops_stalled_request_without_waiting_for_http_timeout() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let (entered_tx, entered_rx) = std::sync::mpsc::channel();
+    let (release_tx, release_rx) = std::sync::mpsc::channel();
+    let server = thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        let mut request = [0u8; 2048];
+        assert!(stream.read(&mut request).unwrap() > 0);
+        entered_tx.send(()).unwrap();
+        release_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+    });
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let signal = cancelled.clone();
+    let request = thread::spawn(move || probe_cancel("http://example.org/check", port, &signal));
+    entered_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+    let start = Instant::now();
+    cancelled.store(true, Ordering::Release);
+    assert_eq!(request.join().unwrap().unwrap_err().message, "测速已取消");
+    assert!(start.elapsed() < Duration::from_secs(1));
+    release_tx.send(()).unwrap();
+    server.join().unwrap();
+}
+
+#[test]
+fn cancelled_actual_probe_core_is_removed_before_executor_returns() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let directory = tempfile::tempdir().unwrap();
+    let binary = if let Some(binary) = crate::test_core::binary() {
+        std::path::PathBuf::from(binary)
+    } else {
+        let binary = directory.path().join(if cfg!(windows) {
+            "fake-core.exe"
+        } else {
+            "fake-core"
+        });
+        let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/fake-sing-box.rs");
+        assert!(Command::new("rustc")
+            .arg("--edition=2021")
+            .arg(source)
+            .arg("-o")
+            .arg(&binary)
+            .status()
+            .unwrap()
+            .success());
+        binary
+    };
+    use sha2::Digest;
+    let checksum = hex::encode(sha2::Sha256::digest(std::fs::read(&binary).unwrap()));
+    let mut main_configuration = configuration(false);
+    main_configuration.active_profile_id = Some("test".into());
+    let main_root = directory.path().join("main-runtime");
+    let mut main_core = SingBoxProcess::start(
+        &binary,
+        &checksum,
+        &main_root,
+        &main_configuration,
+        RuntimeMode::Global,
+        &HashMap::new(),
+    )
+    .unwrap();
+    let main_pid = main_core.process_id();
+    let runtime_root = directory.path().join("runtime");
+    let tester = LatencyTester::new(
+        Arc::new(Store(configuration(true))),
+        Arc::new(Credentials(Mutex::new(0))),
+        binary,
+        checksum,
+        runtime_root.clone(),
+    );
+    let mut config = configuration(true);
+    config.active_profile_id = Some("test".into());
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let signal = cancelled.clone();
+    let root = runtime_root.clone();
+    let execution = thread::spawn(move || {
+        tester.run(
+            LatencyInput {
+                profile_id: "test".into(),
+                configuration_revision: 1,
+                configuration: config,
+                credential: Some(crate::credentials::ProxyCredential {
+                    username: "alice".into(),
+                    password: "secret".into(),
+                }),
+            },
+            signal,
+        )
+    });
+    let deadline = Instant::now() + Duration::from_secs(15);
+    while !root.exists() || std::fs::read_dir(&root).unwrap().count() == 0 {
+        assert!(Instant::now() < deadline);
+        thread::sleep(Duration::from_millis(5));
+    }
+    cancelled.store(true, Ordering::Release);
+    assert!(execution.join().unwrap().is_err());
+    assert_eq!(std::fs::read_dir(runtime_root).unwrap().count(), 0);
+    assert!(main_core.is_running().unwrap());
+    assert_eq!(main_core.process_id(), main_pid);
+    assert!(main_core.connections_json().is_ok());
+    assert_eq!(std::fs::read_dir(&main_root).unwrap().count(), 1);
+    drop(main_core);
+    assert_eq!(std::fs::read_dir(main_root).unwrap().count(), 0);
 }

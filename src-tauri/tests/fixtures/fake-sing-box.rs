@@ -36,8 +36,8 @@ fn main() {
         let Ok(mut stream) = connection else { continue };
         let mut request = [0u8; 4096];
         let Ok(count) = stream.read(&mut request) else { continue };
-        let body = if String::from_utf8_lossy(&request[..count])
-            .contains(&format!("Authorization: Bearer {secret}\r\n"))
+        let body = if String::from_utf8_lossy(&request[..count]).to_lowercase()
+            .contains(&format!("authorization: bearer {secret}\r\n"))
         {
             b"{\"connections\":[]}".as_slice()
         } else {

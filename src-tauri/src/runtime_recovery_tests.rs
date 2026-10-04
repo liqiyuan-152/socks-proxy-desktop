@@ -1,6 +1,58 @@
 use super::*;
 
 #[test]
+fn failed_switch_keeps_monitoring_old_session_and_restores_after_its_exit() {
+    let backend = Arc::new(FakeBackend::default());
+    let runtime = manager(backend.clone(), configuration());
+    let before = runtime.request_mode(RuntimeMode::Global).unwrap();
+    backend.fail_next.store(true, Ordering::SeqCst);
+    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    let retained = runtime.snapshot();
+    assert_eq!(retained.session_health, SessionHealth::Healthy);
+    assert_eq!(retained.last_operation.outcome, OperationOutcome::Failed);
+    assert_eq!(retained.last_operation.id, before.last_operation.id + 1);
+    assert_eq!(retained.applied_mode, before.applied_mode);
+    assert!(retained.runtime_uptime_ms.is_some());
+    backend.exited.store(true, Ordering::SeqCst);
+    let exited = runtime.snapshot();
+    assert_eq!(exited.session_health, SessionHealth::Exited);
+    assert_eq!(exited.applied_mode, None);
+    assert_eq!(exited.runtime_uptime_ms, None);
+    assert_eq!(exited.last_operation, retained.last_operation);
+    assert_eq!(backend.restorations.load(Ordering::SeqCst), 1);
+    runtime.snapshot();
+    assert_eq!(backend.restorations.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn retained_session_recovery_failure_is_distinct_from_failed_operation() {
+    let backend = Arc::new(FakeBackend::default());
+    let runtime = manager(backend.clone(), configuration());
+    runtime.request_mode(RuntimeMode::Global).unwrap();
+    backend.fail_next.store(true, Ordering::SeqCst);
+    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    let operation = runtime.snapshot().last_operation;
+    backend.fail_reconcile.store(true, Ordering::SeqCst);
+    let failed = runtime.snapshot();
+    assert_eq!(failed.session_health, SessionHealth::RecoveryRequired);
+    assert_eq!(failed.last_operation, operation);
+    assert_eq!(failed.applied_mode, None);
+    assert!(failed.last_error.unwrap().contains("系统代理恢复失败"));
+}
+
+#[test]
+fn exited_session_does_not_rewrite_successful_operation_result() {
+    let backend = Arc::new(FakeBackend::default());
+    let runtime = manager(backend.clone(), configuration());
+    let started = runtime.request_mode(RuntimeMode::Global).unwrap();
+    assert_eq!(started.last_operation.outcome, OperationOutcome::Succeeded);
+    backend.exited.store(true, Ordering::SeqCst);
+    let exited = runtime.snapshot();
+    assert_eq!(exited.last_operation, started.last_operation);
+    assert_eq!(exited.session_health, SessionHealth::Exited);
+}
+
+#[test]
 fn coordinator_acquires_exclusive_session_before_a_second_instance_can_start() {
     let name = uuid::Uuid::new_v4().to_string();
     let first = ManagedRuntime::from_lease(

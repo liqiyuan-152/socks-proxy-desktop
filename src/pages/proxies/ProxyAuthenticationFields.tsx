@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
+import type { ProxyProtocol } from "@/lib/generated/ipc";
+
 export type ProxyDraft = {
   name: string;
-  protocol: string;
+  protocol: ProxyProtocol;
   server: string;
   port: string;
   authentication: boolean;

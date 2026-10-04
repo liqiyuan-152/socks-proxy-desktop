@@ -11,6 +11,7 @@ pub fn default_latency_test_url() -> String {
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum ProxyProtocol {
     Socks5,
     Http,
@@ -18,6 +19,7 @@ pub enum ProxyProtocol {
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum RuntimeMode {
     Rules,
     Global,
@@ -38,6 +40,7 @@ pub struct ProxyProfile {
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum RuleMatcher {
     Domain,
     DomainSuffix,
@@ -46,6 +49,7 @@ pub enum RuleMatcher {
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum RuleAction {
     Proxy,
     Direct,
@@ -53,6 +57,7 @@ pub enum RuleAction {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct RoutingRule {
     pub id: String,
     pub name: String,
@@ -68,6 +73,7 @@ pub struct RoutingRule {
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub enum RetentionPolicy {
     Days7,
     Days30,
@@ -76,6 +82,7 @@ pub enum RetentionPolicy {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct AppSettings {
     pub launch_at_login: bool,
     pub diagnostic_retention: RetentionPolicy,

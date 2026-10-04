@@ -2,12 +2,14 @@ use serde::Serialize;
 use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct FieldError {
     pub field: String,
     pub message: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct AppError {
     pub code: String,
     pub message: String,

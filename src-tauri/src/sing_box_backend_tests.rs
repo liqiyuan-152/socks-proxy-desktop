@@ -9,6 +9,9 @@ use std::{
     sync::atomic::{AtomicBool, Ordering},
 };
 
+#[path = "sing_box_observation_tests.rs"]
+mod observation;
+
 struct Credentials;
 impl CredentialStore for Credentials {
     fn get(&self, _: &str) -> Result<Option<ProxyCredential>, AppError> {
@@ -59,7 +62,7 @@ fn configuration() -> PersistedConfiguration {
 
 #[test]
 fn real_core_retains_old_process_until_commit_and_can_revert_candidate() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let mut hasher = Sha256::new();

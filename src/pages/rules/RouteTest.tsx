@@ -1,19 +1,11 @@
-import { useState, type FormEvent } from "react";
+import { ipc } from "@/lib/ipc";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { command, errorMessage } from "@/lib/backend";
+import { errorMessage, onRuntimeSnapshot } from "@/lib/backend";
 
-type RouteTestResult = {
-  stage: "user_rule" | "china_domain" | "private_ip" | "china_ip" | "final";
-  action: "proxy" | "direct";
-  proxy_profile_id: string | null;
-  proxy_name: string | null;
-  matched_rule_id: string | null;
-  matched_rule_name: string | null;
-  reason: string;
-  data_date: string | null;
-};
+import type { RouteTestResult } from "@/lib/generated/ipc";
 
 const stageLabels: Record<RouteTestResult["stage"], string> = {
   user_rule: "用户规则",
@@ -30,10 +22,45 @@ export function RouteTest() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function test(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const generation = useRef(0);
+  const latestRevision = useRef<number | null>(null);
+  const resultRevision = useRef<number | null>(null);
+
+  const invalidate = useCallback(() => {
+    generation.current += 1;
+    resultRevision.current = null;
     setResult(null);
     setError(null);
+    setBusy(false);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const subscription = onRuntimeSnapshot((snapshot) => {
+      if (!active) return;
+      const revision = snapshot.configuration_revision;
+      if (latestRevision.current !== null && revision <= latestRevision.current) return;
+      latestRevision.current = revision;
+      if (resultRevision.current !== null && resultRevision.current >= revision) return;
+      invalidate();
+    });
+    void subscription.catch((reason: unknown) => {
+      if (active) setError(errorMessage(reason));
+    });
+    return () => {
+      active = false;
+      generation.current += 1;
+      void subscription.then(
+        (unlisten) => unlisten(),
+        () => {},
+      );
+    };
+  }, [invalidate]);
+
+  async function test(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    invalidate();
+    const request = generation.current;
     const parsedPort = Number(port);
     if (!target.trim() || !Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
       setError("请输入有效的目标域名或 IP，以及 1–65535 的端口。");
@@ -41,13 +68,22 @@ export function RouteTest() {
     }
     setBusy(true);
     try {
-      setResult(
-        await command<RouteTestResult>("test_route", { target: target.trim(), port: parsedPort }),
-      );
+      const prediction = await ipc("test_route", {
+        target: target.trim(),
+        port: parsedPort,
+      });
+      if (request !== generation.current) return;
+      if (
+        latestRevision.current !== null &&
+        prediction.configuration_revision < latestRevision.current
+      )
+        return;
+      resultRevision.current = prediction.configuration_revision;
+      setResult(prediction);
     } catch (reason) {
-      setError(errorMessage(reason));
+      if (request === generation.current) setError(errorMessage(reason));
     } finally {
-      setBusy(false);
+      if (request === generation.current) setBusy(false);
     }
   }
 
@@ -62,7 +98,10 @@ export function RouteTest() {
           <Input
             className="mt-1"
             value={target}
-            onChange={(event) => setTarget(event.target.value)}
+            onChange={(event) => {
+              invalidate();
+              setTarget(event.target.value);
+            }}
             placeholder="example.com 或 1.0.1.1"
           />
         </label>
@@ -74,7 +113,10 @@ export function RouteTest() {
             min={1}
             max={65535}
             value={port}
-            onChange={(event) => setPort(event.target.value)}
+            onChange={(event) => {
+              invalidate();
+              setPort(event.target.value);
+            }}
           />
         </label>
         <Button type="submit" disabled={busy}>
@@ -92,6 +134,9 @@ export function RouteTest() {
           <p className="font-medium">
             {result.action === "direct" ? "直连" : `代理：${result.proxy_name ?? "未知出口"}`}
             {result.matched_rule_name ? ` · 规则：${result.matched_rule_name}` : ""}
+          </p>
+          <p className="text-muted-foreground">
+            测试目标：{result.target}:{result.port} · 配置版本：{result.configuration_revision}
           </p>
           <p className="text-muted-foreground">命中阶段：{stageLabels[result.stage]}</p>
           <p className="text-muted-foreground">{result.reason}</p>

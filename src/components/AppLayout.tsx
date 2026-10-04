@@ -67,8 +67,8 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
 }
 
 export function AppLayout() {
-  const { snapshot, profiles } = useBackend();
-  const running = snapshot?.phase === "running";
+  const { snapshot, profiles, error } = useBackend();
+  const running = snapshot?.session_health === "healthy";
   const activeModeLabel = snapshot?.applied_mode
     ? proxyModes[snapshot.applied_mode].label
     : "未应用";
@@ -107,6 +107,14 @@ export function AppLayout() {
               内核{running ? "运行中" : "未运行"}
             </span>
           </div>
+          {(error ||
+            snapshot?.last_operation.outcome === "failed" ||
+            snapshot?.session_health === "recovery_required") && (
+            <NavLink to="/" className="text-destructive group-data-[collapsible=icon]:hidden">
+              {snapshot?.session_health === "recovery_required" ? "恢复未完成" : "最近操作失败"} ·{" "}
+              {activeModeLabel} · 查看原因
+            </NavLink>
+          )}
           <p className="mt-3 group-data-[collapsible=icon]:hidden">v0.1.0</p>
         </SidebarFooter>
         <SidebarRail />
@@ -126,7 +134,7 @@ export function AppLayout() {
             <Separator orientation="vertical" className="h-4" />
             <span className="flex items-center gap-2">
               <Activity className="size-3.5" aria-hidden="true" />
-              内核运行状态：{snapshot?.phase ?? "不可用"}
+              内核运行状态：{snapshot ? (running ? "健康" : "未运行") : "不可用"}
             </span>
             <span className="ml-auto flex items-center gap-2">
               <Globe2 className="size-3.5" aria-hidden="true" />

@@ -4,6 +4,7 @@ use crate::{
     error::AppError,
     models::{PersistedConfiguration, RuntimeMode},
     runtime::{BackendSession, RuntimeBackend},
+    runtime_plan::RuntimePlan,
     sing_box_process::SingBoxProcess,
     system_proxy::SystemProxyAdapter,
 };
@@ -53,11 +54,27 @@ impl SingBoxRuntimeBackend {
     }
 
     pub fn active_connections_json(&self) -> Result<serde_json::Value, AppError> {
-        let mut slots = self.slots.lock().map_err(|_| backend_error())?;
-        let Some(active) = slots.active.as_mut() else {
-            return Err(AppError::unavailable("内核未运行，无法读取活跃连接"));
+        let (run_id, control) = {
+            let mut slots = self.slots.lock().map_err(|_| backend_error())?;
+            let active = slots
+                .active
+                .as_mut()
+                .ok_or_else(|| AppError::unavailable("内核未运行，无法读取活跃连接"))?;
+            if !active.process.is_running()? {
+                return Err(AppError::unavailable("受管内核已退出"));
+            }
+            (
+                active.identity.run_id.clone(),
+                active.process.control_client(),
+            )
         };
-        active.process.connections_json()
+        // Network IO must not own the process/session lock.
+        let result = control.connections();
+        let slots = self.slots.lock().map_err(|_| backend_error())?;
+        if slots.active.as_ref().map(|active| &active.identity.run_id) != Some(&run_id) {
+            return Err(AppError::unavailable("旧会话观测已失效"));
+        }
+        result
     }
 }
 
@@ -91,9 +108,19 @@ impl RuntimeBackend for SingBoxRuntimeBackend {
             return Ok(None);
         }
         let mut credentials: HashMap<String, ProxyCredential> = HashMap::new();
-        for (index, profile) in candidate.profiles.iter().enumerate() {
+        let plan = RuntimePlan::build(candidate, mode, &HashMap::new())?;
+        for profile in &plan.exits {
+            let index = candidate
+                .profiles
+                .iter()
+                .position(|p| p.id == profile.id)
+                .expect("planned profile exists");
             if profile.enabled && profile.authentication_enabled {
-                let credential = self.credentials.get(&profile.id)?.ok_or_else(|| {
+                let credential = crate::credentials::read_profile_credential(
+                    self.credentials.as_ref(),
+                    profile,
+                )?
+                .ok_or_else(|| {
                     AppError::validation(vec![crate::error::FieldError {
                         field: format!("profiles[{index}].credential"),
                         message: "代理认证凭据缺失".into(),

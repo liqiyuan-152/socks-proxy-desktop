@@ -14,9 +14,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import type { RuleMatcher } from "@/lib/generated/ipc";
+
 export type RuleDraft = {
   name: string;
-  targetType: string;
+  targetType: RuleMatcher;
   target: string;
   port: string;
   portEnd: string;
@@ -76,7 +78,14 @@ export function RuleForm({
           <Field label="匹配类型" required htmlFor="rule-target-type">
             <Select
               value={draft.targetType}
-              onValueChange={(targetType) => setDraft((current) => ({ ...current, targetType }))}
+              onValueChange={(targetType) => {
+                if (
+                  targetType === "domain" ||
+                  targetType === "domain_suffix" ||
+                  targetType === "ip_cidr"
+                )
+                  setDraft((current) => ({ ...current, targetType }));
+              }}
             >
               <SelectTrigger id="rule-target-type" aria-label="匹配类型">
                 <SelectValue />

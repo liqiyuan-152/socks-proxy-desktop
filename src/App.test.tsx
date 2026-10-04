@@ -60,7 +60,7 @@ describe("backend-driven desktop UI", () => {
     await screen.findByText("example.org");
     expect(screen.getByText("仅遵循 Windows 系统代理设置的应用流量")).toBeInTheDocument();
     expect(screen.getByText("未启用")).toBeInTheDocument();
-    expect(screen.queryByText("成功")).not.toBeInTheDocument();
+    expect(screen.getByText("最近操作").nextElementSibling).toHaveTextContent("成功");
     expect(screen.getAllByText("不可用").length).toBeGreaterThan(0);
   });
 
@@ -78,7 +78,7 @@ describe("backend-driven desktop UI", () => {
       expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
     );
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("内核启动失败");
     expect(screen.getByRole("tab", { name: "规则代理" })).toHaveAttribute("data-state", "active");
     expect(screen.getByText("已应用模式").nextElementSibling).toHaveTextContent("全局代理");
     fireEvent.click(screen.getByRole("tab", { name: "规则代理" }));

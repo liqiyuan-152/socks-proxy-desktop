@@ -191,7 +191,7 @@ fn missing_credential_for_any_enabled_exit_rejects_config() {
     });
     let error = render(
         &config,
-        RuntimeMode::Global,
+        RuntimeMode::Rules,
         SingBoxPorts {
             proxy: 18080,
             control: 19090,
@@ -201,6 +201,9 @@ fn missing_credential_for_any_enabled_exit_rejects_config() {
     )
     .unwrap_err();
     assert_eq!(error.fields[0].field, "profiles[1].credential");
+    let global = rendered(&config, RuntimeMode::Global);
+    assert_eq!(global["outbounds"].as_array().unwrap().len(), 2);
+    assert_eq!(global["outbounds"][0]["tag"], proxy_tag("proxy-1"));
 }
 
 #[test]
@@ -275,7 +278,7 @@ fn missing_profile_or_credentials_never_produces_config() {
 
 #[test]
 fn fixed_sing_box_accepts_rendered_rule_and_global_configs_when_available() {
-    let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(binary) = crate::test_core::binary() else {
         return;
     };
     let mut config = configuration();
@@ -367,7 +370,7 @@ fn china_preset_keeps_domains_before_literal_ip_rules() {
         &HashMap::new()
     )
     .is_err());
-    if let Ok(binary) = std::env::var("SING_BOX_TEST_BIN") {
+    if let Some(binary) = crate::test_core::binary() {
         let mut file = tempfile::NamedTempFile::new().unwrap();
         std::io::Write::write_all(&mut file, raw.as_bytes()).unwrap();
         let output = std::process::Command::new(binary)

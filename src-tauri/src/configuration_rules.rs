@@ -3,7 +3,7 @@ use crate::{error::AppError, models::RoutingRule, routing::CompiledRules};
 
 impl ConfigurationService {
     pub fn replace_rules(&self, rules: Vec<RoutingRule>) -> Result<(), AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         let mut candidate = current.clone();
         candidate.rules = rules;
@@ -19,7 +19,7 @@ impl ConfigurationService {
     }
 
     pub fn reorder_rules(&self, ids: &[String]) -> Result<(), AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         if ids.len() != current.rules.len() {
             return Err(field_error("rule_ids", "排序必须包含全部规则标识"));

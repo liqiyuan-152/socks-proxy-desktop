@@ -4,7 +4,7 @@ use std::{fs, io::Write, path::PathBuf, process::Command, thread, time::Duration
 
 #[test]
 fn bundled_china_rules_check_and_load_offline_with_pinned_core() {
-    let Ok(core) = std::env::var("SING_BOX_TEST_BIN") else {
+    let Some(core) = crate::test_core::binary() else {
         return;
     };
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources/china-rules");

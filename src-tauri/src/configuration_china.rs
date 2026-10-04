@@ -9,6 +9,7 @@ use serde::Serialize;
 use std::path::PathBuf;
 
 #[derive(Debug, Serialize)]
+#[cfg_attr(test, derive(ts_rs::TS))]
 pub struct ChinaDirectStatus {
     pub enabled: bool,
     pub available: bool,
@@ -36,16 +37,19 @@ impl ConfigurationService {
     }
 
     pub fn test_route(&self, target: &str, port: u16) -> Result<RouteTestResult, AppError> {
-        route_test::evaluate(
+        let _guard = self.lock()?;
+        let mut result = route_test::evaluate(
             &self.store.load()?,
             self.china_rule_root.as_deref(),
             target,
             port,
-        )
+        )?;
+        result.configuration_revision = self.store.recovery_revision()?;
+        Ok(result)
     }
 
     pub fn set_china_direct_enabled(&self, enabled: bool) -> Result<ChinaDirectStatus, AppError> {
-        let _guard = self.lock()?;
+        let _guard = self.mutation_lock()?;
         let current = self.store.load()?;
         let mut candidate = current.clone();
         candidate.china_direct_enabled = enabled;
