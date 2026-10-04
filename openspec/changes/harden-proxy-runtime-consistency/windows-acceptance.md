@@ -1,6 +1,6 @@
 ## Execution Preconditions
 
-本清单用于目标平台验收，不是已执行记录；实际结果见 [windows-execution.md](windows-execution.md)。目前 1.1、5.5、8.2、8.3 已完成，剩余 1.3 的 Actions 记录。要求 Windows x64、Node >=22.22.0、pnpm >=10.33.0、Rust 工具链与真实桌面会话。使用包含本变更的确定源码修订；当前未提交工作区不能由旧的 GitHub Actions 结果代替。
+本清单用于目标平台验收，不是已执行记录；实际结果见 [windows-execution.md](windows-execution.md)。目前 1.1、5.5、8.2、8.3 已完成，1.3 的 Actions 记录亦已完成，整体 30/30。要求 Windows x64、Node >=22.22.0、pnpm >=10.33.0、Rust 工具链与真实桌面会话。使用包含本变更的确定源码修订；当前未提交工作区不能由旧的 GitHub Actions 结果代替。
 
 在干净目录克隆该修订，记录 `git rev-parse HEAD`、`git status --short`、Git 换行设置、Windows 版本、Node/pnpm/Rust 版本。不得复制开发机 `.cargo/config.toml`。Windows 默认检出下运行格式检查；另在 `core.autocrlf=true` 的干净检出复核。比较所有已跟踪二进制资源升级前后 SHA-256，不以文件大小或格式工具成功代替哈希。
 

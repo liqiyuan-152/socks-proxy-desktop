@@ -1,0 +1,11 @@
+{
+  "commit": "5b3dbf87ca4f72049fd17e10919cc61e76f629c4",
+  "quality_url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173127519",
+  "package_url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173128544",
+  "conclusion": "failure",
+  "passed_before_failure": ["format", "lint", "typecheck", "99 frontend tests", "rust fmt"],
+  "failure": "Tauri build script requires resources/sing-box/windows-amd64/libcronet.dll before Rust checks",
+  "subsequent_tests_and_builds": "skipped",
+  "fix_commit": "d28bdfe2e4100033fc7222cb7cd32849c0e7698b",
+  "fix": "Prepare pinned resources before pnpm check in both Windows workflows"
+}

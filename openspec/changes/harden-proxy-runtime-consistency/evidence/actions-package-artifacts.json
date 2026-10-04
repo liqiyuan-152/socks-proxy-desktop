@@ -1,0 +1,25 @@
+{
+  "total_count": 1,
+  "artifacts": [
+    {
+      "id": 11291909393,
+      "node_id": "MDg6QXJ0aWZhY3QxMTI5MTkwOTM5Mw==",
+      "name": "socks-proxy-windows-test-d28bdfe2e4100033fc7222cb7cd32849c0e7698b",
+      "size_in_bytes": 27343326,
+      "url": "https://api.github.com/repos/liqiyuan-152/socks-proxy-desktop/actions/artifacts/11291909393",
+      "archive_download_url": "https://api.github.com/repos/liqiyuan-152/socks-proxy-desktop/actions/artifacts/11291909393/zip",
+      "expired": false,
+      "digest": "sha256:bef2a025bc82035c3cef2a7583405b11c1d436ca393fbdba25ef43b7e2c55400",
+      "created_at": "2026-10-04T03:26:10Z",
+      "updated_at": "2026-10-04T03:26:10Z",
+      "expires_at": "2026-10-18T03:26:07Z",
+      "workflow_run": {
+        "id": 37173375471,
+        "repository_id": 1381464642,
+        "head_repository_id": 1381464642,
+        "head_branch": "codex/harden-proxy-runtime-consistency",
+        "head_sha": "d28bdfe2e4100033fc7222cb7cd32849c0e7698b"
+      }
+    }
+  ]
+}

@@ -1,6 +1,18 @@
 ## Scope and Evidence Boundary
 
-核对基线：`1a073c309eb6a9e77cf255deb2dd3393c2048ae3` 加当前未提交工作区。以下文件均以仓库根目录为相对路径；最新命令与平台证据见 `verification.md` 和 [windows-execution.md](windows-execution.md)。下表保留首次本地规格核对的实现入口及当时的证据边界；其中 Windows 待验收项现已完成干净检出、六点崩溃/Job 清理、固定真实内核及实际系统凭据/启动项恢复。安装包桌面验收已完成，Actions URL 仍待补齐，不能将历史表格中的待执行状态当作当前进度。
+核对基线：`1a073c309eb6a9e77cf255deb2dd3393c2048ae3` 加本变更实施代码。以下文件均以仓库根目录为相对路径；最新命令与平台证据见 `verification.md` 和 [windows-execution.md](windows-execution.md)。下表保留首次本地规格核对的实现入口及当时的证据边界；其中 Windows 待验收项现已完成干净检出、六点崩溃/Job 清理、固定真实内核及实际系统凭据/启动项恢复。安装包桌面验收已完成，Quality 与打包 Actions 均已通过，不能将历史表格中的待执行状态当作当前进度。
+
+## Current Target-platform Evidence
+
+| 规格                        | 当前验收证据                                                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `runtime-consistency`       | Windows 固定内核门禁验证凭据替换及失败后旧内核退出恢复；桌面模式切换、退出及重启恢复通过。                                  |
+| `core-control-observation`  | Windows 慢控制响应测试通过，直接锁探测证明请求期间会话锁释放；新旧运行 ID 隔离由组合测试验证。                              |
+| `configuration-recovery`    | Windows 六点进程中断、实际 Job 回收及真实 OS 凭据库/启动项恢复通过，含提交前后边界、外部值保留和幂等。                      |
+| `diagnostic-task-lifecycle` | Windows 固定内核验证取消资源回收和主内核保留；任务边界、版本与前端交互由 Rust/IPC/Vitest 覆盖。                             |
+| `desktop-quality-gates`     | Windows 干净检出、完整检查、不打包构建、NSIS 构建及实际安装包桌面验收通过；当前 Quality 与打包 Actions 均成功，无跳过步骤。 |
+
+上述目标平台结果对应快照 `00e72c0e1f849f859ad046abc75cd898c59de7ff`，源码指纹见 `evidence/windows-environment.json`；完整日志及桌面结果见 `windows-execution.md`。
 
 ## Historical Requirement Audit
 
@@ -62,4 +74,4 @@
 
 ## Outstanding Acceptance
 
-目前 29/30 项完成；仍需当前修订对应的 GitHub Actions URL。NSIS 安装启动、托盘退出和异常退出恢复的桌面证据已完成。Windows 干净检出、六点中断/Job 清理、固定真实内核和实际凭据库/启动项恢复已通过，完整记录见 `windows-execution.md`。整体变更保持实施中，不把规格核对本身当成产品验收通过。
+目前 30/30 项完成；当前修订对应的 GitHub Actions URL 已记录于 `windows-execution.md`。NSIS 安装启动、托盘退出和异常退出恢复的桌面证据已完成。Windows 干净检出、六点中断/Job 清理、固定真实内核和实际凭据库/启动项恢复已通过，完整记录见 `windows-execution.md`。整体实施与验收已完成，尚未归档，不把规格核对本身当成产品验收通过。

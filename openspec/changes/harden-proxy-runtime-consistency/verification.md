@@ -1,6 +1,6 @@
 ## Execution Evidence
 
-本记录对应基线 `1a073c309eb6a9e77cf255deb2dd3393c2048ae3` 之上的未提交工作区。下文保留逐阶段的 macOS 实施记录；最新 Windows 隔离验收见 [windows-execution.md](windows-execution.md)，已完成干净检出格式/二进制验证、六点进程中断恢复、固定真实内核及实际凭据库/启动项恢复。当前进度 29/30；Windows 安装包桌面验收已完成，当前变更的 Actions URL 仍待完成，不能按历史进度段落推断当前状态。
+本记录对应基线 `1a073c309eb6a9e77cf255deb2dd3393c2048ae3` 之上的实施代码。下文保留逐阶段的 macOS 实施记录；最新 Windows 隔离验收见 [windows-execution.md](windows-execution.md)，已完成干净检出格式/二进制验证、六点进程中断恢复、固定真实内核及实际凭据库/启动项恢复。当前进度 30/30；Windows 安装包桌面验收、Quality 和 NSIS 打包 Actions 均已完成，不能按历史进度段落推断当前状态。
 
 ### Implemented
 

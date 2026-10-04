@@ -31,4 +31,14 @@ Windows 生产不打包构建与 NSIS 构建均退出 0，日志见 `evidence/wi
 - 异常退出：重新启动并选择规则模式后强制结束宿主；Windows Job 终止固定内核且端口可重新绑定。此时观察到遗留代理与私有目录，证明没有依赖宿主析构清理。再次启动已安装应用后，系统代理精确恢复、遗留目录清理、保存档案保留、状态为未应用且没有抢先启动新内核。见 `evidence/desktop-crash-before-restart.json`、`evidence/desktop-crash-result.json` 和 `evidence/desktop-restart-result.json`。
 - 最终恢复：重启后的应用经实际托盘菜单退出，测试包卸载，临时计划任务删除；用户原 Roaming 数据库及历史备份、Local WebView 数据恢复到原位置，没有遗留验收宿主或内核，系统代理与测试前快照完全一致。原用户数据仅保留在 Windows，不作为验收证据复制。见 `evidence/windows-desktop-cleanup.json`。
 
-1.3 的当前 GitHub Actions URL 尚待补齐，不以 SSH 的成功结果替代 Actions。整体为 29/30。
+1.3 已完成，当前 GitHub Actions 结果见下文。整体为 30/30。
+
+## GitHub Actions Follow-up
+
+交付分支为 `codex/harden-proxy-runtime-consistency`。首轮提交 `5b3dbf87ca4f72049fd17e10919cc61e76f629c4` 的 Quality/内测打包通过格式、lint、类型、99 项前端测试及 Rust fmt 后，在 Rust 编译阶段因尚未准备 `libcronet.dll` 失败，后续阶段跳过；记录见 `evidence/actions-initial-failure.json`。已将固定资源准备前移至 `pnpm check` 前，未跳过资源校验，也未将资源存在当作真实内核测试已执行。
+
+修正提交 `d28bdfe2e4100033fc7222cb7cd32849c0e7698b` 与实机验收快照之间的非 OpenSpec 差异仅为两个工作流的资源准备顺序；应用源码保持逐字节一致。[Quality](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173374593) 和 [Windows test package](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173375471) 均为 completed/success，所有步骤实际执行，无失败或跳过阶段。两者各通过 99 项前端测试、完整静态/Rust/IPC 检查、Rust 单元测试、2 项门禁负向测试，以及固定真实内核 165 passed、0 failed、5 ignored；独立实际 OS 恢复测试的实机证据仍单列。Quality 前端与桌面构建通过，打包流水线 NSIS 构建、校验和/源码修订记录及 artifact 上传通过。
+
+运行步骤和日志见 `evidence/actions-quality.json`、`evidence/actions-quality.txt`、`evidence/actions-package.json` 和 `evidence/actions-package.txt`；安装包 artifact 元数据见 `evidence/actions-package-artifacts.json`。CI 安装包与此前实机验收包是不同构建，不将 artifact 的产物哈希冒充实机已执行安装包哈希。最终证据提交仅修改 OpenSpec 文档与日志，应用与工作流代码仍对应上述成功提交。
+
+30/30 项已完成；本变更未自动归档或同步主规格，历史规格衔接顺序保留在 `acceptance-audit.md`。

@@ -1,0 +1,163 @@
+{
+  "conclusion": "success",
+  "headSha": "d28bdfe2e4100033fc7222cb7cd32849c0e7698b",
+  "jobs": [
+    {
+      "completedAt": "2026-10-04T03:26:19Z",
+      "conclusion": "success",
+      "databaseId": 111350800109,
+      "name": "package",
+      "startedAt": "2026-10-04T03:12:02Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-04T03:12:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-04T03:12:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:12:12Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-04T03:12:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:12:21Z",
+          "conclusion": "success",
+          "name": "Run pnpm/action-setup@v4",
+          "number": 3,
+          "startedAt": "2026-10-04T03:12:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:12:33Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v4",
+          "number": 4,
+          "startedAt": "2026-10-04T03:12:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:12:52Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "number": 5,
+          "startedAt": "2026-10-04T03:12:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:13:08Z",
+          "conclusion": "success",
+          "name": "Run pnpm install --frozen-lockfile",
+          "number": 6,
+          "startedAt": "2026-10-04T03:12:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:13:10Z",
+          "conclusion": "success",
+          "name": "Prepare pinned Windows core",
+          "number": 7,
+          "startedAt": "2026-10-04T03:13:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:18:53Z",
+          "conclusion": "success",
+          "name": "Static checks and frontend unit tests",
+          "number": 8,
+          "startedAt": "2026-10-04T03:13:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:19:33Z",
+          "conclusion": "success",
+          "name": "Rust unit tests (without real core)",
+          "number": 9,
+          "startedAt": "2026-10-04T03:18:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:19:33Z",
+          "conclusion": "success",
+          "name": "Real-core gate regression tests",
+          "number": 10,
+          "startedAt": "2026-10-04T03:19:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:20:36Z",
+          "conclusion": "success",
+          "name": "Verify pinned core and run real-core tests",
+          "number": 11,
+          "startedAt": "2026-10-04T03:19:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:02Z",
+          "conclusion": "success",
+          "name": "NSIS package build",
+          "number": 12,
+          "startedAt": "2026-10-04T03:20:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:03Z",
+          "conclusion": "success",
+          "name": "Record package checksums and source revision",
+          "number": 13,
+          "startedAt": "2026-10-04T03:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:10Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 14,
+          "startedAt": "2026-10-04T03:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:14Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v4",
+          "number": 26,
+          "startedAt": "2026-10-04T03:26:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:14Z",
+          "conclusion": "success",
+          "name": "Post Run pnpm/action-setup@v4",
+          "number": 27,
+          "startedAt": "2026-10-04T03:26:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:17Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 28,
+          "startedAt": "2026-10-04T03:26:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-04T03:26:17Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 29,
+          "startedAt": "2026-10-04T03:26:17Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173375471/job/111350800109"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173375471"
+}

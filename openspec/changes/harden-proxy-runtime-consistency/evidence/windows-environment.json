@@ -21,8 +21,18 @@
   "os_recovery_session_id": 3,
   "build_exit_code": 0,
   "nsis_exit_code": 0,
-  "actions_url": null,
+  "actions_url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173374593",
   "desktop_acceptance_complete": true,
   "desktop_session_id": 3,
-  "desktop_session_unlocked_wts_verified": true
+  "desktop_session_unlocked_wts_verified": true,
+  "delivery_branch": "codex/harden-proxy-runtime-consistency",
+  "actions_source_commit": "d28bdfe2e4100033fc7222cb7cd32849c0e7698b",
+  "actions_source_difference_from_acceptance_snapshot": [
+    ".github/workflows/package.yml: prepare resources before Rust checks",
+    ".github/workflows/quality.yml: prepare resources before Rust checks"
+  ],
+  "application_source_matches_acceptance_snapshot": true,
+  "package_actions_url": "https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37173375471",
+  "actions_conclusion": "success",
+  "all_tasks_complete": true
 }
