@@ -114,15 +114,15 @@ describe("backend-driven desktop UI", () => {
     fireEvent.click(await screen.findByRole("link", { name: "代理" }));
     await screen.findByText("Secondary");
 
-    for (const [name, label, color] of [
-      ["Primary", "默认代理", "text-emerald-700"],
-      ["Secondary", "已启用", "text-blue-700"],
-      ["Disabled", "已停用", "text-destructive"],
+    for (const [name, label, variant] of [
+      ["Primary", "默认代理", "success"],
+      ["Secondary", "已启用", "success"],
+      ["Disabled", "已停用", "secondary"],
     ]) {
       const row = within(screen.getByRole("table")).getByText(name).closest("tr")!;
       const labels = within(row).getAllByText(label);
       expect(labels).toHaveLength(2);
-      for (const item of labels) expect(item).toHaveClass(color);
+      for (const item of labels) expect(item).toHaveAttribute("data-variant", variant);
     }
   });
 

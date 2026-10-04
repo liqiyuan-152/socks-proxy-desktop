@@ -3,6 +3,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -30,6 +38,15 @@
 }
 
 :root {
+  --success: oklch(0.49 0.13 145);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.5 0.12 70);
+  --warning-foreground: oklch(0.99 0 0);
+  --info: oklch(0.5 0.13 230);
+  --info-foreground: oklch(0.99 0 0);
+  --primary-hover: oklch(0.48 0.21 255);
+  --primary-active: oklch(0.43 0.2 255);
+
   color-scheme: light;
 
   --background: oklch(0.985 0.004 250);
@@ -114,6 +131,15 @@ button:not(:disabled),
 }
 
 .dark {
+  --success: oklch(0.72 0.14 145);
+  --success-foreground: oklch(0.16 0.015 145);
+  --warning: oklch(0.78 0.14 70);
+  --warning-foreground: oklch(0.16 0.015 70);
+  --info: oklch(0.72 0.13 230);
+  --info-foreground: oklch(0.16 0.015 230);
+  --primary-hover: oklch(0.56 0.19 255);
+  --primary-active: oklch(0.5 0.19 255);
+
   color-scheme: dark;
 
   --background: oklch(0.16 0.015 250);
