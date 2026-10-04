@@ -1,11 +1,11 @@
 use crate::{
-    configuration_service::ConfigurationService,
     configuration_startup_recovery::recover_configuration_on_startup,
     credentials::{CredentialStore, CredentialUpdate},
     error::AppError,
     models::{PersistedConfiguration, ProxyProfile, ProxyProtocol, RuntimeMode},
     runtime::{BackendSession, ManagedRuntime, RuntimeBackend, RuntimeCoordinator},
     runtime_session::SessionLease,
+    services::ApplicationService,
     startup::StartupAdapter,
     store::{ConfigurationStore, SqliteConfigurationStore},
 };
@@ -121,7 +121,7 @@ fn interrupted_configuration_child() {
     .unwrap()
     .with_configuration_revision(store.recovery_revision().unwrap());
     runtime.request_mode(RuntimeMode::Global).unwrap();
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store),
         Box::new(Credentials(root.join("keyring"))),
         Box::new(Startup(root.join("startup.json"))),

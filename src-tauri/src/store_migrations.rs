@@ -24,6 +24,14 @@ const STEPS: [&str; DATABASE_SCHEMA_VERSION as usize] = [
         id INTEGER PRIMARY KEY CHECK (id = 1), revision INTEGER NOT NULL CHECK (revision >= 0)
      );
      INSERT INTO configuration_commit (id, revision) VALUES (1, 0);",
+    "ALTER TABLE runtime_diagnostics ADD COLUMN error_type TEXT;
+     ALTER TABLE runtime_diagnostics ADD COLUMN operation TEXT;
+     UPDATE runtime_diagnostics SET
+       error_type = json_extract(summary, '$.context.domain') || '.' || json_extract(summary, '$.context.kind'),
+       operation = json_extract(summary, '$.context.operation')
+     WHERE json_valid(summary) AND json_type(summary, '$.context.domain') = 'text'
+       AND json_type(summary, '$.context.kind') = 'text';
+     CREATE INDEX runtime_diagnostics_error_type ON runtime_diagnostics(error_type, operation, severity);",
 ];
 
 pub(super) fn migrate(connection: &Connection) -> Result<(), AppError> {
@@ -137,10 +145,11 @@ mod tests {
                 "proxy_ownership",
                 "selected_mode",
                 "configuration_recovery",
+                "runtime_diagnostics_error_type",
             ][(target - 1) as usize];
             let count: i64 = connection
                 .query_row(
-                    "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?1",
+                    "SELECT COUNT(*) FROM sqlite_master WHERE name = ?1",
                     [table],
                     |row| row.get(0),
                 )

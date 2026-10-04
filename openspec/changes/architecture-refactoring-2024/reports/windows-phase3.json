@@ -1,0 +1,26 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "snapshot_archive_sha256": "f681d6e999f687a620d6a2f889bee9a8e9a82a3a118a8226f51d5a4dd219b292",
+  "scope": "phase3 backend state machine and Zustand, independent lifecycle/runtime integration tests, property tests, coverage/CI setup",
+  "status": "passed",
+  "completed_at": "2026-10-04T15:00:54.7425262+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 149,
+    "rust_tests": 218,
+    "rust_ignored": 6,
+    "integration_tests": 7,
+    "rust_doc_tests": 2,
+    "real_core_preflight_tests": 2,
+    "real_core_version": "1.14.1",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "limitations": [
+    "does not include subsequent configuration-recovery integration tests or tracing changes",
+    "native chooser and Windows UI acceptance not performed",
+    "PowerShell stderr handling repaired; desktop override passed via JSON file after argument quoting failure"
+  ],
+  "credentials": "not retained"
+}

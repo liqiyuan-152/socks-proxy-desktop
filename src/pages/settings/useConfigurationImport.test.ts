@@ -1,5 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
+import { ipc } from "@/lib/ipc";
+import type { CommandMap } from "@/lib/generated/ipc";
 import { useConfigurationImport } from "./useConfigurationImport";
 
 const invoke = vi.hoisted(() => vi.fn());
@@ -24,7 +26,11 @@ beforeEach(() => {
 
 it("keeps the newest file and ignores reads completed after closing or unmount", async () => {
   const onImported = vi.fn();
-  const { result, unmount } = renderHook(() => useConfigurationImport(onImported));
+  const { result, unmount } = renderHook(() =>
+    useConfigurationImport(onImported, (input: CommandMap["import_configuration"][0]) =>
+      ipc("import_configuration", input),
+    ),
+  );
   const first = deferred();
   let read!: Promise<void>;
   act(() => {
@@ -67,9 +73,11 @@ it.each([
   [async () => "{}", "结构无效"],
   [async () => JSON.stringify({ schema_version: 2, profiles: [{ id: "bad" }] }), "结构无效"],
 ])("distinguishes file, JSON and structure failures", async (text, message) => {
-  const { result } = renderHook(() => useConfigurationImport(vi.fn()));
+  const { result } = renderHook(() =>
+    useConfigurationImport(vi.fn(), (input) => ipc("import_configuration", input)),
+  );
   await act(() => result.current.read(file(text)));
-  expect(result.current.error).toContain(message);
+  expect(result.current.error?.message).toContain(message);
   expect(result.current.open).toBe(false);
 });
 
@@ -82,7 +90,11 @@ it("guards duplicate submissions and clears credentials and input after success"
       }),
   );
   const onImported = vi.fn(async () => {});
-  const { result } = renderHook(() => useConfigurationImport(onImported));
+  const { result } = renderHook(() =>
+    useConfigurationImport(onImported, (input: CommandMap["import_configuration"][0]) =>
+      ipc("import_configuration", input),
+    ),
+  );
   await act(() => result.current.read(file(async () => json)));
   act(() => {
     result.current.updateCredential("proxy", "username", "alice");

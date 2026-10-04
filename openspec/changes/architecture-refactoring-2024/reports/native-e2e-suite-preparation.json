@@ -1,0 +1,23 @@
+{
+  "status": "prepared_not_executed",
+  "ui_session_created": false,
+  "tasks": ["4.5.2", "4.5.3", "4.5.4", "4.5.5"],
+  "source_sha256": {
+    "scripts/e2e/webdriver.mjs": "202da6a477d7256742cb134651e5fccf341e5a5c0ca3eded35f79190bcd04224",
+    "scripts/e2e/scenarios.mjs": "b0840466a0c865e065642f4b565b678eac557e92a070dc8bebc1fccb62d35559",
+    "scripts/e2e/run-windows.mjs": "b93b08d272ab76f360d1366b8259e33744bf3348b14a0f9ac9c313018b581acf",
+    "scripts/run-native-e2e.ps1": "e5e2e397dc52192cedbcf9a55598eb6178e334991986e84d5b2d6f7fc8c73982",
+    "scripts/test-e2e-driver.mjs": "eb9d94830fbc6e5d3f37adb44d656f29e69cebc2afdb6b9acf1f2a3c9accdd1b"
+  },
+  "validation": {
+    "protocol_fixture_tests": 4,
+    "powershell_5_syntax": "passed on Windows; Parser.ParseFile only",
+    "quality": "pnpm check passed: 157 frontend tests, 8 tool tests, format/lint/types/Rust fmt/clippy/IPC"
+  },
+  "limitations": [
+    "Windows 原生 UI 场景尚未执行，对应任务保持待验收",
+    "两次原生保存窗口需要操作员完成检查点",
+    "合成本地上游不证明公网连通性",
+    "进程崩溃恢复、运行中竞态、GUI 长时稳定性及原生文件选择窗口另行验收"
+  ]
+}

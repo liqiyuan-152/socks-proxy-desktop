@@ -1,0 +1,23 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "remote_directory": "C:\\Users\\lqy15\\socks-proxy-architecture-20261004",
+  "snapshot_archive_sha256": "57a6b3f76551a06b5ba84b31041a897db3d6c5d848e935c1a8abe16cba4deeb8",
+  "scope": "phase2 diagnostics including native-save implementation, IPC rejection and persistence tests, and successful-flow benchmark instrumentation",
+  "status": "passed",
+  "completed_at": "2026-10-04T14:03:20.4170003+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 143,
+    "rust_tests": 201,
+    "rust_ignored": 6,
+    "rust_doc_tests": 2,
+    "real_core_preflight_tests": 2,
+    "real_core_version": "1.14.1",
+    "real_core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "manual_ui_acceptance": "native chooser success/cancel and Windows system-proxy takeover not performed via SSH",
+  "credentials": "not retained"
+}

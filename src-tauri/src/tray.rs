@@ -1,7 +1,7 @@
 use crate::{
-    configuration_service::ConfigurationService,
     models::RuntimeMode,
     runtime::{RuntimeSnapshot, SessionHealth},
+    services::ApplicationService,
 };
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -80,7 +80,7 @@ pub fn sync_snapshot<R: Runtime>(app: &AppHandle<R>, snapshot: &RuntimeSnapshot)
 }
 
 fn request_mode<R: Runtime>(app: &AppHandle<R>, mode: RuntimeMode) {
-    let service = app.state::<Arc<ConfigurationService>>().inner().clone();
+    let service = app.state::<Arc<ApplicationService>>().inner().clone();
     // A checkable menu can optimistically toggle itself before the callback.
     // Immediately restore the committed backend state while the request runs.
     sync_snapshot(app, &service.runtime_snapshot());
@@ -96,7 +96,7 @@ fn request_mode<R: Runtime>(app: &AppHandle<R>, mode: RuntimeMode) {
 }
 
 fn request_exit<R: Runtime>(app: &AppHandle<R>) {
-    let service = app.state::<Arc<ConfigurationService>>().inner().clone();
+    let service = app.state::<Arc<ApplicationService>>().inner().clone();
     let app = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
         if service.stop_runtime().is_ok() {

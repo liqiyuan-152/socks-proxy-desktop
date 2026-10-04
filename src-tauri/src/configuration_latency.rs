@@ -5,15 +5,7 @@ use crate::latency_tasks::{
 };
 use std::{sync::Arc, time::Duration};
 
-impl ConfigurationService {
-    #[cfg(any(windows, test))]
-    pub(crate) fn with_latency_tasks(self, registry: Arc<LatencyTaskRegistry>) -> Self {
-        *self
-            .latency_tasks
-            .lock()
-            .unwrap_or_else(|poison| poison.into_inner()) = Some(registry);
-        self
-    }
+impl ConfigurationContext {
     fn latency_registry(&self) -> Result<Arc<LatencyTaskRegistry>, AppError> {
         self.latency_tasks
             .lock()

@@ -1,3 +1,4 @@
+import { appVersion } from "@/lib/app-version";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AboutCard() {
@@ -11,7 +12,7 @@ export function AboutCard() {
       <CardContent className="grid gap-5 border-t border-border py-5 text-sm sm:grid-cols-2">
         <dl className="grid grid-cols-[auto_1fr] gap-x-7 gap-y-3">
           <dt className="text-muted-foreground">版本</dt>
-          <dd className="font-semibold">v0.1.0</dd>
+          <dd className="font-semibold">v{appVersion}</dd>
           <dt className="text-muted-foreground">内核版本</dt>
           <dd className="font-semibold">目标 v1.14.1（未就绪）</dd>
         </dl>

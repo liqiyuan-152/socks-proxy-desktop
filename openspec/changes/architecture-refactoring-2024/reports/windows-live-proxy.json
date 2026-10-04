@@ -1,0 +1,24 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "test": "system_proxy_windows::live_tests::live_user_proxy_restores_original_settings_after_stop_and_reopen",
+  "status": "passed",
+  "duration_seconds": 0.07,
+  "checks": [
+    "持有生产运行时会话锁",
+    "真实 HKCU 用户代理接管到本地监听端口",
+    "正常停止完整还原原设置",
+    "重新打开 SQLite 与适配器完整还原原设置",
+    "恢复后所有权记录清理",
+    "Windows all-targets Clippy 无警告"
+  ],
+  "sources_sha256": {
+    "src-tauri/src/system_proxy_windows.rs": "fba9ea380126e0fe409fc96262f3b2d3a60d4bf3968d42f08addb531766c655a",
+    "src-tauri/src/system_proxy_live_tests.rs": "0e91433d045ce9fc34e6dd589cb943a154d0184c07afdd07949c24a04f5043cb"
+  },
+  "limitations": [
+    "测试没有启动真实内核或操作原生窗口",
+    "重新构建适配器，不包含本次测试的进程强制退出",
+    "未记录任何原代理地址、PAC 内容或凭据"
+  ]
+}

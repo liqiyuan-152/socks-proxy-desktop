@@ -1,0 +1,113 @@
+
+> socks-proxy@0.2.0 check /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run test:tools && pnpm run rust:fmt && pnpm run rust:clippy && pnpm run ipc:check
+
+
+> socks-proxy@0.2.0 format:check /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> oxfmt --check .
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 945ms on 279 files using 8 threads.
+
+> socks-proxy@0.2.0 lint /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> pnpm run lint:ox && pnpm run lint:eslint && pnpm run lint:style
+
+
+> socks-proxy@0.2.0 lint:ox /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> oxlint --config oxlint.config.ts
+
+
+> socks-proxy@0.2.0 lint:eslint /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> eslint .
+
+
+> socks-proxy@0.2.0 lint:style /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> stylelint "src/**/*.css"
+
+
+> socks-proxy@0.2.0 typecheck /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> tsc -b
+
+
+> socks-proxy@0.2.0 test /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> vitest run
+
+
+ RUN  v5.0.1 /Users/liqiyuan/RustProjects/socks-proxy-desktop
+
+
+ Test Files  30 passed (30)
+      Tests  157 passed (157)
+   Start at  19:06:50
+   Duration  11.17s (tests 46%, environment 25%, import 17%, setup 9%, transform 3%, worker 1%)
+
+    Isolate  30 workers spawned · ~242ms startup each (spawn + environment, per file)
+             at least ~3.39s faster with isolate: false — reuses workers across files instead of one per file
+
+
+> socks-proxy@0.2.0 test:tools /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> node --test scripts/test-query-runtime-log.mjs scripts/test-project-version.mjs scripts/test-e2e-driver.mjs
+
+✔ 原生 UI 入口在非 Windows 或未明确启用时拒绝启动 (1.686375ms)
+✔ 原生重跑拒绝删除非本套件的档案 (0.514167ms)
+✔ 隧道探测验证实际 CONNECT 与 GET 双向响应，并拒绝错误状态 (10.265292ms)
+✔ W3C 会话：等候延迟出现的元素，输入/读取并正常关闭 (133.535083ms)
+✔ 轮询只重试元素缺失/陈旧；业务失败直接返回，等待有期限 (205.269958ms)
+请在接下来打开的原生保存窗口保存到：/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/e2e-save-fixture-9t1Hpu/new.json
+请在接下来打开的原生保存窗口保存到：/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/e2e-save-fixture-9t1Hpu/unsafe.json
+✔ 人工原生保存检查点拒绝旧文件和密码泄漏；仅新文件加界面确认才通过 (9.2585ms)
+✔ frontend, Tauri and Rust package versions agree (4.055458ms)
+✔ queries combine level, operation, event, identity, time and literal text (0.631542ms)
+✔ query streams JSON Lines and counts malformed records (6.310291ms)
+✔ invalid CLI filters fail before reading files (0.394625ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 434.487709
+
+> socks-proxy@0.2.0 rust:fmt /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> cargo fmt --manifest-path src-tauri/Cargo.toml --check
+
+
+> socks-proxy@0.2.0 rust:clippy /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.75s
+
+> socks-proxy@0.2.0 ipc:check /Users/liqiyuan/RustProjects/socks-proxy-desktop
+> node scripts/generate-ipc.mjs --check
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/socks_proxy_lib-3744089c2ed59a92)
+
+running 1 test
+test ipc_contract::generate_ipc_contract ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 235 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (src-tauri/target/debug/deps/socks_proxy-5cfacaac7fbffe5a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/architecture.rs (src-tauri/target/debug/deps/architecture-35325e0ee5fdb66d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running unittests examples/runtime-flamegraph.rs (src-tauri/target/debug/examples/runtime_flamegraph-3a90301c45c1a904)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+Finished in 7ms on 2 files using 8 threads.
+IPC 契约未漂移

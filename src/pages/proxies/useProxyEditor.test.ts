@@ -1,6 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
 import { useProxyEditor } from "./useProxyEditor";
+import { ipc } from "@/lib/ipc";
+import type { ProfileInput } from "@/lib/generated/credentials";
 import type { ProxyProfile } from "@/lib/backend";
 
 const invoke = vi.hoisted(() => vi.fn());
@@ -20,7 +22,7 @@ function options() {
     busy: false,
     setBusy: vi.fn(),
     setError: vi.fn(),
-    refresh: vi.fn().mockResolvedValue(undefined),
+    persistProfile: (input: ProfileInput) => ipc("save_profile", { input }),
     clearLatency: vi.fn(),
   };
 }

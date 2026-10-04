@@ -1,6 +1,6 @@
 [package]
 name = "socks-proxy"
-version = "0.1.0"
+version = "0.2.0"
 description = "A desktop SOCKS proxy manager"
 authors = ["Socks Proxy contributors"]
 license = "UNLICENSED"
@@ -22,6 +22,7 @@ serde_json = "=1.0.119"
 log = "=0.4.21"
 tauri = { version = "=2.11.6", features = ["tray-icon"] }
 tauri-plugin-log = "=2.9.2"
+tauri-plugin-dialog = "=2.6.0"
 tokio = { version = "=1.36.0", features = [
   "macros",
   "net",
@@ -40,10 +41,16 @@ hex = "=0.4.3"
 tempfile = "=3.10.1"
 url = "=2.5.7"
 reqwest = { version = "=0.13.5", default-features = false, features = ["blocking", "rustls"] }
+tracing = "=0.1.41"
+tracing-subscriber = { version = "=0.3.20", features = ["env-filter", "json"] }
+tracing-flame = "=0.2.0"
+tracing-appender = "=0.2.3"
 
 [dev-dependencies]
 ts-rs = { version = "=10.1.0", features = ["no-serde-warnings"] }
 tauri = { version = "=2.11.6", features = ["test"] }
+proptest = "=1.9.0"
+inferno = { version = "=0.12.2", default-features = false }
 
 [target.'cfg(windows)'.dependencies]
 winreg = "=0.55.0"
@@ -56,3 +63,7 @@ windows-sys = { version = "=0.59.0", features = [
   "Win32_System_LibraryLoader",
   "Win32_System_Threading",
 ] }
+
+[[example]]
+name = "runtime-flamegraph"
+test = true

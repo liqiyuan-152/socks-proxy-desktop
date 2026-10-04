@@ -1,11 +1,8 @@
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError, CommandMap, ProfileView } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import {
-  errorMessage,
-  type BackendError,
-  type ProfileCredential,
-  type ProxyProfile,
-} from "@/lib/backend";
+import { type ProfileCredential, type ProxyProfile } from "@/lib/backend";
 import type { CredentialUpdate } from "@/lib/generated/credentials";
 import type { ProxyDraft } from "./ProxyAuthenticationFields";
 import { createProxyDraft } from "./proxyDraft";
@@ -14,19 +11,25 @@ import { parseProxyLink } from "./parseProxyLink";
 type EditorOptions = {
   busy: boolean;
   setBusy: Dispatch<SetStateAction<boolean>>;
-  setError: Dispatch<SetStateAction<string | null>>;
-  refresh: () => Promise<void>;
+  setError: Dispatch<SetStateAction<AppError | null>>;
+  persistProfile: (input: CommandMap["save_profile"][0]["input"]) => Promise<ProfileView>;
   clearLatency: (id: string) => void;
 };
 
-export function useProxyEditor({ busy, setBusy, setError, refresh, clearLatency }: EditorOptions) {
+export function useProxyEditor({
+  busy,
+  setBusy,
+  setError,
+  persistProfile,
+  clearLatency,
+}: EditorOptions) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProxy, setEditingProxy] = useState<ProxyProfile | null>(null);
   const [draft, setDraft] = useState<ProxyDraft>(() => createProxyDraft());
   const [proxyLink, setProxyLink] = useState("");
   const [linkError, setLinkError] = useState<string | null>(null);
   const [credentialLoading, setCredentialLoading] = useState(false);
-  const [credentialError, setCredentialError] = useState<string | null>(null);
+  const [credentialError, setCredentialError] = useState<AppError | null>(null);
   const [originalCredential, setOriginalCredential] = useState<ProfileCredential | null>(null);
   const credentialRequest = useRef(0);
   const editorGeneration = useRef(0);
@@ -53,7 +56,7 @@ export function useProxyEditor({ busy, setBusy, setError, refresh, clearLatency 
       setOriginalCredential(credential);
       setDraft((current) => ({ ...current, ...credential }));
     } catch (reason) {
-      if (request === credentialRequest.current) setCredentialError(errorMessage(reason));
+      if (request === credentialRequest.current) setCredentialError(normalizeError(reason));
     } finally {
       if (request === credentialRequest.current) setCredentialLoading(false);
     }
@@ -73,29 +76,22 @@ export function useProxyEditor({ busy, setBusy, setError, refresh, clearLatency 
             draft.password === originalCredential.password
           ? { action: "preserve" }
           : { action: "replace", username: draft.username, password: draft.password };
-      await ipc("save_profile", {
-        input: {
-          id: editingProxy?.id ?? null,
-          name: draft.name,
-          protocol: draft.protocol,
-          host: draft.server,
-          port: Number(draft.port),
-          authentication_enabled: draft.authentication,
-          enabled: editingProxy?.enabled ?? true,
-          credential,
-        },
+      await persistProfile({
+        id: editingProxy?.id ?? null,
+        name: draft.name,
+        protocol: draft.protocol,
+        host: draft.server,
+        port: Number(draft.port),
+        authentication_enabled: draft.authentication,
+        enabled: editingProxy?.enabled ?? true,
+        credential,
       });
       if (editingProxy) clearLatency(editingProxy.id);
       if (!mounted.current) return;
       if (generation === editorGeneration.current) closeDialog();
-      await refresh();
     } catch (reason) {
       if (!mounted.current || generation !== editorGeneration.current) return;
-      const typed = reason as Partial<BackendError>;
-      setError(
-        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
-          errorMessage(reason),
-      );
+      setError(normalizeError(reason));
     } finally {
       saving.current = false;
       if (mounted.current) setBusy(false);

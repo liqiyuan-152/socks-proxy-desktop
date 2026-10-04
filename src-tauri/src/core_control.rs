@@ -94,6 +94,7 @@ fn control_error(code: &str, message: &str) -> AppError {
         code: code.into(),
         message: message.into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

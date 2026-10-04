@@ -18,6 +18,7 @@ fn private_dir_error() -> AppError {
         code: "runtime_error".into(),
         message: "无法创建仅当前用户可访问的内核配置目录".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

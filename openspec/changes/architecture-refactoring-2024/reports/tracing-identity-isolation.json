@@ -1,0 +1,21 @@
+{
+  "status": "passed_after_test_isolation",
+  "failure_preserved": {
+    "artifact": "/tmp/architecture-final-soak-coverage.log",
+    "sha256": "2490d21f641ba03e5306a1e597f40321f3ceae17c73c2772c5e8c9d6123d1717",
+    "assertion": "context.span_id 应为 16 位；原并行 LLVM 覆盖率运行没有取得 span ID"
+  },
+  "change": "测试在独立子进程安装生产 subscriber，避免共享进程订阅/过滤环境；保留原标识持久化断言，追加两次错误日志与诊断 trace/span 精确相等",
+  "validation": {
+    "local_targeted": "passed",
+    "local_full_rust": "229 unit + 10 integration + 1 example + 2 doc passed; 7 unit ignored",
+    "local_llvm": "229 unit + 10 integration + 1 example passed",
+    "windows_targeted": "1 parent passed; invokes ignored child in isolated process",
+    "windows_log_sha256": "e5284ae0c66f5c23b171b5d64eda44a6955076a0ca6a4f68620dc90d9238c1b4",
+    "pnpm_check": "157 frontend + 8 tools + format/lint/types/Rust fmt/clippy/IPC passed"
+  },
+  "limitations": [
+    "只修改测试隔离，不声称更改了生产运行时行为",
+    "并行原测试失败且独立通过是 subscriber 环境干扰的线索，不用它证明生产故障"
+  ]
+}

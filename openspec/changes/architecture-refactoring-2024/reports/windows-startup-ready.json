@@ -1,0 +1,26 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "snapshot_archive_sha256": "f63d7284f4b3a18757b7fb8a8f77b6928e5c46a909b1fd6b03ee1714750b5823",
+  "scope": "原生就绪启动指标及当前完整架构代码",
+  "status": "passed",
+  "completed_at": "2026-10-04T16:22:21.0362905+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 157,
+    "rust_unit_tests": 239,
+    "rust_ignored": 8,
+    "integration_tests": 10,
+    "rust_doc_tests": 2,
+    "flamegraph_example_tests": 1,
+    "log_query_tests": 3,
+    "real_core_version": "1.14.1",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "limitations": [
+    "不证明 Windows 原生就绪时间样本、原生保存对话框或 UI E2E",
+    "不含后续报告和任务日志更新"
+  ],
+  "credentials": "未保存"
+}

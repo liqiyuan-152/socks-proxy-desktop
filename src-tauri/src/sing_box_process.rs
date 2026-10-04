@@ -337,6 +337,7 @@ fn process_error(message: &str) -> AppError {
         code: "runtime_error".into(),
         message: message.into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

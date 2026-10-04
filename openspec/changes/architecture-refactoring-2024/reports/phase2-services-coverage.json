@@ -1,0 +1,101 @@
+{
+  "scope": "phase2 domain adapters, conversions, context, application recording and service implementations",
+  "platform": "macOS aarch64",
+  "line_count": 615,
+  "covered_lines": 585,
+  "line_coverage_percent": 95.1219512195122,
+  "files": [
+    {
+      "file": "domain_errors/adapters.rs",
+      "lines": {
+        "count": 36,
+        "covered": 36,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 3,
+        "covered": 3,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "domain_errors/conversions.rs",
+      "lines": {
+        "count": 111,
+        "covered": 111,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 8,
+        "covered": 8,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "error_context.rs",
+      "lines": {
+        "count": 56,
+        "covered": 56,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 6,
+        "covered": 6,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "services/application_errors.rs",
+      "lines": {
+        "count": 64,
+        "covered": 61,
+        "percent": 95.3125
+      },
+      "functions": {
+        "count": 4,
+        "covered": 4,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "services/profile_service.rs",
+      "lines": {
+        "count": 187,
+        "covered": 174,
+        "percent": 93.04812834224599
+      },
+      "functions": {
+        "count": 21,
+        "covered": 20,
+        "percent": 95.23809523809523
+      }
+    },
+    {
+      "file": "services/routing_service.rs",
+      "lines": {
+        "count": 117,
+        "covered": 104,
+        "percent": 88.88888888888889
+      },
+      "functions": {
+        "count": 18,
+        "covered": 13,
+        "percent": 72.22222222222221
+      }
+    },
+    {
+      "file": "services/runtime_service.rs",
+      "lines": {
+        "count": 44,
+        "covered": 43,
+        "percent": 97.72727272727273
+      },
+      "functions": {
+        "count": 7,
+        "covered": 7,
+        "percent": 100.0
+      }
+    }
+  ],
+  "note": "枚举声明无可执行行；报告仅覆盖当前编译目标，不证明 Windows 条件分支或真实内核验收。"
+}

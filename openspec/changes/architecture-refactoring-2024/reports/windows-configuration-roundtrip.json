@@ -1,0 +1,26 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "snapshot_archive_sha256": "9782ed673d36c434e15e7e25220b89cda829bc2e9fa0c685f12b3fa81ab99748",
+  "scope": "延迟任务服务集成、原生配置保存命令、旧服务兼容模块移除",
+  "status": "passed",
+  "completed_at": "2026-10-04T16:16:12.4278895+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 153,
+    "rust_unit_tests": 237,
+    "rust_ignored": 8,
+    "integration_tests": 10,
+    "rust_doc_tests": 2,
+    "flamegraph_example_tests": 1,
+    "log_query_tests": 3,
+    "real_core_version": "1.14.1",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed"
+  },
+  "limitations": [
+    "不证明 Windows 原生保存选择器或 E2E 界面操作",
+    "不包含后续 startup_frontend_ready 指标改动"
+  ],
+  "credentials": "未保存"
+}

@@ -1,0 +1,23 @@
+{
+  "platform": "macOS aarch64",
+  "application_identifier": "com.socksproxy.desktop.refactor-validation",
+  "build": "debug，最新生产代码，不含临时 native_benchmark 命令",
+  "source_sha256": {
+    "src/App.tsx": "15bec3c6cf4263b8c3cc6b25b23c30d75084b4dbb9a2904e51e6befbbb8b9f66"
+  },
+  "sample": {
+    "timestamp": "2026-10-04T09:29:19.795457Z",
+    "level": "INFO",
+    "fields": {
+      "message": "native frontend ready",
+      "operation": "startup_frontend_ready",
+      "elapsed_ms": 631.291959
+    },
+    "target": "performance"
+  },
+  "limitations": [
+    "单次真实生产就绪样本，独立于三轮配对基准",
+    "不含 OS 创建进程或像素首绘",
+    "不证明 Windows 原生性能或运行时能力"
+  ]
+}

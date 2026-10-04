@@ -3,8 +3,8 @@ use super::*;
 #[test]
 fn persistence_failure_restores_runtime_revision_and_previous_rules() {
     use crate::{
-        configuration_service::ConfigurationService,
         credentials::{CredentialStore, ProxyCredential},
+        services::ApplicationService,
         startup::StartupAdapter,
         store::ConfigurationStore,
     };
@@ -84,7 +84,7 @@ fn persistence_failure_restores_runtime_revision_and_previous_rules() {
         reject: AtomicBool::new(false),
     });
     let runtime = manager(Arc::new(FakeBackend::default()), config);
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(Credentials),
         Box::new(Startup),

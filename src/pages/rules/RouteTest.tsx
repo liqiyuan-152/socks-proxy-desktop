@@ -1,9 +1,12 @@
+import { ErrorAlert } from "@/components/ErrorAlert";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { errorMessage, onRuntimeSnapshot } from "@/lib/backend";
+import { onRuntimeSnapshot } from "@/lib/backend";
 
 import type { RouteTestResult } from "@/lib/generated/ipc";
 
@@ -19,7 +22,7 @@ export function RouteTest() {
   const [target, setTarget] = useState("");
   const [port, setPort] = useState("443");
   const [result, setResult] = useState<RouteTestResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [busy, setBusy] = useState(false);
 
   const generation = useRef(0);
@@ -45,7 +48,7 @@ export function RouteTest() {
       invalidate();
     });
     void subscription.catch((reason: unknown) => {
-      if (active) setError(errorMessage(reason));
+      if (active) setError(normalizeError(reason));
     });
     return () => {
       active = false;
@@ -63,7 +66,12 @@ export function RouteTest() {
     const request = generation.current;
     const parsedPort = Number(port);
     if (!target.trim() || !Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
-      setError("请输入有效的目标域名或 IP，以及 1–65535 的端口。");
+      setError(
+        normalizeError({
+          code: "validation_error",
+          message: "请输入有效的目标域名或 IP，以及 1–65535 的端口。",
+        }),
+      );
       return;
     }
     setBusy(true);
@@ -81,7 +89,7 @@ export function RouteTest() {
       resultRevision.current = prediction.configuration_revision;
       setResult(prediction);
     } catch (reason) {
-      if (request === generation.current) setError(errorMessage(reason));
+      if (request === generation.current) setError(normalizeError(reason));
     } finally {
       if (request === generation.current) setBusy(false);
     }
@@ -124,11 +132,7 @@ export function RouteTest() {
           {busy ? "测试中…" : "测试"}
         </Button>
       </form>
-      {error && (
-        <p role="alert" className="mt-3 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      {error && <ErrorAlert error={error} />}
       {result && (
         <div role="status" className="mt-3 space-y-1 text-sm">
           <p className="font-medium">

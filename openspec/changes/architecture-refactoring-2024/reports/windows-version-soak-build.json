@@ -1,0 +1,27 @@
+{
+  "host": "10.168.1.119",
+  "platform": "Windows 11 x64",
+  "snapshot_archive_sha256": "e4ba4aaf331b0aad6e7f1bda914147bb890db7fecd1bb886649fe08be1279980",
+  "scope": "0.2.0 清单一致性、界面版本来源及真实内核稳定性测试源码",
+  "status": "passed",
+  "completed_at": "2026-10-04T16:41:10.1022306+08:00",
+  "checks": {
+    "quality": "passed",
+    "frontend_tests": 157,
+    "rust_unit_tests": 239,
+    "rust_ignored": 9,
+    "integration_tests": 10,
+    "rust_doc_tests": 2,
+    "flamegraph_example_tests": 1,
+    "log_query_tests": 3,
+    "real_core_version": "1.14.1",
+    "frontend_build": "passed",
+    "desktop_debug_build": "passed",
+    "version_consistency_tests": 1
+  },
+  "limitations": [
+    "不证明原生 UI E2E、原生性能基线或长时稳定性",
+    "稳定性运行脚本的 Windows ExitCode 句柄修正不在此快照；另以实际短测验证"
+  ],
+  "credentials": "未保存"
+}

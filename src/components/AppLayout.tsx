@@ -1,3 +1,6 @@
+import { appVersion } from "@/lib/app-version";
+import { useEffect } from "react";
+import { scheduleStartupReady } from "@/lib/startup-ready";
 import {
   Activity,
   FileText,
@@ -8,7 +11,8 @@ import {
   Settings,
   ShieldCheck,
 } from "lucide-react";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { proxyModes } from "@/lib/proxy-mode";
 import { NavLink, Outlet, useMatch } from "react-router-dom";
 import {
@@ -67,7 +71,18 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
 }
 
 export function AppLayout() {
-  const { snapshot, profiles, error } = useBackend();
+  const { snapshot, profiles, error } = useBackendStore(
+    useShallow((state) => ({
+      snapshot: state.snapshot,
+      profiles: state.profiles,
+      error: state.error,
+    })),
+  );
+  const loading = useBackendStore((state) => state.loading);
+  const ready = !loading && snapshot !== null;
+  useEffect(() => {
+    if (ready) return scheduleStartupReady();
+  }, [ready]);
   const running = snapshot?.session_health === "healthy";
   const activeModeLabel = snapshot?.applied_mode
     ? proxyModes[snapshot.applied_mode].label
@@ -115,7 +130,7 @@ export function AppLayout() {
               {activeModeLabel} · 查看原因
             </NavLink>
           )}
-          <p className="mt-3 group-data-[collapsible=icon]:hidden">v0.1.0</p>
+          <p className="mt-3 group-data-[collapsible=icon]:hidden">v{appVersion}</p>
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>

@@ -1,0 +1,30 @@
+{
+  "core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+  "exit_detection_ms": 251.55290000000002,
+  "explicit_retry_core_pid": 25552,
+  "native_ui": false,
+  "owned_core_pid": 45276,
+  "platform": "Windows x64",
+  "restores_after_exit": 1,
+  "runtime_directories_after_stop": 0,
+  "semantics": "automatic network restoration on reconcile; explicit retry starts new core",
+  "status": "passed",
+  "system_proxy": "isolated adapter",
+  "validation": {
+    "rust_test_exit_code": 0,
+    "windows_all_targets_clippy": "passed",
+    "local_pnpm_check": "passed: 157 frontend + 8 tools, fmt/lint/types/Rust/IPC"
+  },
+  "source_sha256": "65b4924714a3dcf4011470d2e717196e2c5db559e29c08ccfc7afe7138db5380",
+  "log_sha256": {
+    "architecture-fixed-core-crash.log": "c4dcd0f297d824184fafa1901ebad916ad1cc968545609cdcf5776256c3d6223",
+    "architecture-fixed-core-crash-clippy.log": "37ac5cf341274b5e633dde6fe725f304994d66f979d9dd8ba29df261b66331c0"
+  },
+  "limitations": [
+    "只强制终止测试 backend 返回的本次内核 PID，不是桌面应用进程崩溃",
+    "通过真实 ApplicationService/ManagedRuntime 的 250 ms 周期快照检查检测退出，不是 Tauri UI 事件循环实测",
+    "系统代理为隔离内存适配器，不修改真实 HKCU",
+    "当前语义为检测退出后恢复网络和保留所选模式，显式重试启动新内核；不证明自动重启",
+    "不证明 Windows UI 用户场景或 GUI 长时稳定性"
+  ]
+}

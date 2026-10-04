@@ -23,6 +23,7 @@ fn already_owned() -> AppError {
         code: "runtime_already_owned".into(),
         message: "当前用户会话已有运行中的应用实例".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

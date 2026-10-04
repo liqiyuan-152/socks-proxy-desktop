@@ -1,5 +1,7 @@
 # Socks Proxy
 
+[![Quality](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/quality.yml/badge.svg)](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/quality.yml)
+
 用于管理 SOCKS5 / HTTP 代理的桌面应用，基于 Tauri 2、React、TypeScript 和 Rust，使用固定版本 sing-box 作为代理内核。
 
 ## 平台与功能
@@ -60,6 +62,8 @@ cargo test --manifest-path src-tauri/Cargo.toml --locked
 
 未设置 `SING_BOX_TEST_BIN` 时，依赖内核的条件测试会直接返回；测试数量通过不等于真实内核已验证。Windows 系统代理和托盘行为还需真实桌面验收，不能仅凭 CI 判定。
 
+错误处理、诊断查看与导出，以及数据库回退约束见 [开发指南](docs/error-handling.md)。
+
 ## 内测打包与发布状态
 
 Windows 本地生成 NSIS 安装包：
@@ -71,3 +75,7 @@ pnpm tauri build --bundles nsis
 也可在 GitHub Actions 手动运行 **Windows test package** 工作流。它会先完成质量检查和内核测试，再生成 NSIS 安装包，并上传安装包、SHA-256 清单及源码提交号，产物保留 14 天。该工作流生成未签名的内测产物，不会创建公开 Release。
 
 当前未配置应用签名、自动更新或公开发布渠道；“检查更新”不可用。正式发布前需提供签名凭据、确定发布与更新渠道，并完成真实 Windows 桌面验收，以及随包 sing-box 的 GPLv3 对应源代码提供方式、许可证通知和最终安装包内容复核。具体内核分发要求见 `scripts/sing-box-release-manifest.md`。
+
+测试框架与覆盖率命令见 [测试指南](docs/testing.md)。
+
+服务分工见 [架构指南](docs/architecture.md)，贡献者改动路径见 [迁移指南](docs/architecture-migration.md)，日志与性能工具见 [观测指南](docs/observability.md)。

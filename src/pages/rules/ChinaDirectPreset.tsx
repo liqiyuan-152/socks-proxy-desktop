@@ -1,16 +1,21 @@
+import { ErrorAlert } from "@/components/ErrorAlert";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { errorMessage } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 
 import type { ChinaDirectStatus } from "@/lib/generated/ipc";
 
 export function ChinaDirectPreset() {
-  const { snapshot, refresh } = useBackend();
+  const { snapshot, refresh } = useBackendStore(
+    useShallow((state) => ({ snapshot: state.snapshot, refresh: state.refresh })),
+  );
   const [status, setStatus] = useState<ChinaDirectStatus | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const defaultAvailable = Boolean(snapshot?.active_profile_id);
 
   useEffect(() => {
@@ -20,7 +25,7 @@ export function ChinaDirectPreset() {
         if (active) setStatus(value);
       })
       .catch((reason: unknown) => {
-        if (active) setError(errorMessage(reason));
+        if (active) setError(normalizeError(reason));
       });
     return () => {
       active = false;
@@ -34,7 +39,7 @@ export function ChinaDirectPreset() {
       setStatus(await ipc("set_china_direct_enabled", { enabled }));
       await refresh();
     } catch (reason) {
-      setError(errorMessage(reason));
+      setError(normalizeError(reason));
     } finally {
       setBusy(false);
     }
@@ -67,11 +72,7 @@ export function ChinaDirectPreset() {
         {!defaultAvailable ? " 请先设置默认代理。" : ""}
         {status && !status.available ? " 本地规则集不可用。" : ""}
       </p>
-      {error && (
-        <p role="alert" className="mt-2 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      {error && <ErrorAlert error={error} />}
     </section>
   );
 }

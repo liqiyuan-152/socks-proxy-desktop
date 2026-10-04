@@ -1,0 +1,49 @@
+{
+  "scope": "phase2 error conversion, context and application recording",
+  "platform": "macOS aarch64",
+  "line_count": 231,
+  "covered_lines": 228,
+  "line_coverage_percent": 98.7012987012987,
+  "files": [
+    {
+      "file": "domain_errors/conversions.rs",
+      "lines": {
+        "count": 111,
+        "covered": 111,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 8,
+        "covered": 8,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "error_context.rs",
+      "lines": {
+        "count": 56,
+        "covered": 56,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 6,
+        "covered": 6,
+        "percent": 100.0
+      }
+    },
+    {
+      "file": "services/application_errors.rs",
+      "lines": {
+        "count": 64,
+        "covered": 61,
+        "percent": 95.3125
+      },
+      "functions": {
+        "count": 4,
+        "covered": 4,
+        "percent": 100.0
+      }
+    }
+  ],
+  "note": "类型声明无可执行行；不可达的序列化失败和时钟失效兜底不单独注入。覆盖范围不证明 Windows 条件分支。"
+}

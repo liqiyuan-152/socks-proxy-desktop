@@ -1,0 +1,85 @@
+{
+  "core_sha256": "b838de45bd0b2e6ddbed1977e4745622f7dffab3b293807ff4c6b1b640fed909",
+  "core_version": "1.14.1",
+  "duration_seconds": 1800.8748579,
+  "maximum_runtime_directories": 1,
+  "metadata_commits": 55,
+  "mode_transitions": 55,
+  "native_ui": false,
+  "platform": "windows",
+  "probes": 1635,
+  "requested_seconds": 1800,
+  "runtime_directories_after_stop": 0,
+  "status": "passed",
+  "system_proxy": "isolated adapter",
+  "resource_summary": {
+    "test_host": {
+      "working_set_bytes": {
+        "min": 18898944,
+        "max": 67952640,
+        "median": 19259392.0,
+        "first": 67952640,
+        "last": 19320832
+      },
+      "private_bytes": {
+        "min": 2568192,
+        "max": 84119552,
+        "median": 3170304.0,
+        "first": 84119552,
+        "last": 3223552
+      },
+      "handles": {
+        "min": 161,
+        "max": 203,
+        "median": 201.0,
+        "first": 161,
+        "last": 201
+      },
+      "threads": {
+        "min": 4,
+        "max": 8,
+        "median": 5.0,
+        "first": 5,
+        "last": 5
+      }
+    },
+    "sing_box": {
+      "working_set_bytes": {
+        "min": 35762176,
+        "max": 37855232,
+        "median": 36999168,
+        "first": 36388864,
+        "last": 37511168
+      },
+      "private_bytes": {
+        "min": 59633664,
+        "max": 62144512,
+        "median": 60948480,
+        "first": 60370944,
+        "last": 61468672
+      },
+      "handles": {
+        "min": 276,
+        "max": 290,
+        "median": 284,
+        "first": 285,
+        "last": 286
+      },
+      "threads": {
+        "min": 15,
+        "max": 17,
+        "median": 16,
+        "first": 16,
+        "last": 16
+      }
+    }
+  },
+  "memory_samples_count": 180,
+  "memory_interval_seconds": 10,
+  "memory_exit_code": 0,
+  "limitations": [
+    "运行的是 ApplicationService + 真实固定内核测试宿主，不包含 GUI/WebView",
+    "使用隔离系统代理适配器，不接管真实用户系统代理",
+    "资源读数包含过渡中的短暂双内核候选，不代表原生桌面内存基准"
+  ]
+}

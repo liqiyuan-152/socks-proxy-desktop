@@ -248,6 +248,7 @@ fn task_error() -> AppError {
         code: "latency_task".into(),
         message: "测速任务不可用或订阅已结束".into(),
         fields: vec![],
+        context: None,
     }
 }
 fn busy_error() -> AppError {
@@ -255,6 +256,7 @@ fn busy_error() -> AppError {
         code: "latency_busy".into(),
         message: "测速队列已满，请稍后重试".into(),
         fields: vec![],
+        context: None,
     }
 }
 

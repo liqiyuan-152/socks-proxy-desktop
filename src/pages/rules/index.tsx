@@ -1,3 +1,5 @@
+import { normalizeError } from "@/lib/error-handler";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { useState } from "react";
 import { Edit3, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,10 +17,12 @@ import {
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRoutingRules, type RoutingRule } from "./useRoutingRules";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { RuleForm, type RuleDraft } from "./RuleForm";
 import { ChinaDirectPreset } from "./ChinaDirectPreset";
 import { RouteTest } from "./RouteTest";
+import { ConfirmDeletionDialog } from "@/components/ConfirmDeletionDialog";
 
 function createRuleDraft(rule?: RoutingRule, defaultProfileId = ""): RuleDraft {
   const action = rule?.action === "direct" ? "直连" : "代理";
@@ -35,11 +39,14 @@ function createRuleDraft(rule?: RoutingRule, defaultProfileId = ""): RuleDraft {
 }
 
 export default function RoutingRuleList() {
-  const { profiles, snapshot } = useBackend();
+  const { profiles, snapshot } = useBackendStore(
+    useShallow((state) => ({ profiles: state.profiles, snapshot: state.snapshot })),
+  );
   const { routingRules, loading, busy, error, setError, replace, moveRule } = useRoutingRules();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<RoutingRule | null>(null);
+  const [deletingRule, setDeletingRule] = useState<RoutingRule | null>(null);
   const [draft, setDraft] = useState<RuleDraft>(() => createRuleDraft());
   const isEditing = editingRule !== null;
 
@@ -50,7 +57,12 @@ export default function RoutingRuleList() {
       (start !== null && (!Number.isInteger(start) || start < 1 || start > 65535)) ||
       (end !== null && (start === null || !Number.isInteger(end) || end < start || end > 65535))
     ) {
-      setError("端口范围必须在 1 到 65535 之间，且结束端口不小于起始端口。");
+      setError(
+        normalizeError({
+          code: "validation_error",
+          message: "端口范围必须在 1 到 65535 之间，且结束端口不小于起始端口。",
+        }),
+      );
       return;
     }
     const rule: RoutingRule = {
@@ -126,11 +138,7 @@ export default function RoutingRuleList() {
               添加规则
             </Button>
           </div>
-          {error && (
-            <p role="alert" className="text-destructive">
-              {error}
-            </p>
-          )}
+          {error && !dialogOpen && !deletingRule && <ErrorAlert error={error} />}
           {loading && <p role="status">正在加载分流规则…</p>}
 
           <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-none">
@@ -238,11 +246,8 @@ export default function RoutingRuleList() {
                                 aria-label={`删除${rule.name}`}
                                 disabled={busy}
                                 onClick={() => {
-                                  if (window.confirm(`确认删除规则「${rule.name}」？`)) {
-                                    void replace(
-                                      routingRules.filter((item) => item.id !== rule.id),
-                                    );
-                                  }
+                                  setError(null);
+                                  setDeletingRule(rule);
                                 }}
                               >
                                 <Trash2 className="size-4" aria-hidden="true" />
@@ -267,6 +272,15 @@ export default function RoutingRuleList() {
         </div>
       </div>
 
+      {deletingRule && (
+        <ConfirmDeletionDialog
+          name={deletingRule.name}
+          resource="规则"
+          error={error}
+          onCancel={() => setDeletingRule(null)}
+          onConfirm={() => replace(routingRules.filter((item) => item.id !== deletingRule.id))}
+        />
+      )}
       <Dialog
         open={dialogOpen}
         onOpenChange={(open) => {
@@ -280,6 +294,7 @@ export default function RoutingRuleList() {
             setDraft={setDraft}
             isEditing={isEditing}
             busy={busy}
+            error={error}
             profiles={profiles}
             onSave={() => void saveRule()}
           />

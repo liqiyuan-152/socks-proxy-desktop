@@ -1,0 +1,23 @@
+{
+  "scope": "domain_errors.rs and domain_errors/conversions.rs",
+  "test_filter": "domain_errors",
+  "line_count": 68,
+  "covered_lines": 68,
+  "line_coverage_percent": 100.0,
+  "files": [
+    {
+      "file": "domain_errors/conversions.rs",
+      "lines": {
+        "count": 68,
+        "covered": 68,
+        "percent": 100.0
+      },
+      "functions": {
+        "count": 8,
+        "covered": 8,
+        "percent": 100.0
+      }
+    }
+  ],
+  "note": "LLVM 报告仅包含有可执行行的 conversions.rs；domain_errors.rs 的类型声明不产生可执行行。枚举携带字段、来源和显示行为由 12 项测试验证。当前报告限于 macOS 编译目标。"
+}

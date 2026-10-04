@@ -115,7 +115,7 @@ fn fixed_core_applies_password_username_import_and_preserves_credentials_after_f
         RuntimeMode::Direct,
     )
     .unwrap();
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(credentials),
         Box::new(Arc::new(MemoryStartup::default())),

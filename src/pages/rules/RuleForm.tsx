@@ -1,3 +1,5 @@
+import type { AppError } from "@/lib/generated/ipc";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { type Dispatch, type SetStateAction } from "react";
 import { GitBranch, X } from "lucide-react";
 import { Field } from "@/components/forms/Field";
@@ -31,6 +33,7 @@ export function RuleForm({
   setDraft,
   isEditing,
   busy,
+  error,
   profiles,
   onSave,
 }: {
@@ -38,6 +41,7 @@ export function RuleForm({
   setDraft: Dispatch<SetStateAction<RuleDraft>>;
   isEditing: boolean;
   busy: boolean;
+  error: AppError | null;
   profiles: ProxyProfile[];
   onSave: () => void;
 }) {
@@ -63,6 +67,7 @@ export function RuleForm({
         </DialogClose>
       </DialogHeader>
       <div className="space-y-5 px-6 py-6 sm:px-7">
+        {error && <ErrorAlert error={error} />}
         <div className="grid gap-5 sm:grid-cols-[1.1fr_0.9fr]">
           <Field label="规则名称" required htmlFor="rule-name">
             <Input

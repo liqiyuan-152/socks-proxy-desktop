@@ -1,0 +1,1016 @@
+{
+  "scope": "3 轮顺序配对，先分别一次预热；CUA 启动/退出独立 macOS debug app；空配置、稳态 SQLite，无并行本地编译",
+  "baseline_revision": "0d93dd13359c110b1465f0138b02ccc29ac11bec",
+  "current_revision": "refactoring-v1 0.2.0 工作区",
+  "startup_ms": {
+    "baseline": 827.415,
+    "current": 988.161125,
+    "change_percent": 19.427509170126235
+  },
+  "ipc_mean_ms": {
+    "baseline": 0.7449999999999999,
+    "current": 0.475,
+    "change_percent": -36.24161073825503
+  },
+  "root_rss_bytes": {
+    "baseline": 114655232.0,
+    "current": 121511936.0,
+    "change_percent": 5.980280080022871
+  },
+  "tree_rss_bytes": {
+    "baseline": 114655232.0,
+    "current": 121511936.0,
+    "change_percent": 5.980280080022871
+  },
+  "startup_gate": {
+    "maximum_increase_percent": 10,
+    "status": "failed"
+  },
+  "runs": [
+    {
+      "baseline": {
+        "label": "baseline-1",
+        "platform": "macOS aarch64",
+        "startup_ms": 608.850209,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 0.9999999999999574,
+          "p95_ms": 1.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 22.99999999999997,
+          "raw_ms": [
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            1.0000000000000284, 0.0, 22.99999999999997, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0000000000000284, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0, 1.0, 0.0, 0.0, 0.9999999999999716, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0, 0.0, 1.0, 2.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 2.000000000000057, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+            0.9999999999999432, 1.0, 1.0, 0.0, 1.0, 0.0, 2.0, 1.0, 1.0, 0.0, 1.0, 12.0, 1.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+            0.0, 2.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 113672192.0,
+          "tree_median_rss_bytes": 113672192.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 113721344,
+              "process_tree_rss_bytes": 113721344,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113721344,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 113672192,
+              "process_tree_rss_bytes": 113672192,
+              "processes": [
+                {
+                  "pid": 25953,
+                  "parent": 1,
+                  "rss_bytes": 113672192,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      },
+      "current": {
+        "label": "current-1",
+        "platform": "macOS aarch64",
+        "startup_ms": 964.938292,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 0.0,
+          "p95_ms": 1.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 3.0,
+          "raw_ms": [
+            1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0,
+            1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 3.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0000000000001137,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.9999999999998864, 0.0, 1.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 116506624.0,
+          "tree_median_rss_bytes": 116506624.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116506624,
+              "process_tree_rss_bytes": 116506624,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116506624,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116555776,
+              "process_tree_rss_bytes": 116555776,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116555776,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116555776,
+              "process_tree_rss_bytes": 116555776,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116555776,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116555776,
+              "process_tree_rss_bytes": 116555776,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116555776,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 116555776,
+              "process_tree_rss_bytes": 116555776,
+              "processes": [
+                {
+                  "pid": 26151,
+                  "parent": 1,
+                  "rss_bytes": 116555776,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      }
+    },
+    {
+      "baseline": {
+        "label": "baseline-2",
+        "platform": "macOS aarch64",
+        "startup_ms": 838.9428330000001,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 1.0,
+          "p95_ms": 2.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 13.0,
+          "raw_ms": [
+            5.0, 1.0, 0.0, 1.0, 0.0, 2.0, 1.0, 2.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            1.0000000000000568, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.9999999999999432, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 13.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 0.0, 1.0000000000000568, 1.0,
+            1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.9999999999999432, 0.0, 1.0, 1.0, 1.0, 2.0,
+            0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            1.0, 2.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 5.0, 1.0, 0.0, 4.0, 4.0, 1.0, 1.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0000000000000568, 0.0, 2.0, 1.0, 1.0, 1.0, 0.0,
+            1.0, 1.0, 1.9999999999999432, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 0.0, 1.0, 0.0,
+            1.0, 1.0, 1.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 114655232.0,
+          "tree_median_rss_bytes": 114655232.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 114704384,
+              "process_tree_rss_bytes": 114704384,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114704384,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114704384,
+              "process_tree_rss_bytes": 114704384,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114704384,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114704384,
+              "process_tree_rss_bytes": 114704384,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114704384,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114704384,
+              "process_tree_rss_bytes": 114704384,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114704384,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 114655232,
+              "process_tree_rss_bytes": 114655232,
+              "processes": [
+                {
+                  "pid": 26479,
+                  "parent": 1,
+                  "rss_bytes": 114655232,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      },
+      "current": {
+        "label": "current-2",
+        "platform": "macOS aarch64",
+        "startup_ms": 1030.795834,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 0.0,
+          "p95_ms": 1.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 9.0,
+          "raw_ms": [
+            1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 9.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            1.0000000000001137, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 1.0, 2.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.9999999999998864, 0.0, 0.0,
+            1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 122028032.0,
+          "tree_median_rss_bytes": 122028032.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122028032,
+              "process_tree_rss_bytes": 122028032,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122028032,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122093568,
+              "process_tree_rss_bytes": 122093568,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122093568,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122093568,
+              "process_tree_rss_bytes": 122093568,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122093568,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122109952,
+              "process_tree_rss_bytes": 122109952,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122109952,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 122109952,
+              "process_tree_rss_bytes": 122109952,
+              "processes": [
+                {
+                  "pid": 26697,
+                  "parent": 1,
+                  "rss_bytes": 122109952,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      }
+    },
+    {
+      "baseline": {
+        "label": "baseline-3",
+        "platform": "macOS aarch64",
+        "startup_ms": 827.415,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 1.0,
+          "p95_ms": 2.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 13.0,
+          "raw_ms": [
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.9999999999999716, 0.0, 1.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 2.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 3.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 1.0000000000000568, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.9999999999999432, 2.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 13.0, 1.0, 1.0, 1.0,
+            1.0, 0.0, 2.0, 1.0, 0.0, 3.0, 1.0, 0.0, 1.0, 3.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0000000000000568, 0.0,
+            1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.9999999999999432, 2.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            1.0, 0.0, 2.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 2.0, 1.0, 4.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 2.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 120340480.0,
+          "tree_median_rss_bytes": 120340480.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 120340480,
+              "process_tree_rss_bytes": 120340480,
+              "processes": [
+                {
+                  "pid": 28977,
+                  "parent": 1,
+                  "rss_bytes": 120340480,
+                  "command": "/private/var/folders/z5/gv80fxcj4fs1vm7ytzcr5h5h0000gn/T/architecture-baseline-1moui8n4/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Baseline.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      },
+      "current": {
+        "label": "current-3",
+        "platform": "macOS aarch64",
+        "startup_ms": 988.161125,
+        "ipc": {
+          "samples": 200,
+          "warmup": 20,
+          "median_ms": 0.0,
+          "p95_ms": 1.0,
+          "minimum_ms": 0.0,
+          "maximum_ms": 1.9999999999998863,
+          "raw_ms": [
+            1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+            0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+            1.0000000000001137, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.9999999999998863, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 1.0
+          ]
+        },
+        "memory": {
+          "root_median_rss_bytes": 121511936.0,
+          "tree_median_rss_bytes": 121511936.0,
+          "interval_seconds": 1.0,
+          "samples": [
+            {
+              "root_rss_bytes": 121536512,
+              "process_tree_rss_bytes": 121536512,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121536512,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121536512,
+              "process_tree_rss_bytes": 121536512,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121536512,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121536512,
+              "process_tree_rss_bytes": 121536512,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121536512,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121536512,
+              "process_tree_rss_bytes": 121536512,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121536512,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121536512,
+              "process_tree_rss_bytes": 121536512,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121536512,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121487360,
+              "process_tree_rss_bytes": 121487360,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121487360,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121487360,
+              "process_tree_rss_bytes": 121487360,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121487360,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121487360,
+              "process_tree_rss_bytes": 121487360,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121487360,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121487360,
+              "process_tree_rss_bytes": 121487360,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121487360,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            },
+            {
+              "root_rss_bytes": 121487360,
+              "process_tree_rss_bytes": 121487360,
+              "processes": [
+                {
+                  "pid": 29253,
+                  "parent": 1,
+                  "rss_bytes": 121487360,
+                  "command": "/private/tmp/architecture-native-current/src-tauri/target/debug/bundle/macos/Socks Proxy Benchmark Current.app/Contents/MacOS/socks-proxy"
+                }
+              ]
+            }
+          ]
+        },
+        "limitations": [
+          "启动为 Rust run 至初始数据可用、页面挂载并跨两个可见帧后的 IPC 确认",
+          "不含 OS 创建进程耗时，不是像素首绘，也不是 Windows 原生性能",
+          "内存为 RSS，不等同私有内存；共享页可能重复计入进程树总和",
+          "只统计实际应用及当前父子进程树，OS 共享 WebKit 服务不一定在树内",
+          "IPC 为无参数 bool 命令的真实 WebView 往返，不代表大数据序列化"
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "启动区间为 Rust run 到初始数据可用/页面挂载且两帧后的确认，不是 OS 进程创建或像素首绘",
+    "performance.now 在本 WebView 约 1 ms 量化，单次中位数不足以区分亚毫秒延迟；平均值为200次累计/次数",
+    "RSS 仅应用及父子进程树，不含 OS 独立共享 WebKit 服务，不能用其作为完整桌面私有内存",
+    "macOS 空配置测量不替代 Windows 内核运行与真实用户系统代理场景"
+  ]
+}

@@ -42,7 +42,7 @@ pub fn start<R: Runtime>(
     store: Arc<SqliteConfigurationStore>,
     mut receiver: tokio::sync::mpsc::UnboundedReceiver<RuntimeSnapshot>,
 ) {
-    use crate::configuration_service::ConfigurationService;
+    use crate::services::ApplicationService;
     use tauri::Manager;
     tauri::async_runtime::spawn(async move {
         let mut timer = tokio::time::interval(std::time::Duration::from_millis(250));
@@ -52,7 +52,7 @@ pub fn start<R: Runtime>(
                 biased;
                 Some(snapshot) = receiver.recv() => snapshot,
                 _ = timer.tick() => {
-                    let service = app.state::<Arc<ConfigurationService>>().inner().clone();
+                    let service = app.state::<Arc<ApplicationService>>().inner().clone();
                     match tauri::async_runtime::spawn_blocking(move || service.runtime_snapshot()).await {
                         Ok(snapshot) => snapshot,
                         Err(_) => break,
@@ -70,6 +70,8 @@ pub fn start<R: Runtime>(
             if let Ok(created_at_ms) = created_at_ms {
                 let store = store.clone();
                 let diagnostic = RuntimeDiagnostic {
+                    error_type: None,
+                    operation: None,
                     id: uuid::Uuid::new_v4().to_string(),
                     created_at_ms,
                     severity: severity.into(),

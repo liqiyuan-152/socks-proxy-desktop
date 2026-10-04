@@ -76,7 +76,7 @@ impl RuntimeBackend for Arc<RecordingBackend> {
 }
 
 struct RuntimeFixture {
-    service: ConfigurationService,
+    service: ApplicationService,
     store: Arc<MemoryStore>,
     backend: Arc<RecordingBackend>,
     id: String,
@@ -99,7 +99,7 @@ impl RuntimeFixture {
             RuntimeMode::Direct,
         )
         .unwrap();
-        let service = ConfigurationService::new(
+        let service = ApplicationService::new(
             Box::new(store.clone()),
             Box::new(credentials.clone()),
             Box::new(Arc::new(MemoryStartup::default())),

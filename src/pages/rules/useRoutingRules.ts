@@ -1,78 +1,67 @@
-import { ipc } from "@/lib/ipc";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError, RoutingRule } from "@/lib/generated/ipc";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { errorMessage, type BackendError } from "@/lib/backend";
+import { useShallow } from "zustand/react/shallow";
+import { useBackendStore } from "@/store/backend-store";
 
-import type { RoutingRule } from "@/lib/generated/ipc";
 export type { RoutingRule } from "@/lib/generated/ipc";
 
+/** 规则数据由全局 store 持有；这里只保存当前页面的表单操作反馈。 */
 export function useRoutingRules() {
-  const [routingRules, setRoutingRules] = useState<RoutingRule[]>([]);
+  const { routingRules, refreshRules, replaceRules, reorderRules } = useBackendStore(
+    useShallow((state) => ({
+      routingRules: state.rules,
+      refreshRules: state.refreshRules,
+      replaceRules: state.replaceRules,
+      reorderRules: state.reorderRules,
+    })),
+  );
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const mounted = useRef(true);
-  const readGeneration = useRef(0);
   const writing = useRef(false);
   const refresh = useCallback(async () => {
-    const request = ++readGeneration.current;
     try {
-      const rules = await ipc("list_rules");
-      if (!mounted.current || request !== readGeneration.current) return;
-      setRoutingRules(rules);
-      setError(null);
+      await refreshRules();
+      if (mounted.current) setError(null);
     } catch (reason) {
-      if (mounted.current && request === readGeneration.current) setError(errorMessage(reason));
+      if (mounted.current) setError(normalizeError(reason));
     } finally {
-      if (mounted.current && request === readGeneration.current) setLoading(false);
+      if (mounted.current) setLoading(false);
     }
-  }, []);
+  }, [refreshRules]);
   useEffect(() => {
-    const generation = readGeneration;
     mounted.current = true;
     const timer = window.setTimeout(() => void refresh(), 0);
     return () => {
       mounted.current = false;
-      generation.current++;
       window.clearTimeout(timer);
     };
   }, [refresh]);
-
-  async function mutate(action: () => Promise<unknown>): Promise<boolean> {
+  async function mutate(action: () => Promise<void>): Promise<boolean> {
     if (writing.current || !mounted.current) return false;
     writing.current = true;
-    readGeneration.current++;
     setBusy(true);
     setError(null);
     try {
       await action();
-      if (!mounted.current) return false;
-      await refresh();
       return mounted.current;
     } catch (reason) {
-      if (!mounted.current) return false;
-      const typed = reason as Partial<BackendError>;
-      setError(
-        typed.fields?.map((field) => `${field.field}: ${field.message}`).join("；") ||
-          errorMessage(reason),
-      );
+      if (mounted.current) setError(normalizeError(reason));
       return false;
     } finally {
       writing.current = false;
       if (mounted.current) setBusy(false);
     }
   }
-
-  function replace(next: RoutingRule[]): Promise<boolean> {
-    return mutate(() => ipc("replace_rules", { rules: next }));
-  }
-
+  const replace = (next: RoutingRule[]) => mutate(() => replaceRules(next));
   async function moveRule(index: number, delta: number) {
     const next = [...routingRules];
     const target = index + delta;
     if (target < 0 || target >= next.length) return;
     [next[index], next[target]] = [next[target], next[index]];
-    await mutate(() => ipc("reorder_rules", { ids: next.map((rule) => rule.id) }));
+    await mutate(() => reorderRules(next.map((rule) => rule.id)));
   }
-
   return { routingRules, loading, busy, error, setError, replace, moveRule };
 }

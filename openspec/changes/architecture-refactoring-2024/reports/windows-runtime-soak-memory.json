@@ -1,0 +1,4122 @@
+{
+  "platform": "Windows x64",
+  "requested_seconds": 1800,
+  "elapsed_seconds": 1813.4118208,
+  "exit_code": 0,
+  "scope": "真实内核与 ApplicationService 测试宿主；不含 GUI/WebView，不接管真实用户系统代理",
+  "samples": [
+    {
+      "elapsed_seconds": 0.11834159999999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 67952640,
+          "private_bytes": 84119552,
+          "handles": 161,
+          "threads": 5,
+          "cpu_seconds": 0.015625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 10.2058827,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18956288,
+          "private_bytes": 2818048,
+          "handles": 202,
+          "threads": 8,
+          "cpu_seconds": 3.671875
+        },
+        {
+          "role": "sing_box",
+          "pid": 32152,
+          "working_set_bytes": 36388864,
+          "private_bytes": 60370944,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.03125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 20.2669931,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18956288,
+          "private_bytes": 2818048,
+          "handles": 202,
+          "threads": 8,
+          "cpu_seconds": 3.703125
+        },
+        {
+          "role": "sing_box",
+          "pid": 32152,
+          "working_set_bytes": 36757504,
+          "private_bytes": 60747776,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 30.324158999999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18898944,
+          "private_bytes": 2719744,
+          "handles": 202,
+          "threads": 5,
+          "cpu_seconds": 3.734375
+        },
+        {
+          "role": "sing_box",
+          "pid": 32152,
+          "working_set_bytes": 36978688,
+          "private_bytes": 60919808,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 40.4083006,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18939904,
+          "private_bytes": 2785280,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 5.515625
+        },
+        {
+          "role": "sing_box",
+          "pid": 28004,
+          "working_set_bytes": 36462592,
+          "private_bytes": 61071360,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 50.493002499999996,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18939904,
+          "private_bytes": 2785280,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 5.578125
+        },
+        {
+          "role": "sing_box",
+          "pid": 28004,
+          "working_set_bytes": 36732928,
+          "private_bytes": 61333504,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 60.5626922,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18944000,
+          "private_bytes": 2785280,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 5.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 28004,
+          "working_set_bytes": 36999168,
+          "private_bytes": 61562880,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 70.6491118,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18964480,
+          "private_bytes": 2797568,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 7.5625
+        },
+        {
+          "role": "sing_box",
+          "pid": 40956,
+          "working_set_bytes": 36646912,
+          "private_bytes": 60690432,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 80.7139223,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18964480,
+          "private_bytes": 2797568,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 7.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 40956,
+          "working_set_bytes": 37015552,
+          "private_bytes": 61067264,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 90.7876433,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18964480,
+          "private_bytes": 2797568,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 7.671875
+        },
+        {
+          "role": "sing_box",
+          "pid": 40956,
+          "working_set_bytes": 37322752,
+          "private_bytes": 61353984,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 100.93544949999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18980864,
+          "private_bytes": 2813952,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 8.421875
+        },
+        {
+          "role": "sing_box",
+          "pid": 40956,
+          "working_set_bytes": 37556224,
+          "private_bytes": 61624320,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 111.0307227,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18944000,
+          "private_bytes": 2744320,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 12.359375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22144,
+          "working_set_bytes": 36319232,
+          "private_bytes": 60891136,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 121.0903943,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18944000,
+          "private_bytes": 2744320,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 12.421875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22144,
+          "working_set_bytes": 36925440,
+          "private_bytes": 61489152,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 131.1673653,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18944000,
+          "private_bytes": 2744320,
+          "handles": 203,
+          "threads": 7,
+          "cpu_seconds": 12.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22144,
+          "working_set_bytes": 37236736,
+          "private_bytes": 61792256,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 141.2622561,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18903040,
+          "private_bytes": 2650112,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 13.578125
+        },
+        {
+          "role": "sing_box",
+          "pid": 22144,
+          "working_set_bytes": 37396480,
+          "private_bytes": 61898752,
+          "handles": 288,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 151.3204558,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18931712,
+          "private_bytes": 2723840,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 13.90625
+        },
+        {
+          "role": "sing_box",
+          "pid": 39276,
+          "working_set_bytes": 36823040,
+          "private_bytes": 61046784,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.171875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 161.3888146,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18931712,
+          "private_bytes": 2723840,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 13.96875
+        },
+        {
+          "role": "sing_box",
+          "pid": 39276,
+          "working_set_bytes": 37208064,
+          "private_bytes": 61595648,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.171875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 171.4530213,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18931712,
+          "private_bytes": 2723840,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 14
+        },
+        {
+          "role": "sing_box",
+          "pid": 39276,
+          "working_set_bytes": 37498880,
+          "private_bytes": 61857792,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.171875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 181.54161689999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18919424,
+          "private_bytes": 2715648,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 16.140625
+        },
+        {
+          "role": "sing_box",
+          "pid": 33016,
+          "working_set_bytes": 36737024,
+          "private_bytes": 60776448,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 191.62286849999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18919424,
+          "private_bytes": 2715648,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 16.15625
+        },
+        {
+          "role": "sing_box",
+          "pid": 33016,
+          "working_set_bytes": 37072896,
+          "private_bytes": 61063168,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 201.70529349999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18919424,
+          "private_bytes": 2715648,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 16.203125
+        },
+        {
+          "role": "sing_box",
+          "pid": 33016,
+          "working_set_bytes": 37396480,
+          "private_bytes": 61407232,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 211.7628379,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18923520,
+          "private_bytes": 2686976,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 18.3125
+        },
+        {
+          "role": "sing_box",
+          "pid": 49708,
+          "working_set_bytes": 36786176,
+          "private_bytes": 60481536,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 221.8423957,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18923520,
+          "private_bytes": 2686976,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 18.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49708,
+          "working_set_bytes": 37167104,
+          "private_bytes": 60776448,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 231.90356119999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18923520,
+          "private_bytes": 2686976,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 18.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49708,
+          "working_set_bytes": 37437440,
+          "private_bytes": 61046784,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 241.97842269999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18903040,
+          "private_bytes": 2662400,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 22.203125
+        },
+        {
+          "role": "sing_box",
+          "pid": 34056,
+          "working_set_bytes": 36200448,
+          "private_bytes": 60170240,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 252.0376643,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18903040,
+          "private_bytes": 2662400,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 22.3125
+        },
+        {
+          "role": "sing_box",
+          "pid": 34056,
+          "working_set_bytes": 36630528,
+          "private_bytes": 60571648,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 262.1205482,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18968576,
+          "private_bytes": 2768896,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 22.359375
+        },
+        {
+          "role": "sing_box",
+          "pid": 34056,
+          "working_set_bytes": 37011456,
+          "private_bytes": 61022208,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 272.20636989999997,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18984960,
+          "private_bytes": 2768896,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 22.71875
+        },
+        {
+          "role": "sing_box",
+          "pid": 34056,
+          "working_set_bytes": 37359616,
+          "private_bytes": 61390848,
+          "handles": 283,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 282.2805067,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18997248,
+          "private_bytes": 2752512,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 24.390625
+        },
+        {
+          "role": "sing_box",
+          "pid": 2224,
+          "working_set_bytes": 36544512,
+          "private_bytes": 59891712,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 292.3315215,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18997248,
+          "private_bytes": 2752512,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 24.4375
+        },
+        {
+          "role": "sing_box",
+          "pid": 2224,
+          "working_set_bytes": 36892672,
+          "private_bytes": 60235776,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 302.3857495,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2822144,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 24.5
+        },
+        {
+          "role": "sing_box",
+          "pid": 2224,
+          "working_set_bytes": 37232640,
+          "private_bytes": 60850176,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 312.4699755,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2850816,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 26.6875
+        },
+        {
+          "role": "sing_box",
+          "pid": 44788,
+          "working_set_bytes": 36683776,
+          "private_bytes": 60129280,
+          "handles": 290,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 322.56047509999996,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2850816,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 26.734375
+        },
+        {
+          "role": "sing_box",
+          "pid": 44788,
+          "working_set_bytes": 37044224,
+          "private_bytes": 60481536,
+          "handles": 290,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 332.6233411,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2850816,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 26.734375
+        },
+        {
+          "role": "sing_box",
+          "pid": 44788,
+          "working_set_bytes": 37216256,
+          "private_bytes": 60571648,
+          "handles": 290,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 342.7250135,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19144704,
+          "private_bytes": 2912256,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 28.96875
+        },
+        {
+          "role": "sing_box",
+          "pid": 12628,
+          "working_set_bytes": 36798464,
+          "private_bytes": 60772352,
+          "handles": 290,
+          "threads": 17,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 352.8101637,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19144704,
+          "private_bytes": 2912256,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 29
+        },
+        {
+          "role": "sing_box",
+          "pid": 12628,
+          "working_set_bytes": 37122048,
+          "private_bytes": 61124608,
+          "handles": 290,
+          "threads": 17,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 362.9915886,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19144704,
+          "private_bytes": 2912256,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 29
+        },
+        {
+          "role": "sing_box",
+          "pid": 12628,
+          "working_set_bytes": 37347328,
+          "private_bytes": 61296640,
+          "handles": 290,
+          "threads": 17,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 373.07415299999997,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19013632,
+          "private_bytes": 2719744,
+          "handles": 191,
+          "threads": 6,
+          "cpu_seconds": 32
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 383.1241004,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19128320,
+          "private_bytes": 2867200,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 33.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 21880,
+          "working_set_bytes": 36573184,
+          "private_bytes": 60878848,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 393.2037286,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19128320,
+          "private_bytes": 2867200,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 33.125
+        },
+        {
+          "role": "sing_box",
+          "pid": 21880,
+          "working_set_bytes": 36925440,
+          "private_bytes": 61263872,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 403.2844148,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19087360,
+          "private_bytes": 2846720,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 33.1875
+        },
+        {
+          "role": "sing_box",
+          "pid": 21880,
+          "working_set_bytes": 37175296,
+          "private_bytes": 61485056,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 413.39311649999996,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2842624,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 35.140625
+        },
+        {
+          "role": "sing_box",
+          "pid": 16988,
+          "working_set_bytes": 36442112,
+          "private_bytes": 60264448,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 423.4745704,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2842624,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 35.171875
+        },
+        {
+          "role": "sing_box",
+          "pid": 16988,
+          "working_set_bytes": 36765696,
+          "private_bytes": 60583936,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 433.5291883,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2842624,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 35.1875
+        },
+        {
+          "role": "sing_box",
+          "pid": 16988,
+          "working_set_bytes": 37081088,
+          "private_bytes": 60928000,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 443.5899922,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2785280,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 36.84375
+        },
+        {
+          "role": "sing_box",
+          "pid": 21388,
+          "working_set_bytes": 36790272,
+          "private_bytes": 60444672,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 453.6702213,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2785280,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 36.890625
+        },
+        {
+          "role": "sing_box",
+          "pid": 21388,
+          "working_set_bytes": 37126144,
+          "private_bytes": 61009920,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 463.76674909999997,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19116032,
+          "private_bytes": 2785280,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 36.890625
+        },
+        {
+          "role": "sing_box",
+          "pid": 21388,
+          "working_set_bytes": 37490688,
+          "private_bytes": 61444096,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 473.8409205,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2813952,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 38.53125
+        },
+        {
+          "role": "sing_box",
+          "pid": 8460,
+          "working_set_bytes": 36769792,
+          "private_bytes": 59981824,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 483.90486619999996,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2813952,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 38.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 8460,
+          "working_set_bytes": 37138432,
+          "private_bytes": 60334080,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.171875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 493.9618357,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19120128,
+          "private_bytes": 2813952,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 38.640625
+        },
+        {
+          "role": "sing_box",
+          "pid": 8460,
+          "working_set_bytes": 37310464,
+          "private_bytes": 60489728,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.171875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 504.0406916,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 18944000,
+          "private_bytes": 2568192,
+          "handles": 191,
+          "threads": 4,
+          "cpu_seconds": 41.3125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 514.1294567,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19136512,
+          "private_bytes": 2945024,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 42.9375
+        },
+        {
+          "role": "sing_box",
+          "pid": 13260,
+          "working_set_bytes": 36290560,
+          "private_bytes": 61333504,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 524.2229252999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19136512,
+          "private_bytes": 2945024,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 42.953125
+        },
+        {
+          "role": "sing_box",
+          "pid": 13260,
+          "working_set_bytes": 36675584,
+          "private_bytes": 61685760,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 534.2811995,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19136512,
+          "private_bytes": 2945024,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 42.984375
+        },
+        {
+          "role": "sing_box",
+          "pid": 13260,
+          "working_set_bytes": 37089280,
+          "private_bytes": 62144512,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 544.3649613,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19234816,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 45.015625
+        },
+        {
+          "role": "sing_box",
+          "pid": 316,
+          "working_set_bytes": 36528128,
+          "private_bytes": 60375040,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 554.4133987,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19234816,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 45.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 316,
+          "working_set_bytes": 36835328,
+          "private_bytes": 60637184,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 564.4671357,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19234816,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 45.125
+        },
+        {
+          "role": "sing_box",
+          "pid": 316,
+          "working_set_bytes": 37122048,
+          "private_bytes": 60932096,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 574.548153,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19226624,
+          "private_bytes": 3145728,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 46.875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22492,
+          "working_set_bytes": 36634624,
+          "private_bytes": 60510208,
+          "handles": 284,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 584.6340806,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19226624,
+          "private_bytes": 3145728,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 46.96875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22492,
+          "working_set_bytes": 36982784,
+          "private_bytes": 61140992,
+          "handles": 284,
+          "threads": 15,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 594.7218553,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19226624,
+          "private_bytes": 3145728,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 46.96875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22492,
+          "working_set_bytes": 37199872,
+          "private_bytes": 61329408,
+          "handles": 284,
+          "threads": 15,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 604.802137,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3297280,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 49.03125
+        },
+        {
+          "role": "sing_box",
+          "pid": 29904,
+          "working_set_bytes": 36634624,
+          "private_bytes": 60833792,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 614.8821689,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3297280,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 49.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 29904,
+          "working_set_bytes": 37048320,
+          "private_bytes": 61243392,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 624.9315874,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3297280,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 49.109375
+        },
+        {
+          "role": "sing_box",
+          "pid": 29904,
+          "working_set_bytes": 37273600,
+          "private_bytes": 61480960,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 635.0182036,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19324928,
+          "private_bytes": 3297280,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 50.59375
+        },
+        {
+          "role": "sing_box",
+          "pid": 29904,
+          "working_set_bytes": 37490688,
+          "private_bytes": 61710336,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 645.0804058,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19288064,
+          "private_bytes": 3231744,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 53.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 32504,
+          "working_set_bytes": 36335616,
+          "private_bytes": 60600320,
+          "handles": 281,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 655.1599248,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19288064,
+          "private_bytes": 3231744,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 53.578125
+        },
+        {
+          "role": "sing_box",
+          "pid": 32504,
+          "working_set_bytes": 36794368,
+          "private_bytes": 60977152,
+          "handles": 283,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 665.2462019,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19288064,
+          "private_bytes": 3231744,
+          "handles": 201,
+          "threads": 7,
+          "cpu_seconds": 53.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 32504,
+          "working_set_bytes": 37122048,
+          "private_bytes": 61288448,
+          "handles": 283,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 675.3108678,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 55.828125
+        },
+        {
+          "role": "sing_box",
+          "pid": 18908,
+          "working_set_bytes": 36958208,
+          "private_bytes": 60698624,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 685.3950616,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 55.875
+        },
+        {
+          "role": "sing_box",
+          "pid": 18908,
+          "working_set_bytes": 37208064,
+          "private_bytes": 60960768,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 695.4395572,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 55.890625
+        },
+        {
+          "role": "sing_box",
+          "pid": 18908,
+          "working_set_bytes": 37826560,
+          "private_bytes": 61669376,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 705.4907066,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 57.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49320,
+          "working_set_bytes": 36880384,
+          "private_bytes": 60477440,
+          "handles": 278,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 715.5673714,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 57.453125
+        },
+        {
+          "role": "sing_box",
+          "pid": 49320,
+          "working_set_bytes": 37216256,
+          "private_bytes": 60780544,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 725.6425525999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3256320,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 57.453125
+        },
+        {
+          "role": "sing_box",
+          "pid": 49320,
+          "working_set_bytes": 37507072,
+          "private_bytes": 61034496,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 735.693674,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19329024,
+          "private_bytes": 3260416,
+          "handles": 201,
+          "threads": 6,
+          "cpu_seconds": 59.125
+        },
+        {
+          "role": "sing_box",
+          "pid": 29452,
+          "working_set_bytes": 36909056,
+          "private_bytes": 60665856,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 745.7769566999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 59.1875
+        },
+        {
+          "role": "sing_box",
+          "pid": 29452,
+          "working_set_bytes": 37265408,
+          "private_bytes": 60968960,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 755.8675243,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 59.21875
+        },
+        {
+          "role": "sing_box",
+          "pid": 29452,
+          "working_set_bytes": 37523456,
+          "private_bytes": 61198336,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 765.9608508,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 59.890625
+        },
+        {
+          "role": "sing_box",
+          "pid": 29452,
+          "working_set_bytes": 37797888,
+          "private_bytes": 61493248,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 776.0446168999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3174400,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 63.421875
+        },
+        {
+          "role": "sing_box",
+          "pid": 48524,
+          "working_set_bytes": 36450304,
+          "private_bytes": 60760064,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 786.1329059999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3174400,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 63.46875
+        },
+        {
+          "role": "sing_box",
+          "pid": 48524,
+          "working_set_bytes": 36728832,
+          "private_bytes": 61030400,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 796.2232031,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3174400,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 63.515625
+        },
+        {
+          "role": "sing_box",
+          "pid": 48524,
+          "working_set_bytes": 36978688,
+          "private_bytes": 61259776,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 806.2927539,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 65.4375
+        },
+        {
+          "role": "sing_box",
+          "pid": 46572,
+          "working_set_bytes": 36511744,
+          "private_bytes": 60223488,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 816.3640975999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 65.453125
+        },
+        {
+          "role": "sing_box",
+          "pid": 46572,
+          "working_set_bytes": 36847616,
+          "private_bytes": 60583936,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 826.433316,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 65.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 46572,
+          "working_set_bytes": 37072896,
+          "private_bytes": 60764160,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 836.4948587,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 67.3125
+        },
+        {
+          "role": "sing_box",
+          "pid": 22012,
+          "working_set_bytes": 36458496,
+          "private_bytes": 59793408,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 846.5808078,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 67.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22012,
+          "working_set_bytes": 36925440,
+          "private_bytes": 60284928,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 856.6504213999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 67.359375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22012,
+          "working_set_bytes": 37359616,
+          "private_bytes": 60694528,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 866.7285664,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 69.109375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22012,
+          "working_set_bytes": 37593088,
+          "private_bytes": 60895232,
+          "handles": 283,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 876.8005101,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 69.1875
+        },
+        {
+          "role": "sing_box",
+          "pid": 46564,
+          "working_set_bytes": 36978688,
+          "private_bytes": 60653568,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 886.8516887,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 69.234375
+        },
+        {
+          "role": "sing_box",
+          "pid": 46564,
+          "working_set_bytes": 37408768,
+          "private_bytes": 61071360,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 896.9412021999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 69.265625
+        },
+        {
+          "role": "sing_box",
+          "pid": 46564,
+          "working_set_bytes": 37650432,
+          "private_bytes": 61325312,
+          "handles": 281,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 907.018751,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3182592,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 73.015625
+        },
+        {
+          "role": "sing_box",
+          "pid": 42596,
+          "working_set_bytes": 36089856,
+          "private_bytes": 60575744,
+          "handles": 288,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 917.093007,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3182592,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 73.09375
+        },
+        {
+          "role": "sing_box",
+          "pid": 42596,
+          "working_set_bytes": 36524032,
+          "private_bytes": 61247488,
+          "handles": 288,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 927.1493385,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3182592,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 73.109375
+        },
+        {
+          "role": "sing_box",
+          "pid": 42596,
+          "working_set_bytes": 36880384,
+          "private_bytes": 61657088,
+          "handles": 288,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 937.2200514,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 75.015625
+        },
+        {
+          "role": "sing_box",
+          "pid": 38496,
+          "working_set_bytes": 36331520,
+          "private_bytes": 59633664,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 947.2992895,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 75.09375
+        },
+        {
+          "role": "sing_box",
+          "pid": 38496,
+          "working_set_bytes": 36687872,
+          "private_bytes": 59953152,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 957.3729058,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 75.109375
+        },
+        {
+          "role": "sing_box",
+          "pid": 38496,
+          "working_set_bytes": 36986880,
+          "private_bytes": 60182528,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 967.4447928,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 77.28125
+        },
+        {
+          "role": "sing_box",
+          "pid": 2188,
+          "working_set_bytes": 36585472,
+          "private_bytes": 59932672,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 977.5282361999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 77.328125
+        },
+        {
+          "role": "sing_box",
+          "pid": 2188,
+          "working_set_bytes": 37117952,
+          "private_bytes": 60530688,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 987.5897001,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 77.375
+        },
+        {
+          "role": "sing_box",
+          "pid": 2188,
+          "working_set_bytes": 37330944,
+          "private_bytes": 60694528,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 997.6703471999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19267584,
+          "private_bytes": 3186688,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 78.359375
+        },
+        {
+          "role": "sing_box",
+          "pid": 2188,
+          "working_set_bytes": 37502976,
+          "private_bytes": 60858368,
+          "handles": 288,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1007.7494753999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 79.578125
+        },
+        {
+          "role": "sing_box",
+          "pid": 49664,
+          "working_set_bytes": 37101568,
+          "private_bytes": 60878848,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1017.822403,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 79.59375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49664,
+          "working_set_bytes": 37347328,
+          "private_bytes": 61116416,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1027.9074088,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 79.609375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49664,
+          "working_set_bytes": 37732352,
+          "private_bytes": 61566976,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1037.989294,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3149824,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 83.296875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22196,
+          "working_set_bytes": 36446208,
+          "private_bytes": 61181952,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1048.0448625,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3149824,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 83.328125
+        },
+        {
+          "role": "sing_box",
+          "pid": 22196,
+          "working_set_bytes": 36753408,
+          "private_bytes": 61476864,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1058.1037938,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3149824,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 83.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 22196,
+          "working_set_bytes": 37076992,
+          "private_bytes": 61796352,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1068.1795137,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 85.390625
+        },
+        {
+          "role": "sing_box",
+          "pid": 30316,
+          "working_set_bytes": 36577280,
+          "private_bytes": 60633088,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1078.2537654999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3223552,
+          "handles": 200,
+          "threads": 5,
+          "cpu_seconds": 85.5
+        },
+        {
+          "role": "sing_box",
+          "pid": 30316,
+          "working_set_bytes": 36995072,
+          "private_bytes": 60919808,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1088.3323004,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 85.546875
+        },
+        {
+          "role": "sing_box",
+          "pid": 30316,
+          "working_set_bytes": 37527552,
+          "private_bytes": 61509632,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1098.4127810999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 87.25
+        },
+        {
+          "role": "sing_box",
+          "pid": 3452,
+          "working_set_bytes": 36585472,
+          "private_bytes": 59981824,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1108.4809609,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 87.25
+        },
+        {
+          "role": "sing_box",
+          "pid": 3452,
+          "working_set_bytes": 37109760,
+          "private_bytes": 60772352,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1118.5545603,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 87.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 3452,
+          "working_set_bytes": 37478400,
+          "private_bytes": 61157376,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1128.6044202,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19263488,
+          "private_bytes": 3186688,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 87.875
+        },
+        {
+          "role": "sing_box",
+          "pid": 3452,
+          "working_set_bytes": 37822464,
+          "private_bytes": 61403136,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1138.656994,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 88.71875
+        },
+        {
+          "role": "sing_box",
+          "pid": 23084,
+          "working_set_bytes": 37036032,
+          "private_bytes": 60506112,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1148.7049,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 88.78125
+        },
+        {
+          "role": "sing_box",
+          "pid": 23084,
+          "working_set_bytes": 37425152,
+          "private_bytes": 61251584,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1158.7745879,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 88.828125
+        },
+        {
+          "role": "sing_box",
+          "pid": 23084,
+          "working_set_bytes": 37670912,
+          "private_bytes": 61353984,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1168.8515327999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 92.3125
+        },
+        {
+          "role": "sing_box",
+          "pid": 10640,
+          "working_set_bytes": 36061184,
+          "private_bytes": 59932672,
+          "handles": 276,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1178.9246941,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 92.34375
+        },
+        {
+          "role": "sing_box",
+          "pid": 10640,
+          "working_set_bytes": 36425728,
+          "private_bytes": 60284928,
+          "handles": 276,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1188.9970578999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 92.375
+        },
+        {
+          "role": "sing_box",
+          "pid": 10640,
+          "working_set_bytes": 36794368,
+          "private_bytes": 60645376,
+          "handles": 276,
+          "threads": 15,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1199.0771814,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 94.546875
+        },
+        {
+          "role": "sing_box",
+          "pid": 13620,
+          "working_set_bytes": 36392960,
+          "private_bytes": 60420096,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1209.1358821,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 94.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 13620,
+          "working_set_bytes": 36687872,
+          "private_bytes": 60665856,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1219.1955255999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 94.703125
+        },
+        {
+          "role": "sing_box",
+          "pid": 13620,
+          "working_set_bytes": 37019648,
+          "private_bytes": 61018112,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1229.2873276,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 97.03125
+        },
+        {
+          "role": "sing_box",
+          "pid": 8396,
+          "working_set_bytes": 36626432,
+          "private_bytes": 60141568,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1239.3665737,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 97.046875
+        },
+        {
+          "role": "sing_box",
+          "pid": 8396,
+          "working_set_bytes": 37183488,
+          "private_bytes": 60981248,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1249.4342231,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19255296,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 97.078125
+        },
+        {
+          "role": "sing_box",
+          "pid": 8396,
+          "working_set_bytes": 37625856,
+          "private_bytes": 61464576,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1259.4988071999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19267584,
+          "private_bytes": 3186688,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 97.078125
+        },
+        {
+          "role": "sing_box",
+          "pid": 8396,
+          "working_set_bytes": 37785600,
+          "private_bytes": 61538304,
+          "handles": 283,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1269.5770576999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 98.6875
+        },
+        {
+          "role": "sing_box",
+          "pid": 31516,
+          "working_set_bytes": 37109760,
+          "private_bytes": 60727296,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1279.6611036,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 98.734375
+        },
+        {
+          "role": "sing_box",
+          "pid": 31516,
+          "working_set_bytes": 37384192,
+          "private_bytes": 60948480,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1289.7425266,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 98.828125
+        },
+        {
+          "role": "sing_box",
+          "pid": 31516,
+          "working_set_bytes": 37646336,
+          "private_bytes": 61169664,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1299.7924506,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 102.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 45908,
+          "working_set_bytes": 36044800,
+          "private_bytes": 60243968,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1309.8779474,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 102.53125
+        },
+        {
+          "role": "sing_box",
+          "pid": 45908,
+          "working_set_bytes": 36552704,
+          "private_bytes": 60973056,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1319.9462386,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19251200,
+          "private_bytes": 3153920,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 102.640625
+        },
+        {
+          "role": "sing_box",
+          "pid": 45908,
+          "working_set_bytes": 36884480,
+          "private_bytes": 61227008,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1330.0203927,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 104.9375
+        },
+        {
+          "role": "sing_box",
+          "pid": 25628,
+          "working_set_bytes": 36397056,
+          "private_bytes": 60395520,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1340.104766,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 104.984375
+        },
+        {
+          "role": "sing_box",
+          "pid": 25628,
+          "working_set_bytes": 36925440,
+          "private_bytes": 60944384,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1350.1975204999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19304448,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 105
+        },
+        {
+          "role": "sing_box",
+          "pid": 25628,
+          "working_set_bytes": 37203968,
+          "private_bytes": 61231104,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1360.2838646,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 106.46875
+        },
+        {
+          "role": "sing_box",
+          "pid": 25628,
+          "working_set_bytes": 37392384,
+          "private_bytes": 61632512,
+          "handles": 281,
+          "threads": 16,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1370.3461826,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 107.015625
+        },
+        {
+          "role": "sing_box",
+          "pid": 35800,
+          "working_set_bytes": 36679680,
+          "private_bytes": 60489728,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1380.4183977999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 107.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 35800,
+          "working_set_bytes": 36990976,
+          "private_bytes": 60997632,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1390.4702468,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 107.15625
+        },
+        {
+          "role": "sing_box",
+          "pid": 35800,
+          "working_set_bytes": 37314560,
+          "private_bytes": 61292544,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.140625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1400.5287199,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 108.96875
+        },
+        {
+          "role": "sing_box",
+          "pid": 22048,
+          "working_set_bytes": 37146624,
+          "private_bytes": 61087744,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1410.6117911,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 109.03125
+        },
+        {
+          "role": "sing_box",
+          "pid": 22048,
+          "working_set_bytes": 37449728,
+          "private_bytes": 61366272,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1420.6694899,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 109.078125
+        },
+        {
+          "role": "sing_box",
+          "pid": 22048,
+          "working_set_bytes": 37728256,
+          "private_bytes": 61644800,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1430.7206070999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 113.03125
+        },
+        {
+          "role": "sing_box",
+          "pid": 6452,
+          "working_set_bytes": 35893248,
+          "private_bytes": 59924480,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1440.7747723,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 113.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 6452,
+          "working_set_bytes": 36261888,
+          "private_bytes": 60481536,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1450.8326029999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 113.09375
+        },
+        {
+          "role": "sing_box",
+          "pid": 6452,
+          "working_set_bytes": 36556800,
+          "private_bytes": 60801024,
+          "handles": 289,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1460.9137928999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 114.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 33772,
+          "working_set_bytes": 36388864,
+          "private_bytes": 60698624,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1470.9986125,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 114.484375
+        },
+        {
+          "role": "sing_box",
+          "pid": 33772,
+          "working_set_bytes": 36757504,
+          "private_bytes": 61091840,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1481.0447746,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 114.515625
+        },
+        {
+          "role": "sing_box",
+          "pid": 33772,
+          "working_set_bytes": 37130240,
+          "private_bytes": 61386752,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1491.1235302999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19312640,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 115.53125
+        },
+        {
+          "role": "sing_box",
+          "pid": 33772,
+          "working_set_bytes": 37367808,
+          "private_bytes": 61595648,
+          "handles": 284,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1501.1951772999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 116.796875
+        },
+        {
+          "role": "sing_box",
+          "pid": 37836,
+          "working_set_bytes": 36675584,
+          "private_bytes": 59850752,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.03125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1511.2600877999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 116.84375
+        },
+        {
+          "role": "sing_box",
+          "pid": 37836,
+          "working_set_bytes": 36962304,
+          "private_bytes": 60096512,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1521.3220777,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19259392,
+          "private_bytes": 3158016,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 116.90625
+        },
+        {
+          "role": "sing_box",
+          "pid": 37836,
+          "working_set_bytes": 37240832,
+          "private_bytes": 60383232,
+          "handles": 285,
+          "threads": 16,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1531.4006792,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 119.140625
+        },
+        {
+          "role": "sing_box",
+          "pid": 27144,
+          "working_set_bytes": 37003264,
+          "private_bytes": 61042688,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1541.4588609999998,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 119.203125
+        },
+        {
+          "role": "sing_box",
+          "pid": 27144,
+          "working_set_bytes": 37265408,
+          "private_bytes": 61296640,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1551.5448167,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19308544,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 119.203125
+        },
+        {
+          "role": "sing_box",
+          "pid": 27144,
+          "working_set_bytes": 37584896,
+          "private_bytes": 61624320,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1561.6036864999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3141632,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 122.890625
+        },
+        {
+          "role": "sing_box",
+          "pid": 5568,
+          "working_set_bytes": 35897344,
+          "private_bytes": 60682240,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1571.69141,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3141632,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 122.984375
+        },
+        {
+          "role": "sing_box",
+          "pid": 5568,
+          "working_set_bytes": 36311040,
+          "private_bytes": 61108224,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1581.7709378,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19243008,
+          "private_bytes": 3141632,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 123.03125
+        },
+        {
+          "role": "sing_box",
+          "pid": 5568,
+          "working_set_bytes": 36577280,
+          "private_bytes": 61378560,
+          "handles": 287,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1591.8608247,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 124.75
+        },
+        {
+          "role": "sing_box",
+          "pid": 30444,
+          "working_set_bytes": 36089856,
+          "private_bytes": 60162048,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1601.9419864,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 124.8125
+        },
+        {
+          "role": "sing_box",
+          "pid": 30444,
+          "working_set_bytes": 36548608,
+          "private_bytes": 60645376,
+          "handles": 283,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1612.0287113,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 124.875
+        },
+        {
+          "role": "sing_box",
+          "pid": 30444,
+          "working_set_bytes": 36978688,
+          "private_bytes": 61087744,
+          "handles": 283,
+          "threads": 15,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1622.1453061,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 125.09375
+        },
+        {
+          "role": "sing_box",
+          "pid": 30444,
+          "working_set_bytes": 37257216,
+          "private_bytes": 61403136,
+          "handles": 282,
+          "threads": 15,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1632.2062329999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 127.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 19100,
+          "working_set_bytes": 36724736,
+          "private_bytes": 60444672,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1642.2556263,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 127.09375
+        },
+        {
+          "role": "sing_box",
+          "pid": 19100,
+          "working_set_bytes": 37060608,
+          "private_bytes": 60805120,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1652.3297456,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 127.125
+        },
+        {
+          "role": "sing_box",
+          "pid": 19100,
+          "working_set_bytes": 37384192,
+          "private_bytes": 61091840,
+          "handles": 282,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1662.4036727,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 129.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 17524,
+          "working_set_bytes": 37085184,
+          "private_bytes": 60436480,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1672.4553981,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 129.0625
+        },
+        {
+          "role": "sing_box",
+          "pid": 17524,
+          "working_set_bytes": 37404672,
+          "private_bytes": 60715008,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1682.5092898999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 129.140625
+        },
+        {
+          "role": "sing_box",
+          "pid": 17524,
+          "working_set_bytes": 37855232,
+          "private_bytes": 61157376,
+          "handles": 281,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1692.5825355,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 133.59375
+        },
+        {
+          "role": "sing_box",
+          "pid": 4336,
+          "working_set_bytes": 35762176,
+          "private_bytes": 60190720,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1702.6608939,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 133.625
+        },
+        {
+          "role": "sing_box",
+          "pid": 4336,
+          "working_set_bytes": 36270080,
+          "private_bytes": 60731392,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1712.7493476,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19271680,
+          "private_bytes": 3170304,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 133.6875
+        },
+        {
+          "role": "sing_box",
+          "pid": 4336,
+          "working_set_bytes": 36524032,
+          "private_bytes": 60952576,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1722.8415714999999,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19283968,
+          "private_bytes": 3190784,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 134.390625
+        },
+        {
+          "role": "sing_box",
+          "pid": 4336,
+          "working_set_bytes": 36855808,
+          "private_bytes": 61169664,
+          "handles": 279,
+          "threads": 15,
+          "cpu_seconds": 0.125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1732.898379,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 135.46875
+        },
+        {
+          "role": "sing_box",
+          "pid": 18172,
+          "working_set_bytes": 36794368,
+          "private_bytes": 60694528,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.0625
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1742.9758186,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 135.53125
+        },
+        {
+          "role": "sing_box",
+          "pid": 18172,
+          "working_set_bytes": 37113856,
+          "private_bytes": 61022208,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1753.0636716,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19316736,
+          "private_bytes": 3219456,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 135.546875
+        },
+        {
+          "role": "sing_box",
+          "pid": 18172,
+          "working_set_bytes": 37404672,
+          "private_bytes": 61251584,
+          "handles": 280,
+          "threads": 15,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1763.1418769,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19267584,
+          "private_bytes": 3166208,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 137.15625
+        },
+        {
+          "role": "sing_box",
+          "pid": 15948,
+          "working_set_bytes": 36995072,
+          "private_bytes": 60620800,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1773.2111986,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19267584,
+          "private_bytes": 3166208,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 137.21875
+        },
+        {
+          "role": "sing_box",
+          "pid": 15948,
+          "working_set_bytes": 37322752,
+          "private_bytes": 60948480,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.09375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1783.2885849,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19267584,
+          "private_bytes": 3166208,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 137.234375
+        },
+        {
+          "role": "sing_box",
+          "pid": 15948,
+          "working_set_bytes": 37662720,
+          "private_bytes": 61243392,
+          "handles": 280,
+          "threads": 16,
+          "cpu_seconds": 0.109375
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1793.3364568,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 138.90625
+        },
+        {
+          "role": "sing_box",
+          "pid": 49940,
+          "working_set_bytes": 37097472,
+          "private_bytes": 60862464,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.046875
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 1803.4033917,
+      "processes": [
+        {
+          "role": "test_host",
+          "pid": 45332,
+          "working_set_bytes": 19320832,
+          "private_bytes": 3223552,
+          "handles": 201,
+          "threads": 5,
+          "cpu_seconds": 138.984375
+        },
+        {
+          "role": "sing_box",
+          "pid": 49940,
+          "working_set_bytes": 37511168,
+          "private_bytes": 61468672,
+          "handles": 286,
+          "threads": 16,
+          "cpu_seconds": 0.078125
+        }
+      ]
+    }
+  ]
+}

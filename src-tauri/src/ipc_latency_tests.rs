@@ -1,11 +1,11 @@
 use crate::{
-    configuration_service::{ConfigurationService, ProfileInput},
     credentials::{CredentialStore, ProxyCredential},
     error::AppError,
     latency_tasks::{LatencyExecutor, LatencyInput, LatencyResult, LatencyTaskRegistry},
     models::{ProxyProtocol, RuntimeMode},
     runtime::{ManagedRuntime, RuntimeCoordinator},
     runtime_session::SessionLease,
+    services::{ApplicationService, ProfileInput},
     startup::SystemStartupAdapter,
     store::{ConfigurationStore, SqliteConfigurationStore},
 };
@@ -83,7 +83,7 @@ fn actual_task_ipc_subscribes_reuses_reports_and_releases() {
     .unwrap();
     assert_eq!(runtime.snapshot().configuration_revision, 0);
     let service = Arc::new(
-        ConfigurationService::new(
+        ApplicationService::new(
             Box::new(store),
             Box::new(Credentials),
             Box::new(SystemStartupAdapter),

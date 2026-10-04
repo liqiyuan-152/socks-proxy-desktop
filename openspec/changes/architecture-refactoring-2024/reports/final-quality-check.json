@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "date": "2026-10-04",
+  "platform": "macOS",
+  "command": "pnpm check",
+  "exit_code": 0,
+  "node_version": "24.15.0",
+  "pnpm_version": "10.33.0",
+  "frontend_tests_passed": 157,
+  "tool_tests_passed": 10,
+  "lint_warnings": 0,
+  "checks": [
+    "oxfmt",
+    "oxlint",
+    "eslint",
+    "stylelint",
+    "tsc",
+    "vitest",
+    "node tools tests",
+    "cargo fmt",
+    "cargo clippy --all-targets -- -D warnings",
+    "IPC contract"
+  ],
+  "log": "final-quality-check.txt",
+  "log_sha256": "7b41eb0efa8c65299bc3847c354b98b1157502850384f217acbf2af693fea7bb",
+  "changed_source_sha256": {
+    "scripts/e2e/webdriver.mjs": "c94bd0fac06e332cc41562c252e010d51362f1d6c59ca7c258733b297cf068a6",
+    "scripts/e2e/runtime-scenarios.mjs": "04e4a5700319c4c823a6ba17c75642e3d6038f4d958280ea7c320fddc7ad9ff2",
+    "scripts/e2e/scenarios.mjs": "c3ac61c1c32ddf255144152d014493344972b863d17a3db13994b1b5c8e36cf6"
+  },
+  "limits": [
+    "此命令没有运行完整 Rust 测试套件，完整 Rust 回归有独立证据。",
+    "此命令不是 Windows 原生 E2E；当前原生套件仍等待第二次人工保存。",
+    "此次源码变更仅将 ESLint 抑制注释改为 Oxlint 指令，原生在运行脚本没有改动。"
+  ]
+}

@@ -52,6 +52,7 @@ fn ownership_error() -> AppError {
         code: "startup_ownership".into(),
         message: "开机启动项已由外部修改，请保留现场并检查设置".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

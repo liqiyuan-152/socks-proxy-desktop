@@ -76,6 +76,7 @@ fn job_error() -> AppError {
         code: "runtime_error".into(),
         message: "无法保护代理内核的异常退出清理".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

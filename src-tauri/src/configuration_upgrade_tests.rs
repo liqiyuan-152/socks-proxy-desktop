@@ -58,7 +58,7 @@ fn previous_database_and_matching_credentials_are_required_for_safe_backout() {
     )
     .unwrap()
     .with_configuration_revision(store.recovery_revision().unwrap());
-    let service = ConfigurationService::new(
+    let service = ApplicationService::new(
         Box::new(store.clone()),
         Box::new(Credentials(root.join("keyring"))),
         Box::new(Startup(root.join("startup.json"))),

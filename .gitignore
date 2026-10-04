@@ -33,3 +33,10 @@ src-tauri/resources/sing-box/
 *.sw?
 .oxfmt-cache
 .codegraph
+
+# Local verification reports
+coverage/
+rust-coverage.lcov
+
+# Local native E2E drivers and reports
+.e2e-tools/

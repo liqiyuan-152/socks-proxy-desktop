@@ -1,0 +1,154 @@
+{
+  "status": "passed",
+  "platform": "Windows x64",
+  "application_identifier": "com.socksproxy.desktop.architecture-e2e",
+  "application_sha256": "5cb02795c27e0a4a43486290fbf827ef3ff54056903248f61ca21e55cf63da4b",
+  "user_proxy_restored": true,
+  "elapsed_seconds": 1801.5553946999999,
+  "probes": 1262,
+  "transitions": 59,
+  "metadata_saves": 29,
+  "resource_samples": 180,
+  "application_pids": [47404],
+  "max_runtime_directories": 1,
+  "runtime_directories_after_stop": 0,
+  "core_pids_after_stop": [],
+  "cases": [
+    {
+      "name": "\u539f\u751f\u65e0\u6548\u914d\u7f6e\u53cd\u9988\u4e0e\u4fdd\u7559\u8f93\u5165",
+      "status": "passed",
+      "screenshot": "case-1.png"
+    },
+    {
+      "name": "\u539f\u751f\u5feb\u901f\u6a21\u5f0f\u9009\u62e9\u3001\u9875\u9762\u5207\u6362\u4e0e\u914d\u7f6e\u4fdd\u5b58\u540e\u72b6\u6001\u4e00\u81f4",
+      "status": "passed",
+      "screenshot": "case-2.png"
+    },
+    {
+      "name": "\u539f\u751f\u5185\u6838\u5d29\u6e83\u63d0\u793a\u4e0e\u81ea\u52a8\u6062\u590d\u771f\u5b9e\u7528\u6237\u7f51\u7edc",
+      "status": "passed",
+      "screenshot": "case-3.png"
+    },
+    {
+      "name": "\u539f\u751f\u624b\u52a8\u91cd\u8bd5\u521b\u5efa\u5065\u5eb7\u7684\u65b0\u5185\u6838\u4f1a\u8bdd",
+      "status": "passed",
+      "screenshot": "case-4.png"
+    },
+    {
+      "name": "\u539f\u751f\u5e94\u7528\u4e0e WebView \u6301\u7eed\u8fd0\u884c\u3001\u53cc\u5411\u96a7\u9053\u3001\u6a21\u5f0f/\u5143\u6570\u636e\u5207\u6362\u53ca\u8d44\u6e90\u91c7\u6837",
+      "status": "passed",
+      "screenshot": "case-5.png"
+    },
+    {
+      "name": "4.5.5 \u4ece\u539f\u751f\u8fd0\u884c\u754c\u9762\u6062\u590d\u7f51\u7edc\u5e76\u5b8c\u6574\u8fd8\u539f\u7528\u6237\u7cfb\u7edf\u4ee3\u7406",
+      "status": "passed",
+      "screenshot": "case-6.png"
+    }
+  ],
+  "resources": {
+    "application": {
+      "private_bytes": {
+        "first": 216190976,
+        "last": 216662016,
+        "min": 216088576,
+        "max": 216702976,
+        "median": 216571904.0
+      },
+      "working_set_bytes": {
+        "first": 257101824,
+        "last": 34062336,
+        "min": 33914880,
+        "max": 257183744,
+        "median": 52436992.0
+      },
+      "handles": {
+        "first": 603,
+        "last": 591,
+        "min": 591,
+        "max": 603,
+        "median": 593.0
+      },
+      "threads": {
+        "first": 50,
+        "last": 40,
+        "min": 40,
+        "max": 50,
+        "median": 41.0
+      }
+    },
+    "webview_or_child": {
+      "private_bytes": {
+        "first": 322818048,
+        "last": 303431680,
+        "min": 264302592,
+        "max": 335618048,
+        "median": 293552128.0
+      },
+      "working_set_bytes": {
+        "first": 500371456,
+        "last": 253530112,
+        "min": 233623552,
+        "max": 500371456,
+        "median": 270768128.0
+      },
+      "handles": {
+        "first": 3312,
+        "last": 3300,
+        "min": 3280,
+        "max": 3360,
+        "median": 3297.0
+      },
+      "threads": {
+        "first": 195,
+        "last": 176,
+        "min": 173,
+        "max": 195,
+        "median": 176.0
+      }
+    },
+    "core": {
+      "private_bytes": {
+        "first": 62291968,
+        "last": 61640704,
+        "min": 60145664,
+        "max": 64090112,
+        "median": 61704192.0
+      },
+      "working_set_bytes": {
+        "first": 38105088,
+        "last": 40415232,
+        "min": 37756928,
+        "max": 42393600,
+        "median": 39995392.0
+      },
+      "handles": {
+        "first": 289,
+        "last": 250,
+        "min": 250,
+        "max": 298,
+        "median": 278.5
+      },
+      "threads": {
+        "first": 20,
+        "last": 15,
+        "min": 15,
+        "max": 21,
+        "median": 18.0
+      }
+    }
+  },
+  "source_sha256": {
+    "scripts/e2e/runtime-scenarios.mjs": "214c610aaef0c7e19ce67529b6637846780a931b8faa39f2a6b011181e08076a",
+    "scripts/e2e/native-runtime-tools.mjs": "931c4a1ac5970155fc75c57d0e2735a51fe28044459ec3027df50da194b219da",
+    "scripts/inspect-native-e2e.ps1": "318a58061af543397dd15b4a8ad5191f23f07dcde6048487ce2d01e58b84d328",
+    "scripts/e2e/run-windows.mjs": "2859584bcd8a98d9fb750e131fb0ca30ba6c14f56739d5285bcb22bf0917960c",
+    "scripts/run-native-e2e.ps1": "7fcfe832994d507d5b203706f59b9eeee0f96fc7dee78a755884e22bc24442dc"
+  },
+  "raw_report_sha256": "ef1b20bfa09dd6339a5993abf81558a6abec86a1b4fab5740bc71ae7699ce72b",
+  "limits": [
+    "Windows debug isolated application; synthetic localhost upstream; not public network validation",
+    "30 minute observation with mode switches and metadata saves; not proof of absence of all memory leaks",
+    "Core abrupt exit and retry; not desktop host crash; user proxy original values remain in remote temporary directory",
+    "Resources aggregate each role within the application process tree; shared external OS processes are excluded"
+  ]
+}

@@ -14,7 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useBackend } from "@/lib/backend-state";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 import { RuntimeFeedback } from "@/components/RuntimeFeedback";
 import { proxyModes, type ProxyMode } from "@/lib/proxy-mode";
 
@@ -38,7 +39,18 @@ export default function StatusDashboard() {
     pending,
     selectedMode,
     switchMode,
-  } = useBackend();
+  } = useBackendStore(
+    useShallow((state) => ({
+      capabilities: state.capabilities,
+      snapshot: state.snapshot,
+      profiles: state.profiles,
+      connections: state.connections,
+      loading: state.loading,
+      pending: state.pending,
+      selectedMode: state.selectedMode,
+      switchMode: state.switchMode,
+    })),
+  );
   const navigate = useNavigate();
   const profile = profiles.find((item) => item.id === snapshot?.active_profile_id);
 

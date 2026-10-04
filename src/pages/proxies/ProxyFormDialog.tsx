@@ -1,3 +1,5 @@
+import type { AppError } from "@/lib/generated/ipc";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import type { Dispatch, SetStateAction } from "react";
 import { X } from "lucide-react";
 import { Field } from "@/components/forms/Field";
@@ -26,8 +28,9 @@ type ProxyFormDialogProps = {
   onOpenChange: (open: boolean) => void;
   isEditing: boolean;
   busy: boolean;
+  error: AppError | null;
   credentialLoading: boolean;
-  credentialError: string | null;
+  credentialError: AppError | null;
   onRetryCredential: () => void;
   draft: ProxyDraft;
   setDraft: Dispatch<SetStateAction<ProxyDraft>>;
@@ -43,6 +46,7 @@ export function ProxyFormDialog({
   onOpenChange,
   isEditing,
   busy,
+  error,
   credentialLoading,
   credentialError,
   onRetryCredential,
@@ -78,6 +82,7 @@ export function ProxyFormDialog({
           </DialogHeader>
 
           <div className="space-y-5 px-6 py-6 sm:px-7">
+            {error && <ErrorAlert error={error} />}
             {!isEditing && (
               <ProxyLinkInput
                 value={proxyLink}
@@ -151,12 +156,11 @@ export function ProxyFormDialog({
               </p>
             )}
             {credentialError && (
-              <div role="alert" className="flex items-center gap-3 text-sm text-destructive">
-                <span>读取认证凭据失败：{credentialError}</span>
-                <Button type="button" variant="outline" size="sm" onClick={onRetryCredential}>
-                  重试
-                </Button>
-              </div>
+              <ErrorAlert
+                error={credentialError}
+                title="读取认证凭据失败"
+                onRetry={onRetryCredential}
+              />
             )}
           </div>
 

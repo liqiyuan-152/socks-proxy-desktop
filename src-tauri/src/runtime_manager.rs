@@ -11,6 +11,21 @@ pub struct ManagedRuntime {
 }
 
 impl ManagedRuntime {
+    /// 获取独占会话所有权并使用注入的后端创建运行时。
+    pub fn new(
+        configuration: PersistedConfiguration,
+        backend: Box<dyn RuntimeBackend>,
+        session_key: &str,
+        selected_mode: RuntimeMode,
+    ) -> Result<Self, AppError> {
+        Self::from_lease(
+            configuration,
+            backend,
+            SessionLease::acquire(session_key)?,
+            selected_mode,
+        )
+    }
+
     pub(crate) fn from_lease(
         configuration: PersistedConfiguration,
         backend: Box<dyn RuntimeBackend>,
@@ -32,12 +47,9 @@ impl ManagedRuntime {
                 credential_versions,
                 selected_mode,
                 desired_mode: RuntimeMode::Direct,
-                applied_mode: None,
-                phase: RuntimePhase::Stopped,
-                session_health: SessionHealth::Inactive,
+                node: RuntimeStateNode::default(),
+                history: history::TransitionHistory::default(),
                 last_operation: OperationResult::default(),
-                session: None,
-                started_at: None,
                 last_error: None,
                 pending: None,
                 pending_settings: None,
@@ -47,6 +59,15 @@ impl ManagedRuntime {
             backend,
             _ownership: ownership,
         })
+    }
+
+    /// 最近 128 次脱敏状态转换，按时间顺序返回供诊断使用。
+    pub fn transition_history(&self) -> Vec<TransitionRecord> {
+        self.state
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner())
+            .history
+            .snapshot()
     }
 
     pub fn subscribe(&self) -> tokio::sync::mpsc::UnboundedReceiver<RuntimeSnapshot> {
@@ -81,8 +102,11 @@ impl ManagedRuntime {
             .state
             .lock()
             .unwrap_or_else(|poison| poison.into_inner());
-        state.phase = RuntimePhase::Failed;
-        state.session_health = SessionHealth::RecoveryRequired;
+        state
+            .apply_event(RuntimeEvent::RecoveryBlocked {
+                error: message.clone(),
+            })
+            .expect("startup recovery has no active session");
         state.begin_operation();
         state.fail_operation(message);
         self.publish(state.snapshot());
@@ -94,6 +118,10 @@ impl ManagedRuntime {
 }
 
 impl RuntimeCoordinator for ManagedRuntime {
+    fn transition_history(&self) -> Vec<TransitionRecord> {
+        ManagedRuntime::transition_history(self)
+    }
+
     fn report_configuration_recovery_issue(&self, error: &AppError) {
         let mut state = self
             .state
@@ -102,9 +130,12 @@ impl RuntimeCoordinator for ManagedRuntime {
         state.begin_operation();
         state.fail_operation(error.message.clone());
         // Continue watching an existing healthy session despite cleanup errors.
-        if state.session.is_none() {
-            state.session_health = SessionHealth::RecoveryRequired;
-            state.phase = RuntimePhase::Failed;
+        if state.session().is_none() {
+            state
+                .apply_event(RuntimeEvent::RecoveryBlocked {
+                    error: error.message.clone(),
+                })
+                .expect("configuration recovery has no active session");
         }
         self.publish(state.snapshot());
     }
@@ -195,39 +226,23 @@ impl RuntimeCoordinator for ManagedRuntime {
             state.credential_versions = configuration.credential_versions;
             state.configuration_revision += 1;
             state.revision += 1;
-            state.phase = match state.session_health {
-                SessionHealth::Healthy => RuntimePhase::Running,
-                SessionHealth::Inactive => RuntimePhase::Stopped,
-                SessionHealth::Exited | SessionHealth::RecoveryRequired => RuntimePhase::Failed,
-            };
+            state
+                .apply_event(RuntimeEvent::MetadataCommitted)
+                .expect("metadata commit preserves a stable lifecycle");
             state.complete_operation();
             self.publish(state.snapshot());
         }
         if let Some(pending) = state.pending.take() {
-            self.backend.confirm_transition(state.session.as_ref());
+            self.backend.confirm_transition(state.session());
             state.configuration = pending.configuration;
             state.credential_versions = pending.credential_versions;
             state.runtime_plan_revision = pending.runtime_plan_revision;
             state.configuration_revision += 1;
             state.revision = pending.revision;
             state.desired_mode = pending.mode;
-            state.applied_mode = if pending.explicit_stop {
-                None
-            } else {
-                Some(pending.mode)
-            };
-            state.phase = if pending.mode == RuntimeMode::Direct {
-                RuntimePhase::Stopped
-            } else {
-                RuntimePhase::Running
-            };
-            state.started_at = pending.started_at;
-            state.session = pending.session;
-            state.session_health = if state.session.is_some() {
-                SessionHealth::Healthy
-            } else {
-                SessionHealth::Inactive
-            };
+            state
+                .commit_session(pending.explicit_stop)
+                .expect("prepared candidate can be committed");
             state.complete_operation();
             self.publish(state.snapshot());
         }
@@ -248,16 +263,18 @@ impl RuntimeCoordinator for ManagedRuntime {
             self.publish(state.snapshot());
             return Ok(state.snapshot());
         }
-        if let Some(pending) = before.pending {
+        if let Some(pending) = before.pending.as_ref() {
             if before.configuration != *previous || before.revision != snapshot.revision {
                 return Err(AppError::storage("待回滚的配置修订不一致"));
             }
             self.backend
-                .revert_transition(pending.session.as_ref(), before.session.as_ref())?;
+                .revert_transition(pending.session.as_ref(), before.session())?;
             let mut state = self.state.lock().map_err(|_| runtime_error())?;
             state.pending = None;
             state.desired_mode = snapshot.desired_mode;
-            state.phase = snapshot.phase;
+            state.apply_event(RuntimeEvent::Rollback {
+                previous: Box::new(pending.previous_node.clone()),
+            })?;
             state.fail_operation("配置保存失败，已恢复先前运行时".into());
             self.publish(state.snapshot());
             return Ok(state.snapshot());
@@ -274,11 +291,32 @@ impl RuntimeCoordinator for ManagedRuntime {
         state.configuration_revision = snapshot.configuration_revision;
         state.runtime_plan_revision = snapshot.runtime_plan_revision;
         state.desired_mode = snapshot.desired_mode;
-        state.applied_mode = snapshot.applied_mode;
-        state.phase = snapshot.phase;
-        state.started_at = snapshot
+        let restored_start = snapshot
             .runtime_uptime_ms
             .and_then(|elapsed| Instant::now().checked_sub(Duration::from_millis(elapsed)));
+        let active = state.session().cloned().map(|session| ActiveSession {
+            session,
+            mode,
+            started_at: restored_start.unwrap_or_else(Instant::now),
+        });
+        let restored = match snapshot.phase {
+            RuntimePhase::Running => RuntimeStateNode::Running {
+                active: active.ok_or_else(runtime_error)?,
+            },
+            RuntimePhase::Failed => RuntimeStateNode::Failed {
+                error: snapshot.last_error.clone().unwrap_or_default(),
+                last_session: active,
+                applied_mode: snapshot.applied_mode,
+                health: snapshot.session_health,
+            },
+            _ => RuntimeStateNode::Stopped {
+                applied_mode: snapshot.applied_mode,
+                last_error: None,
+            },
+        };
+        state.apply_event(RuntimeEvent::SnapshotRestored {
+            previous: Box::new(restored),
+        })?;
         state.fail_operation("配置保存失败，已恢复先前运行时".into());
         self.publish(state.snapshot());
         Ok(state.snapshot())
@@ -290,6 +328,7 @@ fn runtime_error() -> AppError {
         code: "runtime_error".into(),
         message: "代理运行时操作失败".into(),
         fields: Vec::new(),
+        context: None,
     }
 }
 

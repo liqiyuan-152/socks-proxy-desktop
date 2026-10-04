@@ -1,3 +1,6 @@
+import { ErrorAlert } from "@/components/ErrorAlert";
+import { normalizeError } from "@/lib/error-handler";
+import type { AppError } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Copy, Search, Trash2 } from "lucide-react";
@@ -26,13 +29,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { errorMessage, type ActiveConnection } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-state";
+import { type ActiveConnection } from "@/lib/backend";
+import { useBackendStore } from "@/store/backend-store";
+import { useShallow } from "zustand/react/shallow";
 
 import type { DiagnosticPage, DiagnosticFilter as Filter } from "@/lib/generated/ipc";
 
 export default function ConnectionLogs() {
-  const { connections } = useBackend();
+  const { connections } = useBackendStore(
+    useShallow((state) => ({ connections: state.connections })),
+  );
   const [query, setQuery] = useState("");
   const [severity, setSeverity] = useState("all");
   const [range, setRange] = useState("7");
@@ -40,7 +46,7 @@ export default function ConnectionLogs() {
   const [page, setPage] = useState<DiagnosticPage | null>(null);
   const [selected, setSelected] = useState<ActiveConnection | null>(null);
   const [clearOpen, setClearOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [busy, setBusy] = useState(false);
 
   const filter = useMemo<Filter>(
@@ -57,7 +63,7 @@ export default function ConnectionLogs() {
       setPage(await ipc("get_runtime_diagnostics", { filter, offset: 0, limit: 100 }));
       setError(null);
     } catch (reason) {
-      setError(errorMessage(reason));
+      setError(normalizeError(reason));
     }
   }, [filter]);
   useEffect(() => {
@@ -72,7 +78,7 @@ export default function ConnectionLogs() {
       const text = await ipc("copy_active_connection_detail", { id });
       await navigator.clipboard.writeText(text);
     } catch (reason) {
-      setError(errorMessage(reason));
+      setError(normalizeError(reason));
     } finally {
       setBusy(false);
     }
@@ -86,7 +92,7 @@ export default function ConnectionLogs() {
       setClearOpen(false);
       await refresh();
     } catch (reason) {
-      setError(errorMessage(reason));
+      setError(normalizeError(reason));
     } finally {
       setBusy(false);
     }
@@ -111,11 +117,7 @@ export default function ConnectionLogs() {
       </header>
       <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-5">
-          {error && (
-            <p role="alert" className="text-destructive">
-              {error}
-            </p>
-          )}
+          {error && <ErrorAlert error={error} />}
           <div className="flex flex-wrap gap-3" aria-label="日志筛选">
             <div className="relative flex-1">
               <Search
