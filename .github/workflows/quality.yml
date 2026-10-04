@@ -55,6 +55,8 @@ jobs:
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: pnpm install --frozen-lockfile
+      - name: Prepare pinned Windows core for Tauri coverage resources
+        run: pnpm prepare:core
       - name: Frontend store coverage
         run: pnpm test:coverage
       - name: Rust unit and integration coverage
