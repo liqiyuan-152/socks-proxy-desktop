@@ -22,14 +22,14 @@ jobs:
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
+      - name: Prepare pinned Windows core
+        run: pnpm prepare:core
       - name: Static checks and frontend unit tests
         run: pnpm check
       - name: Rust unit tests (without real core)
         run: cargo test --manifest-path src-tauri/Cargo.toml --locked
       - name: Real-core gate regression tests
         run: node --test scripts/test-real-core-checks.mjs
-      - name: Prepare pinned Windows core
-        run: pnpm prepare:core
       - name: Verify pinned core and run real-core tests
         run: node scripts/test-real-core.mjs
         env:
