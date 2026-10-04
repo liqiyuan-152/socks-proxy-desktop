@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { command, errorMessage } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 
 type ChinaDirectStatus = {
   enabled: boolean;

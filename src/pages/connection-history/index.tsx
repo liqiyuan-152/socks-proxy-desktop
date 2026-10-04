@@ -26,7 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { command, errorMessage, type ActiveConnection } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 
 type Diagnostic = { id: string; created_at_ms: number; severity: string; summary: string };
 type DiagnosticPage = { items: Diagnostic[]; total: number; next_offset: number | null };

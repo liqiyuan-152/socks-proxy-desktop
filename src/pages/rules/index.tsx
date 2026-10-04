@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { command, errorMessage, type BackendError } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 import { RuleForm, type RuleDraft } from "./RuleForm";
 import { ChinaDirectPreset } from "./ChinaDirectPreset";
 import { RouteTest } from "./RouteTest";

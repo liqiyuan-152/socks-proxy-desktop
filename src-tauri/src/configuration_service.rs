@@ -1,19 +1,23 @@
 use crate::{
-    china_rules::ChinaRuleSets,
-    credentials::{apply_credential_update, CredentialStore, CredentialUpdate, ProxyCredential},
+    credentials::{apply_credential_update, CredentialStore, CredentialUpdate},
     error::{AppError, FieldError},
     models::{
         AppSettings, PersistedConfiguration, ProxyProfile, ProxyProtocol, RoutingRule, RuntimeMode,
     },
     observability::ActiveConnectionsSnapshot,
-    routing::CompiledRules,
     runtime::{RuntimeCoordinator, RuntimeSnapshot},
     startup::StartupAdapter,
     store::ConfigurationStore,
     transfer::export_configuration_json,
 };
 use serde::{Deserialize, Serialize};
-use std::{path::PathBuf, sync::Mutex};
+use std::{
+    path::PathBuf,
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Mutex,
+    },
+};
 use uuid::Uuid;
 
 #[path = "configuration_china.rs"]
@@ -34,6 +38,7 @@ pub struct ProfileInput {
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ProfileView {
+    pub configuration_revision: u64,
     pub id: String,
     pub name: String,
     pub protocol: ProxyProtocol,
@@ -52,6 +57,7 @@ pub struct ProfileCredentialView {
 impl From<&ProxyProfile> for ProfileView {
     fn from(value: &ProxyProfile) -> Self {
         Self {
+            configuration_revision: 0,
             id: value.id.clone(),
             name: value.name.clone(),
             protocol: value.protocol,
@@ -70,6 +76,7 @@ pub struct ConfigurationService {
     runtime: Box<dyn RuntimeCoordinator>,
     china_rule_root: Option<PathBuf>,
     serial: Mutex<()>,
+    configuration_revision: AtomicU64,
 }
 
 impl ConfigurationService {
@@ -86,16 +93,23 @@ impl ConfigurationService {
             runtime,
             china_rule_root: None,
             serial: Mutex::new(()),
+            configuration_revision: AtomicU64::new(0),
         }
     }
 
     pub fn list_profiles(&self) -> Result<Vec<ProfileView>, AppError> {
+        let _guard = self.lock()?;
+        let revision = self.configuration_revision.load(Ordering::Relaxed);
         Ok(self
             .store
             .load()?
             .profiles
             .iter()
-            .map(ProfileView::from)
+            .map(|profile| {
+                let mut view = ProfileView::from(profile);
+                view.configuration_revision = revision;
+                view
+            })
             .collect())
     }
 
@@ -218,7 +232,9 @@ impl ConfigurationService {
             }
             Ok(())
         })?;
-        Ok(ProfileView::from(&profile))
+        let mut view = ProfileView::from(&profile);
+        view.configuration_revision = self.configuration_revision.load(Ordering::Relaxed);
+        Ok(view)
     }
 
     pub fn delete_profile(&self, id: &str) -> Result<(), AppError> {
@@ -270,113 +286,30 @@ impl ConfigurationService {
         self.commit(&current, &candidate)
     }
 
-    pub fn replace_rules(&self, rules: Vec<RoutingRule>) -> Result<(), AppError> {
-        let _guard = self.lock()?;
-        let current = self.store.load()?;
-        let mut candidate = current.clone();
-        candidate.rules = rules;
-        candidate.legacy_unresolved_rule_ids.retain(|id| {
-            candidate.rules.iter().any(|rule| {
-                rule.id == *id
-                    && rule.action == crate::models::RuleAction::Proxy
-                    && rule.proxy_profile_id.is_none()
-            })
-        });
-        CompiledRules::compile(&candidate)?;
-        self.commit(&current, &candidate)
-    }
-
-    pub fn reorder_rules(&self, ids: &[String]) -> Result<(), AppError> {
-        let _guard = self.lock()?;
-        let current = self.store.load()?;
-        if ids.len() != current.rules.len() {
-            return Err(field_error("rule_ids", "排序必须包含全部规则标识"));
-        }
-        let mut remaining = current.rules.clone();
-        let mut sorted = Vec::with_capacity(ids.len());
-        for id in ids {
-            let Some(index) = remaining.iter().position(|rule| &rule.id == id) else {
-                return Err(field_error("rule_ids", "排序包含重复或不存在的规则标识"));
-            };
-            sorted.push(remaining.remove(index));
-        }
-        let mut candidate = current.clone();
-        candidate.rules = sorted;
-        CompiledRules::compile(&candidate)?;
-        self.commit(&current, &candidate)
-    }
-
     pub fn update_settings(&self, settings: AppSettings) -> Result<AppSettings, AppError> {
         let _guard = self.lock()?;
         let current = self.store.load()?;
         let previous_startup = self.startup.is_enabled()?;
-        if settings.launch_at_login != previous_startup {
+        let startup_changed = settings.launch_at_login != previous_startup;
+        if startup_changed {
             self.startup.set_enabled(settings.launch_at_login)?;
         }
         let mut candidate = current.clone();
         candidate.settings = settings;
         self.commit_with_rollback(&current, &candidate, || {
-            self.startup
-                .set_enabled(previous_startup)
-                .map_err(|_| rollback_failed())
+            if startup_changed {
+                self.startup
+                    .set_enabled(previous_startup)
+                    .map_err(|_| rollback_failed())
+            } else {
+                Ok(())
+            }
         })?;
         self.settings()
     }
 
     pub fn export(&self) -> Result<String, AppError> {
         export_configuration_json(&self.store.load()?)
-    }
-
-    fn commit(
-        &self,
-        current: &PersistedConfiguration,
-        candidate: &PersistedConfiguration,
-    ) -> Result<(), AppError> {
-        self.commit_with_rollback(current, candidate, || Ok(()))
-    }
-
-    fn commit_with_rollback(
-        &self,
-        current: &PersistedConfiguration,
-        candidate: &PersistedConfiguration,
-        rollback_side_effects: impl FnOnce() -> Result<(), AppError>,
-    ) -> Result<(), AppError> {
-        candidate.validate()?;
-        if candidate.china_direct_enabled {
-            let root = self
-                .china_rule_root
-                .as_deref()
-                .ok_or_else(|| AppError::unavailable("此平台未提供国内直连规则集"))?;
-            ChinaRuleSets::verify(root)?;
-        }
-        let previous_snapshot = self.runtime.snapshot();
-        if let Err(error) = self.runtime.apply_configuration(current, candidate) {
-            rollback_side_effects()?;
-            return Err(error);
-        }
-        if let Err(error) = self.store.save(candidate) {
-            rollback_side_effects()?;
-            self.runtime
-                .restore_configuration(current, &previous_snapshot)
-                .map_err(|_| rollback_failed())?;
-            return Err(error);
-        }
-        self.runtime.confirm_configuration();
-        Ok(())
-    }
-
-    fn restore_credential(
-        &self,
-        id: &str,
-        previous: Option<ProxyCredential>,
-    ) -> Result<(), AppError> {
-        let result = match previous {
-            Some(secret) => self
-                .credentials
-                .replace(id, &secret.username, &secret.password),
-            None => self.credentials.delete(id),
-        };
-        result.map_err(|_| rollback_failed())
     }
 
     fn lock(&self) -> Result<std::sync::MutexGuard<'_, ()>, AppError> {
@@ -408,6 +341,12 @@ fn rollback_failed() -> AppError {
         fields: Vec::new(),
     }
 }
+
+#[path = "configuration_transaction.rs"]
+mod transaction;
+
+#[path = "configuration_rules.rs"]
+mod rules;
 
 #[path = "configuration_service_import.rs"]
 mod import;

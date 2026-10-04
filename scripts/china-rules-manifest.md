@@ -2,10 +2,10 @@
 
 此资源供可选的“国内直连”预设使用。数据代表域名列表和地址归属分类，不是 GFW 可达性检测，也不保证所有中国站点都被收录。运行时不远程更新；应用升级时需重新固定上游提交、校验输入并重新生成资源。
 
-| 资源 | 来源与固定版本 | 许可 | 包内路径 |
-| --- | --- | --- | --- |
-| 域名 | `v2fly/domain-list-community` 的 `cn` 列表，提交 `c1c2cf0d252871e8739747714df06e8d2671f72f`（2026-09-22） | MIT | `china-rules/china-domains.srs` |
-| IPv4/IPv6 | `gaoyifan/china-operator-ip` 的 `china46.txt`，`ip-lists` 提交 `8046f18143a4ad0ced43fe5d7e72e0c68ba73ac8`（2026-09-23） | MIT | `china-rules/china-ipv4.srs`、`china-rules/china-ipv6.srs` |
+| 资源      | 来源与固定版本                                                                                                          | 许可 | 包内路径                                                   |
+| --------- | ----------------------------------------------------------------------------------------------------------------------- | ---- | ---------------------------------------------------------- |
+| 域名      | `v2fly/domain-list-community` 的 `cn` 列表，提交 `c1c2cf0d252871e8739747714df06e8d2671f72f`（2026-09-22）               | MIT  | `china-rules/china-domains.srs`                            |
+| IPv4/IPv6 | `gaoyifan/china-operator-ip` 的 `china46.txt`，`ip-lists` 提交 `8046f18143a4ad0ced43fe5d7e72e0c68ba73ac8`（2026-09-23） | MIT  | `china-rules/china-ipv4.srs`、`china-rules/china-ipv6.srs` |
 
 固定输入 URL、SHA-256、产物 SHA-256、条目数及许可证 SHA-256 记录在 [`manifest.json`](../src-tauri/resources/china-rules/manifest.json)。两个 MIT 许可证原文与 `.srs` 一起打包。IP 数据将可信国内 BGP 分类和未宣告的 RIR-CN 登记地址合并，归属可能滞后或存在误差；不把所有未收录地址断言为“国外”。
 

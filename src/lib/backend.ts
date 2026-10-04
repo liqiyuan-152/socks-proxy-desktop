@@ -23,7 +23,16 @@ export type RuntimeSnapshot = {
   last_error: string | null;
 };
 
+export type BackendCapabilities = {
+  platform: string;
+  proxy_runtime: boolean;
+  proxy_latency: boolean;
+  network_recovery: boolean;
+  startup: boolean;
+};
+
 export type ProxyProfile = {
+  configuration_revision?: number;
   id: string;
   name: string;
   protocol: "socks5" | "http";

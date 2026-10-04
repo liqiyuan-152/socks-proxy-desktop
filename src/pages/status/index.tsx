@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 import { proxyModes, type ProxyMode } from "@/lib/proxy-mode";
 
 const phaseLabels = {
@@ -28,8 +28,17 @@ const phaseLabels = {
 const modeSwitchToastId = "proxy-mode-switch";
 
 export default function StatusDashboard() {
-  const { snapshot, profiles, connections, loading, pending, selectedMode, error, switchMode } =
-    useBackend();
+  const {
+    capabilities,
+    snapshot,
+    profiles,
+    connections,
+    loading,
+    pending,
+    selectedMode,
+    error,
+    switchMode,
+  } = useBackend();
   const navigate = useNavigate();
   const profile = profiles.find((item) => item.id === snapshot?.active_profile_id);
 
@@ -86,7 +95,7 @@ export default function StatusDashboard() {
                   key={mode}
                   value={mode}
                   className="h-full rounded-none border-0 border-r border-border bg-transparent text-xs text-muted-foreground last:border-r-0 hover:bg-muted hover:text-foreground data-[state=active]:!border-transparent data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-[inset_0_1px_0_rgb(255_255_255_/_0.18)] sm:text-sm"
-                  disabled={loading || !snapshot}
+                  disabled={loading || !snapshot || !capabilities?.proxy_runtime}
                   onClick={() => {
                     if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
                       selectMode(mode);

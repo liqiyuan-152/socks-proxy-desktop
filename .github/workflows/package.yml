@@ -1,0 +1,43 @@
+name: Windows test package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm prepare:core
+      - run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+        env:
+          SING_BOX_TEST_BIN: ${{ github.workspace }}\src-tauri\resources\sing-box\windows-amd64\sing-box.exe
+      - run: pnpm tauri build --bundles nsis
+      - name: Record package checksums and source revision
+        shell: pwsh
+        run: |
+          $packageDir = "src-tauri/target/release/bundle/nsis"
+          Get-ChildItem "$packageDir/*.exe" | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content "$packageDir/SHA256SUMS.txt"
+          git rev-parse HEAD | Set-Content "$packageDir/SOURCE_REVISION.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: socks-proxy-windows-test-${{ github.sha }}
+          path: src-tauri/target/release/bundle/nsis/
+          if-no-files-found: error
+          retention-days: 14

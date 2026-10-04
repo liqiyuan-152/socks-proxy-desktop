@@ -1,6 +1,9 @@
 use crate::{
-    credentials::CredentialStore, error::AppError, models::RuntimeMode,
-    sing_box_process::SingBoxProcess, store::ConfigurationStore,
+    credentials::CredentialStore,
+    error::AppError,
+    models::{PersistedConfiguration, ProxyProfile, RuntimeMode},
+    sing_box_process::SingBoxProcess,
+    store::ConfigurationStore,
 };
 use serde::Serialize;
 use std::{
@@ -41,7 +44,7 @@ impl LatencyTester {
     }
 
     pub fn test(&self, id: &str) -> Result<LatencyResult, AppError> {
-        let mut configuration = self.store.load()?;
+        let configuration = self.store.load()?;
         let profile = configuration
             .profiles
             .iter()
@@ -59,9 +62,7 @@ impl LatencyTester {
         } else {
             None
         };
-        configuration.active_profile_id = Some(id.to_owned());
-        // A latency probe needs only the selected profile, not unrelated enabled exits.
-        configuration.profiles.retain(|profile| profile.id == id);
+        let configuration = probe_configuration(&configuration, profile);
         let credentials = credential
             .map(|credential| HashMap::from([(id.to_owned(), credential)]))
             .unwrap_or_default();
@@ -76,6 +77,19 @@ impl LatencyTester {
         let result = probe(&configuration.settings.latency_test_url, process.proxy_port);
         process.stop();
         result
+    }
+}
+
+fn probe_configuration(
+    source: &PersistedConfiguration,
+    profile: &ProxyProfile,
+) -> PersistedConfiguration {
+    // Probe only this exit. Runtime rules and presets belong to the managed session.
+    PersistedConfiguration {
+        profiles: vec![profile.clone()],
+        active_profile_id: Some(profile.id.clone()),
+        settings: source.settings.clone(),
+        ..PersistedConfiguration::default()
     }
 }
 

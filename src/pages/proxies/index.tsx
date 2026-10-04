@@ -18,7 +18,7 @@ import {
   type ProfileCredential,
   type ProxyProfile,
 } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 import type { ProxyDraft } from "./ProxyAuthenticationFields";
 import { ProxyFormDialog } from "./ProxyFormDialog";
 import { ProxyStatus } from "./ProxyStatus";
@@ -29,7 +29,7 @@ import { createProxyDraft } from "./proxyDraft";
 import { parseProxyLink } from "./parseProxyLink";
 
 export default function ProxyList() {
-  const { profiles, snapshot, refresh, loading } = useBackend();
+  const { profiles, snapshot, refresh, loading, capabilities } = useBackend();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProxy, setEditingProxy] = useState<ProxyProfile | null>(null);
   const [draft, setDraft] = useState<ProxyDraft>(() => createProxyDraft());
@@ -43,7 +43,7 @@ export default function ProxyList() {
   const [credentialError, setCredentialError] = useState<string | null>(null);
   const [originalCredential, setOriginalCredential] = useState<ProfileCredential | null>(null);
   const credentialRequest = useRef(0);
-  const latency = useProxyLatency(profiles);
+  const latency = useProxyLatency(profiles, capabilities?.proxy_latency ?? false);
   useEffect(
     () => () => {
       credentialRequest.current++;
@@ -207,7 +207,7 @@ export default function ProxyList() {
             protocolFilter={protocolFilter}
             onProtocolFilter={setProtocolFilter}
             batchPending={latency.batchPending}
-            canTest={profiles.some((profile) => profile.enabled)}
+            canTest={!!capabilities?.proxy_latency && profiles.some((profile) => profile.enabled)}
             loading={loading}
             busy={busy}
             onTestAll={() => void latency.testAll()}
@@ -320,6 +320,7 @@ export default function ProxyList() {
                             aria-label={`测试${proxy.name}延迟`}
                             title={`测试${proxy.name}延迟`}
                             disabled={
+                              !capabilities?.proxy_latency ||
                               !proxy.enabled ||
                               !!latency.results[proxy.id]?.pending ||
                               latency.batchPending

@@ -8,7 +8,7 @@ import {
   Settings,
   ShieldCheck,
 } from "lucide-react";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 import { proxyModes } from "@/lib/proxy-mode";
 import { NavLink, Outlet, useMatch } from "react-router-dom";
 import {

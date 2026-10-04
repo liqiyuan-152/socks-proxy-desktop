@@ -1,3 +1,4 @@
+mod capabilities;
 mod china_rules;
 #[cfg(test)]
 mod china_rules_tests;
@@ -11,6 +12,7 @@ mod models;
 mod observability;
 mod route_test;
 mod routing;
+mod rule_match_process;
 mod runtime;
 mod runtime_events;
 mod runtime_session;
@@ -88,6 +90,7 @@ fn windows_backend<R: tauri::Runtime>(
 pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
+            capabilities::get_capabilities,
             ipc::list_profiles,
             ipc::get_profile_credential,
             ipc::test_proxy_latency,

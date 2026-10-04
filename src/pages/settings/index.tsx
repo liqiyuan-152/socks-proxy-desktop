@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { isTauri } from "@tauri-apps/api/core";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArchiveX, Download, Info, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,57 +16,64 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { command, errorMessage, type BackendError } from "@/lib/backend";
-import { useBackend } from "@/lib/backend-context";
+import { useBackend } from "@/lib/backend-state";
 import { AboutCard } from "./AboutCard";
 import { LatencyTestCard } from "./LatencyTestCard";
-import { parseImportProfiles, type ImportProfile } from "./parseImportProfiles";
+import { useConfigurationImport } from "./useConfigurationImport";
+import { ConfigurationImportDialog } from "./ConfigurationImportDialog";
 import { NetworkRecoveryCard } from "./NetworkRecoveryCard";
 import { StartupCard } from "./StartupCard";
 import type { Retention, Settings } from "./settingsTypes";
 
-type SettingsAction = "clear" | "import" | "restore" | null;
+type SettingsAction = "clear" | "restore" | null;
 type NetworkRecoveryResult = { completed_at_ms: number };
 
 export default function SettingsPage() {
-  const { refresh } = useBackend();
+  const { refresh, capabilities } = useBackend();
+  const active = useRef(false);
+  const settingsRequest = useRef(0);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [pendingAction, setPendingAction] = useState<SettingsAction>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [importJson, setImportJson] = useState("");
-  const [importProfiles, setImportProfiles] = useState<ImportProfile[]>([]);
-  const [newCredentials, setNewCredentials] = useState<
-    Record<string, { username: string; password: string }>
-  >({});
-  const networkRecoveryAvailable = isTauri() && navigator.userAgent.includes("Windows");
 
   const load = useCallback(async () => {
+    const version = ++settingsRequest.current;
     try {
-      setSettings(await command<Settings>("get_settings"));
+      const next = await command<Settings>("get_settings");
+      if (!active.current || version !== settingsRequest.current) return;
+      setSettings(next);
       setError(null);
     } catch (reason) {
-      setError(errorMessage(reason));
+      if (active.current && version === settingsRequest.current) setError(errorMessage(reason));
     }
   }, []);
   useEffect(() => {
+    active.current = true;
     const timer = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(timer);
+    return () => {
+      active.current = false;
+      settingsRequest.current += 1;
+      window.clearTimeout(timer);
+    };
   }, [load]);
 
   async function updateSettings(next: Settings) {
     setBusy(true);
     setError(null);
     setMessage(null);
+    const version = ++settingsRequest.current;
     try {
-      setSettings(await command<Settings>("update_settings", { settings: next }));
+      const updated = await command<Settings>("update_settings", { settings: next });
+      if (active.current && version === settingsRequest.current) setSettings(updated);
     } catch (reason) {
+      if (!active.current || version !== settingsRequest.current) return;
       const typed = reason as Partial<BackendError>;
       setError(typed.fields?.map((field) => field.message).join("；") || errorMessage(reason));
     } finally {
-      setBusy(false);
+      if (active.current) setBusy(false);
     }
   }
 
@@ -86,48 +92,15 @@ export default function SettingsPage() {
     } catch (reason) {
       setError(errorMessage(reason));
     } finally {
-      setBusy(false);
+      if (active.current) setBusy(false);
     }
   }
 
-  async function readImportFile(file: File) {
-    try {
-      const json = await file.text();
-      const data: unknown = JSON.parse(json);
-      const profiles = parseImportProfiles(data);
-      setImportJson(json);
-      setImportProfiles(profiles);
-      setNewCredentials({});
-      setError(null);
-      setPendingAction("import");
-    } catch {
-      setError("配置文件不是有效的 JSON。");
-    }
-  }
-
-  async function importConfig() {
-    setBusy(true);
-    setError(null);
-    try {
-      const updates: Record<string, { action: "replace"; username: string; password: string }> = {};
-      for (const profile of importProfiles.filter((item) => item.authentication_enabled)) {
-        const credential = newCredentials[profile.id];
-        if (!credential?.password) {
-          setError(`请为「${profile.name}」重新输入认证密码。`);
-          return;
-        }
-        updates[profile.id] = { action: "replace", ...credential };
-      }
-      await command("import_configuration", { json: importJson, updates });
-      setPendingAction(null);
-      setMessage("配置已导入；密码没有从导出文件恢复。");
-      await Promise.all([load(), refresh()]);
-    } catch (reason) {
-      setError(errorMessage(reason));
-    } finally {
-      setBusy(false);
-    }
-  }
+  const importFlow = useConfigurationImport(async () => {
+    setMessage("配置已导入；密码没有从导出文件恢复。");
+    await Promise.all([load(), refresh()]);
+  });
+  const actionBusy = busy || importFlow.busy;
 
   const actionDetails = {
     clear: {
@@ -135,12 +108,6 @@ export default function SettingsPage() {
       description: "确认后将删除保存的运行时诊断，不会清理或伪造活跃连接。",
       confirmLabel: "确认清空",
       destructive: true,
-    },
-    import: {
-      title: "导入配置",
-      description: "导入会校验并替换配置；已认证档案必须重新提供密码。",
-      confirmLabel: "确认导入",
-      destructive: false,
     },
     restore: {
       title: "确认恢复网络设置",
@@ -154,10 +121,6 @@ export default function SettingsPage() {
   const activeAction = pendingAction ? actionDetails[pendingAction] : null;
 
   async function completeAction() {
-    if (pendingAction === "import") {
-      await importConfig();
-      return;
-    }
     if (pendingAction === "clear") {
       setBusy(true);
       setError(null);
@@ -171,7 +134,7 @@ export default function SettingsPage() {
       } catch (reason) {
         setError(errorMessage(reason));
       } finally {
-        setBusy(false);
+        if (active.current) setBusy(false);
       }
     }
     if (pendingAction === "restore") {
@@ -187,7 +150,7 @@ export default function SettingsPage() {
       } catch (reason) {
         setError(errorMessage(reason));
       } finally {
-        setBusy(false);
+        if (active.current) setBusy(false);
       }
     }
   }
@@ -219,14 +182,15 @@ export default function SettingsPage() {
               <LatencyTestCard
                 key={settings.latency_test_url}
                 url={settings.latency_test_url}
-                busy={busy}
+                busy={actionBusy}
                 onSave={(url) => void updateSettings({ ...settings, latency_test_url: url })}
               />
             )}
             <StartupCard
               enabled={settings?.launch_at_login ?? false}
               loaded={!!settings}
-              busy={busy}
+              available={!!capabilities?.startup}
+              busy={actionBusy}
               onChange={(enabled) =>
                 settings && void updateSettings({ ...settings, launch_at_login: enabled })
               }
@@ -242,7 +206,7 @@ export default function SettingsPage() {
                 <Button
                   variant="secondary"
                   onClick={() => void exportConfig()}
-                  disabled={busy || !settings}
+                  disabled={actionBusy || !settings}
                 >
                   <Download className="size-4" aria-hidden="true" />
                   导出配置
@@ -255,10 +219,11 @@ export default function SettingsPage() {
                     type="file"
                     accept="application/json,.json"
                     aria-label="选择配置文件"
-                    disabled={busy}
+                    disabled={actionBusy}
                     onChange={(event) => {
                       const file = event.target.files?.[0];
-                      if (file) void readImportFile(file);
+                      event.target.value = "";
+                      if (file) void importFlow.read(file);
                     }}
                   />
                 </label>
@@ -276,7 +241,7 @@ export default function SettingsPage() {
                   <Button
                     variant="secondary"
                     onClick={() => setPendingAction("clear")}
-                    disabled={busy}
+                    disabled={actionBusy}
                   >
                     <ArchiveX className="size-4" aria-hidden="true" />
                     清理运行时诊断
@@ -289,7 +254,7 @@ export default function SettingsPage() {
                     settings &&
                     void updateSettings({ ...settings, diagnostic_retention: value as Retention })
                   }
-                  disabled={!settings || busy}
+                  disabled={!settings || actionBusy}
                 >
                   <SelectTrigger aria-label="日志保留策略">
                     <SelectValue />
@@ -305,8 +270,8 @@ export default function SettingsPage() {
             </Card>
 
             <NetworkRecoveryCard
-              available={networkRecoveryAvailable}
-              busy={busy}
+              available={!!capabilities?.network_recovery}
+              busy={actionBusy}
               onRestore={() => {
                 setError(null);
                 setPendingAction("restore");
@@ -318,6 +283,12 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      <ConfigurationImportDialog flow={importFlow} />
+      {importFlow.error && !importFlow.open && (
+        <p role="alert" className="px-6 text-destructive">
+          {importFlow.error}
+        </p>
+      )}
       <Dialog
         open={pendingAction !== null}
         onOpenChange={(open) => !open && setPendingAction(null)}
@@ -337,43 +308,6 @@ export default function SettingsPage() {
                   {error}
                 </p>
               )}
-              {pendingAction === "import" &&
-                importProfiles
-                  .filter((profile) => profile.authentication_enabled)
-                  .map((profile) => (
-                    <div key={profile.id} className="space-y-2 px-6 pb-4">
-                      <p className="font-medium">{profile.name} 的认证凭据</p>
-                      <Input
-                        aria-label={`${profile.name}用户名`}
-                        placeholder="用户名"
-                        autoComplete="off"
-                        onChange={(event) =>
-                          setNewCredentials((current) => ({
-                            ...current,
-                            [profile.id]: {
-                              username: event.target.value,
-                              password: current[profile.id]?.password ?? "",
-                            },
-                          }))
-                        }
-                      />
-                      <Input
-                        aria-label={`${profile.name}密码`}
-                        placeholder="重新输入密码"
-                        type="password"
-                        autoComplete="new-password"
-                        onChange={(event) =>
-                          setNewCredentials((current) => ({
-                            ...current,
-                            [profile.id]: {
-                              username: current[profile.id]?.username ?? "",
-                              password: event.target.value,
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                  ))}
               <DialogFooter className="border-t border-border px-6 py-4">
                 {activeAction.destructive && (
                   <Button variant="secondary" onClick={() => setPendingAction(null)}>
@@ -382,7 +316,7 @@ export default function SettingsPage() {
                 )}
                 <Button
                   variant={activeAction.destructive ? "destructive" : "default"}
-                  disabled={busy}
+                  disabled={actionBusy}
                   onClick={() => void completeAction()}
                 >
                   {activeAction.confirmLabel}

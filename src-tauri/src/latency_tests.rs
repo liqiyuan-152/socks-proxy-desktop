@@ -67,6 +67,61 @@ fn statuses_only_accept_2xx() {
 }
 
 #[test]
+fn latency_probe_does_not_inherit_unrelated_routes_or_china_preset() {
+    use crate::models::{RoutingRule, RuleAction, RuleMatcher};
+    let mut source = configuration(true);
+    let profile = source.profiles[0].clone();
+    source.profiles.push(ProxyProfile {
+        id: "other".into(),
+        name: "Other".into(),
+        authentication_enabled: false,
+        credential_ref: None,
+        ..profile.clone()
+    });
+    source.active_profile_id = Some("other".into());
+    source.china_direct_enabled = true;
+    source.rules.push(RoutingRule {
+        id: "site".into(),
+        name: "Site".into(),
+        matcher: RuleMatcher::Domain,
+        target: "example.org".into(),
+        port_start: None,
+        port_end: None,
+        action: RuleAction::Proxy,
+        proxy_profile_id: Some("other".into()),
+        enabled: true,
+    });
+    source.validate().unwrap();
+    let probe = probe_configuration(&source, &profile);
+    let credentials = HashMap::from([(
+        "test".into(),
+        crate::credentials::ProxyCredential {
+            username: "alice".into(),
+            password: "secret".into(),
+        },
+    )]);
+    let rendered = crate::sing_box_config::render(
+        &probe,
+        RuntimeMode::Global,
+        crate::sing_box_config::SingBoxPorts {
+            proxy: 18080,
+            control: 18081,
+        },
+        "control-secret",
+        &credentials,
+    )
+    .unwrap();
+    let config: serde_json::Value = serde_json::from_str(&rendered).unwrap();
+    assert_eq!(config["outbounds"].as_array().unwrap().len(), 2);
+    assert_eq!(config["route"]["rules"], serde_json::json!([]));
+    assert_eq!(probe.settings, source.settings);
+    assert!(!probe.china_direct_enabled);
+    assert_eq!(source.active_profile_id.as_deref(), Some("other"));
+    assert_eq!(source.rules.len(), 1);
+    assert!(source.china_direct_enabled);
+}
+
+#[test]
 fn reads_credentials_without_switching_selection_or_system_proxy() {
     let store = Arc::new(Store(configuration(true)));
     let credentials = Arc::new(Credentials(Mutex::new(0)));

@@ -50,6 +50,7 @@ impl CompiledRules {
             .find(|rule| matches_port(rule, port) && matches_target(rule, host))
     }
 
+    #[cfg(any(windows, test))]
     pub fn ordered_rules(&self) -> &[RoutingRule] {
         &self.rules
     }

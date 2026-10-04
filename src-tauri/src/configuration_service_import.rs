@@ -1,4 +1,5 @@
 use super::*;
+use crate::credentials::ProxyCredential;
 use crate::transfer::parse_import_configuration;
 use std::collections::{HashMap, HashSet};
 

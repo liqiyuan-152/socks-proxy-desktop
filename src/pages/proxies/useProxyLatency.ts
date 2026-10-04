@@ -5,9 +5,11 @@ import { command, errorMessage, type ProxyProfile } from "@/lib/backend";
 type LatencyState = { latency?: number; error?: string; at?: number; pending?: boolean };
 type TestSettings = { latency_test_url: string };
 
-export function useProxyLatency(profiles: ProxyProfile[]) {
+export function useProxyLatency(profiles: ProxyProfile[], available = true) {
   const [results, setResults] = useState<Record<string, LatencyState>>({});
   const [batchPending, setBatchPending] = useState(false);
+  const active = useRef(false);
+  const generation = useRef(0);
   const tokens = useRef(new Map<string, number>());
   const signatures = useRef(new Map<string, string>());
   const testUrl = useRef<string | null>(null);
@@ -25,10 +27,31 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
   }, []);
 
   useEffect(() => {
+    active.current = true;
+    const currentTokens = tokens.current;
+    return () => {
+      active.current = false;
+      generation.current += 1;
+      for (const id of currentTokens.keys()) {
+        currentTokens.set(id, (currentTokens.get(id) ?? 0) + 1);
+        toast.dismiss(`proxy-latency-${id}`);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!available) {
+      generation.current += 1;
+      for (const id of tokens.current.keys()) clear(id);
+    }
+  }, [available, clear]);
+
+  useEffect(() => {
     const next = new Map(
       profiles.map((profile) => [
         profile.id,
         JSON.stringify([
+          profile.configuration_revision,
           profile.protocol,
           profile.host,
           profile.port,
@@ -38,18 +61,24 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
       ]),
     );
     for (const [id, signature] of signatures.current) {
-      if (next.get(id) !== signature) clear(id);
+      if (next.get(id) !== signature) {
+        generation.current += 1;
+        clear(id);
+      }
     }
     signatures.current = next;
   }, [profiles, clear]);
 
   useEffect(() => {
-    let active = true;
+    let settingsActive = true;
+    let request = 0;
     async function checkUrl() {
+      const version = ++request;
       try {
         const settings = await command<TestSettings>("get_settings");
-        if (!active) return;
+        if (!settingsActive || request !== version) return;
         if (testUrl.current !== null && testUrl.current !== settings.latency_test_url) {
+          generation.current += 1;
           for (const id of tokens.current.keys()) clear(id);
         }
         testUrl.current = settings.latency_test_url;
@@ -60,14 +89,20 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
     void checkUrl();
     window.addEventListener("focus", checkUrl);
     return () => {
-      active = false;
+      settingsActive = false;
       window.removeEventListener("focus", checkUrl);
     };
   }, [clear]);
 
   const test = useCallback(
     async (id: string) => {
-      if (running.current.has(id)) return;
+      if (
+        !active.current ||
+        !available ||
+        running.current.has(id) ||
+        !profiles.some((profile) => profile.id === id && profile.enabled)
+      )
+        return;
       running.current.add(id);
       const name = profiles.find((profile) => profile.id === id)?.name ?? "代理";
       const toastId = `proxy-latency-${id}`;
@@ -77,7 +112,7 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
       toast.loading(`正在测试 ${name} 的延迟…`, { id: toastId });
       try {
         const result = await command<{ latency_ms: number }>("test_proxy_latency", { id });
-        if (tokens.current.get(id) === token) {
+        if (active.current && tokens.current.get(id) === token) {
           setResults((current) => ({
             ...current,
             [id]: { latency: result.latency_ms, at: Date.now() },
@@ -85,7 +120,7 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
           toast.success(`${name}：${result.latency_ms} ms`, { id: toastId });
         }
       } catch (reason) {
-        if (tokens.current.get(id) === token) {
+        if (active.current && tokens.current.get(id) === token) {
           const message = errorMessage(reason);
           setResults((current) => ({
             ...current,
@@ -97,16 +132,18 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
         running.current.delete(id);
       }
     },
-    [profiles],
+    [profiles, available],
   );
 
   async function testAll() {
-    if (batchRunning.current) return;
+    if (!active.current || !available || batchRunning.current) return;
+    const version = generation.current;
     batchRunning.current = true;
     setBatchPending(true);
     const queue = profiles.filter((profile) => profile.enabled).map((profile) => profile.id);
     try {
       async function work(): Promise<void> {
+        if (!active.current || version !== generation.current) return;
         const id = queue.shift();
         if (!id) return;
         await test(id);
@@ -115,7 +152,7 @@ export function useProxyLatency(profiles: ProxyProfile[]) {
       await Promise.all(Array.from({ length: Math.min(3, queue.length) }, work));
     } finally {
       batchRunning.current = false;
-      setBatchPending(false);
+      if (active.current) setBatchPending(false);
     }
   }
 

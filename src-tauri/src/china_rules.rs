@@ -48,6 +48,7 @@ impl ChinaRuleSets {
         })
     }
 
+    #[cfg(any(windows, test))]
     pub fn rule_sets(&self) -> Vec<serde_json::Value> {
         FILES
             .iter()
@@ -76,20 +77,18 @@ impl ChinaRuleSets {
         if hex::encode(Sha256::digest(bytes)) != CORE_SHA256 {
             return Err(invalid_rules());
         }
-        let output = Command::new(core)
-            .args(["rule-set", "match"])
-            .arg(self.root.join(name))
-            .args([target, "-f", "binary", "--disable-color"])
-            .output()
-            .map_err(|_| invalid_rules())?;
-        if !output.status.success() {
-            return Err(invalid_rules());
-        }
-        let result = String::from_utf8(output.stderr).map_err(|_| invalid_rules())?;
+        let result = crate::rule_match_process::run(
+            Command::new(core)
+                .args(["rule-set", "match"])
+                .arg(self.root.join(name))
+                .args([target, "-f", "binary", "--disable-color"]),
+            std::time::Duration::from_secs(5),
+        )?;
         Ok(result.starts_with("match rules."))
     }
 }
 
+#[cfg(any(windows, test))]
 pub fn resource_root(binary: &Path) -> Result<PathBuf, AppError> {
     binary
         .ancestors()

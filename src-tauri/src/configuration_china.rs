@@ -5,6 +5,7 @@ use crate::{
     route_test::{self, RouteTestResult},
 };
 use serde::Serialize;
+#[cfg(any(windows, test))]
 use std::path::PathBuf;
 
 #[derive(Debug, Serialize)]
