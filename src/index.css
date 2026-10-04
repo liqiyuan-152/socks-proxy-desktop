@@ -16,6 +16,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -56,6 +57,7 @@
   --accent: oklch(0.93 0.018 250);
   --accent-foreground: oklch(0.23 0.02 250);
   --destructive: oklch(0.54 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.86 0.015 250);
   --input: oklch(0.82 0.015 250);
   --ring: oklch(0.55 0.2 255);
@@ -80,6 +82,7 @@
   --info-light: oklch(0.95 0.12 230);
   --primary-hover: oklch(0.48 0.23 255);
   --primary-active: oklch(0.43 0.24 255);
+  --gradient-primary: linear-gradient(135deg, oklch(0.52 0.2 255), oklch(0.48 0.22 265));
 }
 
 * {
@@ -142,7 +145,7 @@ button:not(:disabled),
   --foreground: oklch(0.94 0.01 250);
   --card: oklch(0.19 0.018 250);
   --card-foreground: oklch(0.94 0.01 250);
-  --primary: oklch(0.6 0.22 255);
+  --primary: oklch(0.55 0.2 255);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.24 0.02 250);
   --secondary-foreground: oklch(0.92 0.01 250);
@@ -151,6 +154,7 @@ button:not(:disabled),
   --accent: oklch(0.25 0.025 250);
   --accent-foreground: oklch(0.96 0.01 250);
   --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.12 0.02 25);
   --border: oklch(0.32 0.02 250);
   --input: oklch(0.32 0.02 250);
   --ring: oklch(0.62 0.2 255);
@@ -173,6 +177,7 @@ button:not(:disabled),
   --info: oklch(0.72 0.13 230);
   --info-foreground: oklch(0.15 0.02 230);
   --info-light: oklch(0.25 0.06 230);
-  --primary-hover: oklch(0.68 0.23 255);
-  --primary-active: oklch(0.63 0.24 255);
+  --primary-hover: oklch(0.56 0.2 255);
+  --primary-active: oklch(0.5 0.2 255);
+  --gradient-primary: linear-gradient(135deg, oklch(0.54 0.18 255), oklch(0.5 0.2 265));
 }

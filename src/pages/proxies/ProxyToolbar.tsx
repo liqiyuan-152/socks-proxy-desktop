@@ -67,7 +67,12 @@ export function ProxyToolbar({
         <Timer className="size-4" aria-hidden="true" />
         {batchPending ? "测试中…" : "测试全部"}
       </Button>
-      <Button className="h-11 sm:min-w-36" onClick={onAdd} disabled={loading || busy}>
+      <Button
+        variant="gradient"
+        className="h-11 sm:min-w-36"
+        onClick={onAdd}
+        disabled={loading || busy}
+      >
         <Plus className="size-5" aria-hidden="true" />
         添加代理
       </Button>

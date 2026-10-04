@@ -10,3 +10,11 @@
 - 完整验收仍需后续阶段执行，未声称全部应用文本已符合 WCAG。
 
 - 阶段提交的全仓库 `pnpm check` 在格式检查处因既有未提交文档及临时预览文件停止。没有修改无关文档。逐项运行其余检查：lint、typecheck、157 项前端测试、10 项工具测试、rust:fmt、rust:clippy、ipc:check 均通过；当前阶段六个提交文件的格式检查通过。阶段提交仅排除此已核验的 hook，最终验收仍保留全仓库格式问题。
+
+## Phase 2 — 按钮组件
+
+- 完成 T2.1–T2.7，保留 asChild、所有原有 variant/size、禁用和焦点行为；增加 gradient/success/glass，添加代理按钮使用 gradient。
+- 默认按钮 hover 使用交互色和阴影；outline 为 2px 边框；危险操作使用主题化前景；深色渐变降低亮度。动画仅过渡颜色、背景、边框、阴影与 transform；尊重 reduced motion。
+- 浏览器检查全部变体及 xs/sm/default/lg 和四种 icon 尺寸，高度依次 24/32/40/48px；浅色/深色截图、真实 hover 背景变化及键盘 3px 焦点环验证通过。60fps 及全部响应式验收留在 Phase 7。
+- typecheck、lint、16 项代理/错误恢复/确认对话框测试及生产构建通过。CSS 91.30kB（第一阶段 89.48kB）。
+- 阶段提交采用相同的已说明 hook 例外，未处理无关文档格式。
