@@ -27,3 +27,13 @@
 - 实际表格滚动至 scrollTop=750px，表头与容器顶部始终为 557px，固定表头通过；检查选中行 computed background、深浅色边框和斑马纹。
 - typecheck、10 项代理/表格测试、构建通过；Stylelint 检出的属性顺序已修复，lint 复跑通过。CSS 93.40kB。
 - 采用同一已记录的阶段提交 hook 例外。全应用响应式、可访问性和性能仍待 Phase 6/7。
+
+## Phase 4 — 布局与动画
+
+- 完成 T4.1–T4.15。共用 PageHeader 应用于 status/proxies/rules/settings/connection-history（规范的 routing/logs 对应实际目录）。渐变、标题、说明和装饰统一。
+- 保留工作区原有状态栏防遮挡修复；侧栏 Logo/激活导航使用主题渐变，hover 轻微缩放。主内容 fade-in，状态页卡片 stagger 0/50ms；fade/slide/scale 工具类、transform shimmer 和现有 Skeleton 复用完成。
+- CSS 动画只改变 transform/opacity；prefers-reduced-motion 下关闭；没有引入动画依赖。
+- 浏览器逐页等待标题完成加载，五个标题、渐变和动画名核验通过，深浅色截图已检查；动画结束 opacity=1。实际状态页交错延迟为 0s/0.05s。
+- PageHeader 新增移动侧栏开关；删除测试原独立渲染页面缺少 SidebarProvider，测试包裹与实际应用一致的 Provider 后 7 项复跑通过。完整套件首次为 150 通过/7 因上下文失败，修复后最终完整复跑仍待后续。
+- typecheck、构建通过；Stylelint 空行问题修复后 lint 复跑通过。CSS 94.22kB。60fps 性能实测未完成。
+- 阶段提交沿用已记录 hook 例外。

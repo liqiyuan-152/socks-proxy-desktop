@@ -1,3 +1,5 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/PageHeader";
 import { useEffect } from "react";
 import { ChevronRight, CircleDot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -85,13 +87,15 @@ export default function StatusDashboard() {
 
   return (
     <>
-      <header className="border-b border-sidebar-border bg-sidebar px-5 py-4 text-sidebar-foreground sm:px-6">
-        <h1 className="text-2xl font-semibold tracking-tight">状态</h1>
-        <p className="mt-1 text-sm text-muted-foreground">当前网络模式和实际运行状态</p>
-      </header>
-      <div className="content-scroll min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <PageHeader title="状态" description="当前网络模式和实际运行状态" />
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         <div className="w-full space-y-6">
-          {loading && <p role="status">正在加载运行时状态…</p>}
+          {loading && (
+            <div role="status" className="space-y-3">
+              <p>正在加载运行时状态…</p>
+              <Skeleton className="h-12 w-full" />
+            </div>
+          )}
           <RuntimeFeedback />
           <Tabs
             value={selectedMode ?? snapshot?.selected_mode ?? ""}
@@ -115,7 +119,7 @@ export default function StatusDashboard() {
               ))}
             </TabsList>
           </Tabs>
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="stagger-children grid gap-5 lg:grid-cols-2">
             <Card className="gap-0 border-border bg-card py-0 shadow-none">
               <CardHeader className="border-b border-border py-5">
                 <CardTitle role="heading" aria-level={2}>
