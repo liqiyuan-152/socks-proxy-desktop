@@ -52,7 +52,7 @@ export function ConnectionStatistic({
             <p className="mt-2 text-2xl font-bold tracking-tight tabular-nums">{value}</p>
           </div>
           <span
-            className="shrink-0 rounded-lg bg-primary/10 p-2 text-primary ring-1 ring-primary/20"
+            className="shrink-0 rounded-lg bg-primary/10 p-2 text-primary-text ring-1 ring-primary/20"
             aria-hidden="true"
           >
             {icon}

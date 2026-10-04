@@ -106,8 +106,8 @@ export default function RoutingRuleList() {
     <>
       <PageHeader title="分流规则" description="定义哪些流量走代理，哪些流量直连。" />
 
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-        <div className="w-full space-y-5">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="mx-auto w-full max-w-7xl space-y-5">
           <ChinaDirectPreset />
           <RouteTest />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -189,7 +189,9 @@ export default function RoutingRuleList() {
                       </TableCell>
                       <TableCell className="px-4 py-4">
                         <span
-                          className={rule.action === "proxy" ? "text-primary" : "text-foreground"}
+                          className={
+                            rule.action === "proxy" ? "text-primary-text" : "text-foreground"
+                          }
                         >
                           {rule.action === "proxy"
                             ? (profiles.find((profile) => profile.id === rule.proxy_profile_id)

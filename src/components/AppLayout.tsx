@@ -28,6 +28,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
@@ -52,6 +53,7 @@ function StatusDot({ running }: { running: boolean }) {
 
 function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
   const isActive = useMatch({ path: to, end: to === "/" }) !== null;
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarMenuItem>
@@ -61,7 +63,7 @@ function SidebarNavigationItem({ label, icon: Icon, to }: NavigationItem) {
         tooltip={label}
         className="h-11 rounded-lg text-sm font-medium text-sidebar-foreground transition-[background-color,box-shadow,scale] duration-200 motion-reduce:transition-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground motion-safe:hover:scale-[1.02] data-[active=true]:bg-[image:var(--gradient-primary)] data-[active=true]:text-primary-foreground data-[active=true]:shadow-md data-[active=true]:shadow-primary/25"
       >
-        <NavLink to={to} end={to === "/"}>
+        <NavLink to={to} end={to === "/"} onClick={() => isMobile && setOpenMobile(false)}>
           <Icon className="size-5" aria-hidden="true" />
           <span>{label}</span>
         </NavLink>
@@ -143,7 +145,7 @@ export function AppLayout() {
           <footer className="hidden shrink-0 items-center gap-4 border-t border-sidebar-border/80 bg-gradient-to-r from-sidebar via-sidebar to-sidebar-accent/30 px-6 py-3.5 backdrop-blur-sm text-xs text-muted-foreground lg:flex">
             <span>
               当前模式：
-              <strong className="rounded-md bg-primary/10 px-2 py-0.5 font-semibold text-primary ring-1 ring-primary/20">
+              <strong className="rounded-md bg-primary/10 px-2 py-0.5 font-semibold text-primary-text ring-1 ring-primary/20">
                 {activeModeLabel}
               </strong>
             </span>

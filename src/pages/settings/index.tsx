@@ -171,8 +171,8 @@ export default function SettingsPage() {
     <>
       <PageHeader title="设置" description="管理应用启动、日志和配置选项。" />
 
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-        <div className="w-full space-y-5">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="mx-auto w-full max-w-7xl space-y-5">
           {error && !pendingAction && <ErrorAlert error={error} />}
           {message && (
             <p role="status" className="text-muted-foreground">
@@ -300,7 +300,7 @@ export default function SettingsPage() {
                 <DialogTitle>{activeAction.title}</DialogTitle>
               </DialogHeader>
               <div className="flex gap-3 px-6 py-5 text-sm text-muted-foreground">
-                <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                <Info className="mt-0.5 size-4 shrink-0 text-primary-text" aria-hidden="true" />
                 <p>{activeAction.description}</p>
               </div>
               {error && <ErrorAlert error={error} />}

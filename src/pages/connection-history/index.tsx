@@ -115,11 +115,11 @@ export default function ConnectionLogs() {
         title="连接日志"
         description="活跃连接和运行时诊断。已完成连接历史、成功率与失败详情暂不可用。"
       />
-      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-        <div className="w-full space-y-5">
+      <div className="content-scroll animate-fade-in min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="mx-auto w-full max-w-7xl space-y-5">
           {error && <ErrorAlert error={error} />}
           <div className="flex flex-wrap gap-3" aria-label="日志筛选">
-            <div className="relative flex-1">
+            <div className="relative w-full sm:min-w-48 sm:flex-1">
               <Search
                 className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"

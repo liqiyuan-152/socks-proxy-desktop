@@ -8,6 +8,7 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -49,6 +50,7 @@
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.02 250);
   --primary: oklch(0.52 0.21 255);
+  --primary-text: oklch(0.5 0.18 255);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.94 0.01 250);
   --secondary-foreground: oklch(0.25 0.02 250);
@@ -146,6 +148,7 @@ button:not(:disabled),
   --card: oklch(0.19 0.018 250);
   --card-foreground: oklch(0.94 0.01 250);
   --primary: oklch(0.55 0.2 255);
+  --primary-text: oklch(0.74 0.14 255);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.24 0.02 250);
   --secondary-foreground: oklch(0.92 0.01 250);
@@ -158,13 +161,13 @@ button:not(:disabled),
   --border: oklch(0.32 0.02 250);
   --input: oklch(0.32 0.02 250);
   --ring: oklch(0.62 0.2 255);
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar: oklch(0.15 0.018 250);
+  --sidebar-foreground: oklch(0.94 0.01 250);
   --sidebar-primary: hsl(224.3 76.3% 48%);
   --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-accent: oklch(0.25 0.025 250);
+  --sidebar-accent-foreground: oklch(0.96 0.01 250);
+  --sidebar-border: oklch(0.3 0.02 250);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
   --scrollbar-thumb: oklch(0.42 0.02 250);
   --scrollbar-thumb-hover: oklch(0.53 0.025 250);
@@ -337,5 +340,19 @@ button:not(:disabled),
   .stagger-children > *,
   .animate-shimmer::after {
     animation: none;
+  }
+}
+
+@media (width < 640px) {
+  .table-modern td,
+  .table-modern th {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  [data-slot="button"] {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
