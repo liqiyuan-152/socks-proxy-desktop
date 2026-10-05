@@ -20,7 +20,8 @@
         "sidebarImage": "installer/windows/sidebar.bmp",
         "installerIcon": "icons/icon.ico",
         "uninstallerIcon": "icons/icon.ico",
-        "displayLanguageSelector": false
+        "displayLanguageSelector": false,
+        "installerHooks": "installer/windows/notice-page.nsh"
       }
     }
   }

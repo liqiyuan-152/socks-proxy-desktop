@@ -23,3 +23,7 @@ Tauri 2 Windows 覆盖配置仅发布 NSIS，使用 SimpChinese、品牌图标�
 ## 后续
 
 等待 Linux CI 构建、检查产物后完成 3.3/3.5。Windows 安装向导的实际中文和快捷方式交互、macOS 拖拽更新及系统图标、Linux 桌面菜单视觉、各平台配置保留仍属于 Phase 4，不能以构建成功替代。
+
+## 中文说明页补充
+
+官方 NSIS 模板支持 installerHooks 在页面声明前加载附加定义。新增 notice-page.nsh，仅修改许可说明页的按钮与提示为“下一步”和第三方说明，避免把现有许可说明误呈现为新增 EULA。Windows 官方 makensis 已重新构建成功；生成的 installer.nsi 在 MUI_PAGE_LICENSE 前加载该文件。完整 UI 显示仍待 Phase 4。
