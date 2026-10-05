@@ -1,6 +1,6 @@
-# Phase 4 实际平台验收记录（进行中）
+# Phase 4 实际平台验收记录
 
-日期：2026-10-05。未完成全部系统视觉及安装交互验收，不宣告阶段完成。
+日期：2026-10-05。本文保留逐轮历史记录；最新完成情况见末尾及 ACCEPTANCE_AUDIT.md，历史“待验收”不代表最终状态。
 
 ## macOS 已执行
 
@@ -178,3 +178,11 @@ SocksBrandingDataRetentionUninstall 实际终态 Ready、LastTaskResult=0；安�
 同一重装任务随后实际结束，State=Ready、LastTaskResult=0；应用 PID 512 正在运行，FileVersion/ProductVersion 均为 0.2.2。实时库及快照完整性通过，configuration 1 行，configuration、selected_mode 与升级前快照逐记录相同。桌面和当前用户开始菜单快捷方式均指向新安装程序，IconLocation 为安装目录 brand-shield.ico,0；已清理重装临时任务，保留应用和数据快照。结合用户窗口及原配置确认，重装验收通过。
 
 受影响的真实 Windows 旧版卸载后升级、新版独立卸载及重装均通过；历史删除机制已有文件系统证据，未记录的具体触发细节在发布说明中如实保留。最新应用源码 324c1e6 的五目标打包 37281781145 和独立 Quality 37281781189 均成功，覆盖静态检查、前端/工具/Rust 测试及真实 Windows 内核测试；macOS DMG 实际挂载布局和 Linux 安装启动检查成功。后续仅改验收与发布文档，完成 OpenSpec 严格校验后提交 Phase 4。
+
+### 最终 tag 内核测试夹具时序修复
+
+v0.2.2 首轮发布构建 37289501895 的四个非 Windows 目标成功，Windows 在 china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct 夹具读取请求时返回 WouldBlock；发布步骤跳过，没有公开 Release。同源码 master 构建 37289459490 成功，表明本次失败具有时序条件，但不据此绕过 tag 门禁。
+
+夹具原先在本地 CONNECT 确认后立即关闭客户端，尚不能证明上游已收到请求。修复为显式阻塞读取完整且有大小限制的 CONNECT 头，并用有界等待的通道确认上游响应写完后才关闭客户端；保持原路由断言和生产逻辑。Rust fmt/clippy 与本机 cargo test --locked 通过；本机条件内核测试不作为 Windows 证据，真实 Windows 复测进行中。
+
+使用远端已安装 stable 工具链，显式设置 SING_BOX_TEST_BIN 为固定 sing-box Windows 内核，修复后的该路由测试实际执行通过（1 项，11.42 秒）。初次远端默认 1.78.0 工具链不支持依赖的 edition2024，切换现有 stable 后完成；没有升级宿主工具链。该修复只涉及测试夹具，安装器与应用代码保持已验收内容。

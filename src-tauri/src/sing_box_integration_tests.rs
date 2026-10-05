@@ -163,6 +163,7 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
             crate::route_test::evaluate(&config, Some(&rule_root), target, 443).unwrap();
         assert_eq!(predicted.action, action, "{target}");
     }
+    let (received_tx, received_rx) = std::sync::mpsc::channel();
     let observed = thread::spawn(move || {
         upstream.set_nonblocking(true).unwrap();
         let deadline = Instant::now() + Duration::from_secs(8);
@@ -180,15 +181,22 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
                     Err(error) => panic!("upstream did not receive both requests: {error}"),
                 }
             };
+            stream.set_nonblocking(false).unwrap();
             stream
                 .set_read_timeout(Some(Duration::from_secs(5)))
                 .unwrap();
-            let mut request = [0u8; 1024];
-            let count = stream.read(&mut request).unwrap();
-            targets.push(String::from_utf8_lossy(&request[..count]).into_owned());
+            let mut request = Vec::new();
+            while !request.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                request.push(byte[0]);
+                assert!(request.len() <= 8192, "oversized CONNECT header");
+            }
+            targets.push(String::from_utf8_lossy(&request).into_owned());
             stream
                 .write_all(b"HTTP/1.1 200 Connection Established\r\n\r\n")
                 .unwrap();
+            received_tx.send(()).unwrap();
         }
         targets
     });
@@ -234,8 +242,14 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
         assert!(String::from_utf8_lossy(&response[..count]).contains("200"));
         client
     };
-    drop(connect("unknown.invalid:443"));
-    drop(connect("192.0.2.1:443"));
+    // Local CONNECT acknowledgement precedes upstream dialing. Keep each
+    // client alive until the upstream receives the complete request.
+    let first = connect("unknown.invalid:443");
+    received_rx.recv_timeout(Duration::from_secs(8)).unwrap();
+    drop(first);
+    let second = connect("192.0.2.1:443");
+    received_rx.recv_timeout(Duration::from_secs(8)).unwrap();
+    drop(second);
     let mut client = connect(&format!("127.0.0.1:{destination_port}"));
     let mut payload = [0u8; 64];
     let count = client.read(&mut payload).unwrap();
