@@ -136,12 +136,16 @@ pub fn install<R: Runtime>(app: &tauri::App<R>) -> tauri::Result<()> {
         global,
         direct,
     }));
+    #[cfg(target_os = "macos")]
+    let icon = tauri::include_image!("icons/icon-template.png");
+    #[cfg(not(target_os = "macos"))]
+    let icon = app
+        .default_window_icon()
+        .expect("application icon is missing")
+        .clone();
     TrayIconBuilder::with_id("main-tray")
-        .icon(
-            app.default_window_icon()
-                .expect("application icon is missing")
-                .clone(),
-        )
+        .icon(icon)
+        .icon_as_template(cfg!(target_os = "macos"))
         .tooltip("Socks Proxy")
         .menu(&menu)
         .show_menu_on_left_click(false)
