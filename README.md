@@ -94,4 +94,4 @@ GitHub Actions 的 [Desktop packages](https://github.com/liqiyuan-152/socks-prox
 python3 scripts/generate-installer-assets.py --font /path/to/chinese-font.ttf
 ```
 
-Windows 安装向导使用简体中文，配有品牌侧栏与顶部图；中文第三方说明保留项目现有许可状态，不替代 GPLv3 原文。macOS DMG 使用中文拖拽提示及 Retina 背景。阶段验证及实际平台验收记录见 `openspec/changes/branding-and-installer/`。
+Windows 下载文件使用英文名称 `Socks-Proxy_v{version}_Windows_x64_setup.exe`。Windows 安装向导使用简体中文，配有品牌侧栏与顶部图；中文第三方说明保留项目现有许可状态，不替代 GPLv3 原文。macOS DMG 使用中文拖拽提示及 Retina 背景。阶段验证及实际平台验收记录见 `openspec/changes/branding-and-installer/`。

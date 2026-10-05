@@ -40,7 +40,7 @@ test("完整平台矩阵生成七个具名产物并校验汇总 SHA256", async (
   const { input, output } = await fixture(t);
   const names = await prepareRelease(input, output, "v0.2.2", revision);
   assert.equal(names.length, 7);
-  assert.ok(names.includes("Socks-Proxy_v0.2.2_Windows_x64_安装包.exe"));
+  assert.ok(names.includes("Socks-Proxy_v0.2.2_Windows_x64_setup.exe"));
   assert.ok(names.includes("socks-proxy_0.2.2_amd64.deb"));
   const lines = (await readFile(join(output, "SHA256SUMS.txt"), "utf8")).trim().split("\n");
   await Promise.all(

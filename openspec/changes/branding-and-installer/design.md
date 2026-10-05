@@ -15,7 +15,7 @@
 3. 中文 RTF 为许可与第三方说明，不新增许可或限制；明确 UNLICENSED 的现状、sing-box GPLv3、固定版本与对应源码位置，并随包保留上游许可证。不得使用禁止逆向工程或无依据的隐私声明。
 4. macOS 保留 Universal 支持，并新增 Apple Silicon 与 Intel DMG，中文背景支持标准和 Retina，保持应用标识和最低系统要求。模板菜单栏图标单独集成，菜单行为保持不变。
 5. Linux 新增 AppImage、DEB、RPM 打包与中文桌面及 AppStream 信息。元数据仅描述实际功能和许可；不添加 socks URI 注册。包文件检查与实际桌面安装测试分别记录。
-6. 发布矩阵和汇总脚本按平台显式验证产物数量、格式、版本、源码及 SHA256；任何缺包或不匹配均拒绝发布。README 和 CHANGELOG 随实现更新，新版本发布不得覆盖已有 v0.2.1 标签。
+6. 发布矩阵和汇总脚本按平台显式验证产物数量、格式、版本、源码及 SHA256；任何缺包或不匹配均拒绝发布。Windows GitHub 附件使用英文 setup.exe 文件名，不添加中文显示标签，避免托管服务移除中文导致校验清单不匹配。README 和 CHANGELOG 随实现更新，新版本发布不得覆盖已有 v0.2.1 标签。
 
 ## Risks / Trade-offs
 

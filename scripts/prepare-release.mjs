@@ -5,7 +5,7 @@ import { join, basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const releasePlatforms = {
-  "windows-x64": { ".exe": "Windows_x64_安装包.exe" },
+  "windows-x64": { ".exe": "Windows_x64_setup.exe" },
   "macos-arm64": { ".dmg": "macOS_Apple-Silicon.dmg" },
   "macos-intel": { ".dmg": "macOS_Intel.dmg" },
   "macos-universal": { ".dmg": "macOS_Universal.dmg" },

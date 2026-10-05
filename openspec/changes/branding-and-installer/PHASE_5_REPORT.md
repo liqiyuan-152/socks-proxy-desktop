@@ -1,6 +1,6 @@
-# Phase 5 发布准备记录（进行中）
+# Phase 5 发布与核验记录
 
-日期：2026-10-05。README 和 CHANGELOG 已更新，记录品牌图标、中文 NSIS、三种 macOS 架构、Linux 包及实际功能限制。尚未完成发布。
+日期：2026-10-05。本文保留逐轮准备记录；最终公开下载核验已完成，最新状态见末尾及 ACCEPTANCE_AUDIT.md。
 
 ## 实际产物汇总
 
@@ -75,3 +75,19 @@ node scripts/prepare-release.mjs /tmp/socks-brand-ci-37279969996 /tmp/socks-bran
 Windows 保留加固的真实旧版升级、独立卸载和重装均已完成，详见 Phase 4。新版卸载页面经用户确认中文及品牌正常、说明保留数据且无删除选项，重装后 0.2.2 实际运行，原配置及模式一致。README 示例和 CHANGELOG 更新为 0.2.2 / 2026-10-05。下一步将本阶段提交作为 v0.2.2 发布源码，经 tag 工作流重新构建全部七个安装包；发布后下载实际 Release 并核验清单和源码，5.3/5.4 在取得证据前保留未完成。已有 v0.2.1 保持不变。
 
 首轮 tag 构建 37289501895 因 Windows 路由夹具时序失败，发布步骤跳过，v0.2.2 Release 未创建。修复后真实 Windows 单项内核测试通过，详见 Phase 4。将尚未发布的 v0.2.2 tag 更新至夹具修复提交后重新构建，最终源码与下载清单以后续记录为准，已发布 v0.2.1 不变。
+
+## 最终发布包下载发现 GitHub 文件名规范化
+
+修复源码 b7e5dcfed0e8bfa6128dd9e0ce13dfb9cfe7fb98 的 tag 打包 37290883587 五目标和发布步骤均成功。首次公开后下载全部七个安装包及三份清单，包内容 SHA256 均与清单及 GitHub asset digest 相符，VERSION=0.2.2，SOURCE_REVISION 对应 tag。但 GitHub 把 Windows 附件名 Socks-Proxy_v0.2.2_Windows_x64_安装包.exe 规范化为 Socks-Proxy_v0.2.2_Windows_x64_.exe，与清单的原名不一致，不能宣称完整下载校验通过。
+
+已将 Release 403564394 恢复草稿；调用资产重命名 API 后中文仍被规范化，证实该托管限制。设置了中文显示 label，但尚未调整方案文件名或校验清单。已请求用户选择 ASCII setup.exe + 中文标签，或 ZIP 保留内部中文 EXE；这涉及提案规定的文件命名要求，不能静默更改。原 v0.2.1 不变，5.3/5.4 仍待完成。
+
+## 最终公开与下载核验完成
+
+用户确认“保留英文名称即可”。Windows 附件重命名为 Socks-Proxy_v0.2.2_Windows_x64_setup.exe，并清空 label；同步 SHA256SUMS.txt 的实际名称、发布说明、主分支汇总脚本、测试及 OpenSpec 计划。安装向导仍为简体中文，不添加 ZIP。9 项发布汇总测试、脚本 ESLint、文档格式和 OpenSpec 严格校验通过。
+
+Desktop packages 37290883587 五目标及发布步骤成功，独立 Quality 37290883574 全部成功，均对应 b7e5dcfed0e8bfa6128dd9e0ce13dfb9cfe7fb98。草稿下载核验成功后重新公开，再从实际 Release 下载全部 10 个附件至 /tmp/socks-release-022-public-verified：七个安装包与 SHA256 清单、GitHub digest、文件大小和精确文件名均一致，没有额外或缺失附件；VERSION=0.2.2，SOURCE_REVISION=b7e5dcfed0e8bfa6128dd9e0ce13dfb9cfe7fb98。Windows label 为空，版本专属说明与 docs/releases/v0.2.2.md 一致，Release 非草稿且为 prerelease。
+
+发布地址：https://github.com/liqiyuan-152/socks-proxy-desktop/releases/tag/v0.2.2 。v0.2.1 仍为 990504a7065bf43d9e00cc27a7579a531651158b；公开后的 v0.2.2 tag 保持 b7e5dcf 不再移动。此次文件名和校验清单修正不改变二进制内容，主分支后续维护提交不冒充安装包源码；SOURCE_REVISION 保留实际构建提交。
+
+逐项实现与平台验证见 ACCEPTANCE_AUDIT.md，用户明确豁免的 Linux 人工视觉验收及历史删除具体触发细节仍如实记录。完成 Phase 5 提交后关闭任务，保留所有无关用户改动，不自动归档 OpenSpec。

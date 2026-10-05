@@ -41,7 +41,7 @@ Windows 构建前运行 `pnpm prepare:installer`，校验固定官方 NSIS 模�
 
 ## 阶段 5：发布准备
 
-更新 README 品牌图标与平台说明、CHANGELOG。统一命名：Windows `Socks-Proxy_v{version}_Windows_x64_安装包.exe`；macOS `Socks-Proxy_v{version}_macOS_Apple-Silicon.dmg`、`..._Intel.dmg`、`..._Universal.dmg`；Linux `Socks-Proxy_v{version}_Linux_x64.AppImage`、`socks-proxy_{version}_amd64.deb`，RPM 使用清晰的 Linux x64 标识。
+更新 README 品牌图标与平台说明、CHANGELOG。统一命名：Windows `Socks-Proxy_v{version}_Windows_x64_setup.exe`；macOS `Socks-Proxy_v{version}_macOS_Apple-Silicon.dmg`、`..._Intel.dmg`、`..._Universal.dmg`；Linux `Socks-Proxy_v{version}_Linux_x64.AppImage`、`socks-proxy_{version}_amd64.deb`，RPM 使用清晰的 Linux x64 标识。
 
 核验完整 SHA256SUMS、VERSION、SOURCE_REVISION。确定新的未发布版本号并创建 GitHub Release，保持现有 v0.2.1 标签不变。实际核验下载后逐项审计规格及 tasks，全部完成才宣告实施完成。
 

@@ -470,32 +470,32 @@ high quality, trending on dribbble
 
 **视觉质量**：
 
-- [ ] 在 1024px 下细节丰富
-- [ ] 在 512px 下主体清晰
-- [ ] 在 128px 下识别度高
-- [ ] 在 32px 下轮廓清晰
-- [ ] 在 16px 下仍可辨认
+- [x] 在 1024px 下细节丰富
+- [x] 在 512px 下主体清晰
+- [x] 在 128px 下识别度高
+- [x] 在 32px 下轮廓清晰
+- [x] 在 16px 下仍可辨认
 
 **色彩测试**：
 
-- [ ] 浅色背景下对比度足够
-- [ ] 深色背景下对比度足够
-- [ ] 与品牌色系一致
-- [ ] 在灰度模式下可辨认
+- [x] 浅色背景下对比度足够
+- [x] 深色背景下对比度足够
+- [x] 与品牌色系一致
+- [x] 在灰度模式下可辨认
 
 **平台兼容**：
 
-- [ ] macOS Dock 显示正常
-- [ ] Windows 任务栏显示正常
-- [ ] Linux 桌面环境显示正常
-- [ ] 浏览器 Favicon 显示正常
+- [x] macOS Dock 显示正常
+- [x] Windows 任务栏显示正常
+- [x] Linux 元数据与包验证通过；按用户决定不进行桌面视觉验收
+- [x] 浏览器 Favicon 显示正常
 
 **文件格式**：
 
-- [ ] PNG 文件透明背景正确
-- [ ] ICNS 文件包含所有尺寸
-- [ ] ICO 文件包含所有尺寸
-- [ ] 文件大小合理（< 500KB）
+- [x] PNG 文件透明背景正确
+- [x] ICNS 文件包含所有尺寸
+- [x] ICO 文件包含所有尺寸
+- [x] 文件大小合理（< 500KB）
 
 ---
 
@@ -544,7 +544,7 @@ high quality, trending on dribbble
 格式：Socks-Proxy_v{版本}_{平台}_{架构}_{可选描述}.{扩展名}
 
 示例：
-Socks-Proxy_v0.2.0_Windows_x64_安装包.exe
+Socks-Proxy_v0.2.0_Windows_x64_setup.exe
 Socks-Proxy_v0.2.0_macOS_Apple-Silicon.dmg
 Socks-Proxy_v0.2.0_macOS_Intel.dmg
 Socks-Proxy_v0.2.0_Linux_x64.AppImage

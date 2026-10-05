@@ -63,7 +63,9 @@ Windows 新版卸载器 MUST 不提供删除应用数据选项，也不得递归
 
 ### Requirement: 可追溯的跨平台发布
 
-发布 SHALL 提供 Windows x64 安装包、macOS Apple Silicon 和 Intel DMG、Linux x64 AppImage 及 DEB，使用提案规定的清晰平台和架构命名。发布 MUST 提供覆盖全部安装包的 SHA256 校验清单、版本号和源码提交号，并更新 README、CHANGELOG 和 GitHub Release。已发布版本标签 MUST 保持不变。
+发布 SHALL 提供 Windows x64 安装包、macOS Apple Silicon 和 Intel DMG、Linux x64 AppImage 及 DEB，使用提案规定的清晰平台和架构命名。Windows 附件 SHALL 使用英文文件名 `Socks-Proxy_v{version}_Windows_x64_setup.exe`，不添加中文显示标签；安装向导保持简体中文。
+
+发布 MUST 提供覆盖全部安装包的 SHA256 校验清单、版本号和源码提交号，并更新 README、CHANGELOG 和 GitHub Release。已发布版本标签 MUST 保持不变。
 
 #### Scenario: 下载并核验安装包
 
