@@ -47,3 +47,13 @@ node scripts/prepare-release.mjs /tmp/socks-brand-ci-37269117857 /tmp/socks-bran
 七个安装包及 SHA256、VERSION、SOURCE_REVISION 全部核验通过。此次三个 macOS DMG 均通过实际挂载布局检查，Apple Silicon 包另已通过 Finder 中文背景、拖拽替换和应用启动/非空配置保留验证。Windows EXE 已传至远端，上传前后 SHA256 一致（8c83ab91b6084e7c2e8898c83d44e8b0d3117f6cfa6ebc7cfef6fe1cdd550df7），尚待用户退出应用后执行新版本升级。已有 v0.2.1 不变，未创建 v0.2.2 标签或 Release；首次 Windows 配置缺失未定因，不将后续未复现作为修复证明。
 
 同源码独立 Quality [37269103256](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37269103256) 已全部成功。
+
+## 最新验收文档提交的候选复核
+
+源码 f19b8b7c867da2c4fe499e069c877f53e3fc9e33 已推送。Desktop packages 37271908223 五个目标成功，同源码 Quality 37271908293 全部成功；该提交仅更新验收文档，应用及安装资源与 8bc3b87 相同。已下载全部真实 artifact 并执行：
+
+```sh
+node scripts/prepare-release.mjs /tmp/socks-brand-ci-37271908223 /tmp/socks-brand-ci-verified-37271908223 v0.2.2 f19b8b7c867da2c4fe499e069c877f53e3fc9e33
+```
+
+七个安装包的版本、源码、格式、数量和 SHA256 全部通过。Windows 实际升级已完成且原配置、模式保留，细节见 Phase 4 报告。已准备包含首次未定因配置缺失及完整备份建议的本地发布预览，等待用户决定继续排查或接受明确记录的已知异常后发布；未创建 v0.2.2 标签或 Release，不将未定因异常标记为已修复。

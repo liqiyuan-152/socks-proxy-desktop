@@ -126,3 +126,11 @@ Windows 已再次请求用户从托盘退出，以保存新一致快照并进行
 ## 浏览器 favicon 实际视觉补充
 
 在隔离副本的 0.2.2 生产预览（127.0.0.1:5177）打开 Chrome 标签，原生 Chrome 截图确认标签标题左侧显示蓝色盾牌小图标。受浏览器自动化接管的标签显示的是控制标识，不能据此判断应用 favicon；本次通过 Chrome 原生新建普通标签访问相同地址完成辨认。同时提取 ICO 的 16px PNG 确认蓝色盾牌与中心点，资源各尺寸条目可读。验收标签已关闭，未更改浏览器配置。
+
+## Windows 0.2.1→0.2.2 实际升级
+
+重新查询确认旧版进程已退出后，以 node:sqlite backup 保存 version-022-upgrade/before.sqlite3，一致快照完整性通过，configuration 1 行；原配置及模式与实时库一致。再次核验远端安装包 SHA256 8c83ab91b6084e7c2e8898c83d44e8b0d3117f6cfa6ebc7cfef6fe1cdd550df7，与已核验源码 8bc3b87 的候选包一致。启动 SocksBrandingVersion022Upgrade 交互任务，安装器实际运行于控制台会话 1；未重复启动。
+
+任务随后完成返回 0，已安装 exe 的 FileVersion、ProductVersion 均为 0.2.2，应用进程 10496 在控制台会话 1 持续运行。configuration、selected_mode 与升级前一致快照逐记录相同，configuration 1 行，实时库与快照完整性均通过。桌面及当前用户开始菜单链接目标正确，IconLocation 指向安装目录 brand-shield.ico,0。已清理临时安装任务，保留应用和升级前快照；用户对本轮窗口保持打开及原配置展示的确认尚待回复。
+
+结合 macOS 的非空配置实际 0.2.1→0.2.2 升级及恢复、Linux 真实旧 DEB 升级、先前各平台卸载配置保留证据，4.4 的当前候选升级与卸载保留检查已完成。首次 Windows 安装后配置缺失的历史异常仍未定因，不将上述通过记录作为该异常的根因修复证明；4.5 保留未完成。
