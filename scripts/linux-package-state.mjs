@@ -9,29 +9,12 @@ const database = new DatabaseSync(databasePath);
 try {
   assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
   if (operation === "seed") {
-    const configuration = {
-      schema_version: 2,
-      profiles: [
-        {
-          id: "linux-upgrade-fixture",
-          name: "升级保留配置验收",
-          protocol: "socks5",
-          host: "127.0.0.1",
-          port: 1080,
-          authentication_enabled: false,
-          credential_ref: null,
-          enabled: true,
-        },
-      ],
-      rules: [],
-      default_profile_id: "linux-upgrade-fixture",
-      china_direct_enabled: false,
-      settings: {
-        launch_at_login: false,
-        diagnostic_retention: "Days30",
-        latency_test_url: "https://www.gstatic.com/generate_204",
-      },
-    };
+    const configuration = JSON.parse(
+      await readFile(
+        new URL("./fixtures/linux-upgrade-configuration.json", import.meta.url),
+        "utf8",
+      ),
+    );
     database
       .prepare(
         "INSERT INTO configuration VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET document_json=excluded.document_json",

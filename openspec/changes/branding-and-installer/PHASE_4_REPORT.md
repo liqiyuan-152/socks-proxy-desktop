@@ -94,3 +94,11 @@
 恢复后再次查询，应用进程 23048 持续运行于控制台会话 1；configuration、selected_mode 与 current-before-rehearsal.sqlite3 一致，configuration 1 行，schema 6，完整性检查通过。已清理恢复启动临时任务，保留运行中的应用。用户窗口确认仍待回复。
 
 复查 Linux 验证脚本：现有 CI 覆盖 DEB 安装、原生前端就绪、卸载后数据库文件哈希一致和 AppImage 独立启动，但尚未安装实际旧版本后再升级；4.4 的 Linux 配置升级证据仍缺。用户取消的是桌面视觉验收，未将此静态或单次安装结果记作旧版升级通过。
+
+## 候选 CI 验收问题修正
+
+旧源码 CI 37266088786 的 Windows 实核测试在 read_header 的 read_exact 返回 WouldBlock。夹具监听器使用非阻塞模式，读取函数现在显式切回阻塞读取并保留原 5 秒超时；新增非阻塞连接延迟分段响应测试。本机 Rust fmt/clippy 和回归测试通过，真实 Windows 设置 SING_BOX_TEST_BIN 后执行 real_core_tests，两项均通过，包含固定 sing-box 认证、凭据更新、失败回滚验证。该改动仅影响测试夹具。
+
+0.2.2 候选升级 CI 37266909074 的 Linux 升级步骤失败在旧版读取测试配置：夹具将 diagnostic_retention 写成 Days30，而真实 Rust 契约要求 days30。修正为共享 JSON 夹具，Node 种入数据库与 Rust 模型测试读取同一文件；Rust 实际反序列化、validate、非空代理及默认代理断言通过。此次失败是人工生成的验收数据错误，未涉及用户数据库；修复后仍须重新执行真实 Linux 升级 CI，不以本机模型测试代替。
+
+上述修复的准确暂存源码在隔离副本完整 pnpm check 通过（159 前端、19 工具测试及静态/Rust/IPC 检查），另行 cargo test --locked 通过：233 单元测试、10 集成测试、1 示例测试及 2 文档测试；保留正常的隔离子进程/手动测试忽略项。本机未设置 SING_BOX_TEST_BIN 的条件测试不作为真实内核证据，真实内核依据为前述远端 Windows 两项执行结果。

@@ -1,5 +1,24 @@
 use super::*;
 
+#[test]
+fn linux_upgrade_fixture_matches_persisted_configuration_contract() {
+    let configuration: PersistedConfiguration = serde_json::from_str(include_str!(
+        "../../scripts/fixtures/linux-upgrade-configuration.json"
+    ))
+    .unwrap();
+    configuration.validate().unwrap();
+    assert_eq!(configuration.schema_version, CONFIG_SCHEMA_VERSION);
+    assert_eq!(configuration.profiles.len(), 1);
+    assert_eq!(
+        configuration.settings.diagnostic_retention,
+        RetentionPolicy::Days30
+    );
+    assert_eq!(
+        configuration.active_profile_id.as_deref(),
+        Some(configuration.profiles[0].id.as_str())
+    );
+}
+
 fn profile(id: &str, name: &str, port: u16) -> ProxyProfile {
     ProxyProfile {
         id: id.into(),

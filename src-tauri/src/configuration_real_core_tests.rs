@@ -36,6 +36,9 @@ impl SystemProxyAdapter for Arc<ProxyState> {
 }
 
 fn read_header(stream: &mut TcpStream) -> String {
+    // Windows accepted sockets can inherit the listener's nonblocking mode.
+    // read_exact needs blocking reads with the bounded timeout below.
+    stream.set_nonblocking(false).unwrap();
     stream
         .set_read_timeout(Some(Duration::from_secs(5)))
         .unwrap();
@@ -47,6 +50,21 @@ fn read_header(stream: &mut TcpStream) -> String {
         header.push(byte[0]);
     }
     String::from_utf8(header).unwrap()
+}
+
+#[test]
+fn header_reader_waits_for_delayed_data_on_nonblocking_stream() {
+    let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
+    let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    client.set_nonblocking(true).unwrap();
+    let (mut server, _) = listener.accept().unwrap();
+    let writer = std::thread::spawn(move || {
+        server.write_all(b"HTTP/1.1 200").unwrap();
+        std::thread::sleep(Duration::from_millis(50));
+        server.write_all(b" OK\r\n\r\n").unwrap();
+    });
+    assert_eq!(read_header(&mut client), "HTTP/1.1 200 OK\r\n\r\n");
+    writer.join().unwrap();
 }
 
 fn probe(proxy: &ProxyState, observed: &mpsc::Receiver<String>, expected: &str) {
