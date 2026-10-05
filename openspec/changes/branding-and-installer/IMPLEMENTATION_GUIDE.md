@@ -37,6 +37,8 @@ Linux 验证 AppImage 实际启动、DEB 安装和中文桌面元数据；按 20
 
 所有平台验证旧版升级保留配置、卸载移除安装文件和快捷方式但保留配置。静态检查不替代运行验收；修复问题后重测并记录真实证据。完成质量检查后提交验收记录。
 
+Windows 构建前运行 `pnpm prepare:installer`，校验固定官方 NSIS 模板并生成配置保留版本。升级调用旧 NSIS 卸载器固定使用 `/UPDATE`；新版卸载器无删除应用数据选项和递归删除代码。检查实际生成的 installer.nsi，再执行真实覆盖安装与独立卸载复测。
+
 ## 阶段 5：发布准备
 
 更新 README 品牌图标与平台说明、CHANGELOG。统一命名：Windows `Socks-Proxy_v{version}_Windows_x64_安装包.exe`；macOS `Socks-Proxy_v{version}_macOS_Apple-Silicon.dmg`、`..._Intel.dmg`、`..._Universal.dmg`；Linux `Socks-Proxy_v{version}_Linux_x64.AppImage`、`socks-proxy_{version}_amd64.deb`，RPM 使用清晰的 Linux x64 标识。

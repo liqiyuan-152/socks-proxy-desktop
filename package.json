@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "prepare:core": "node scripts/prepare-sing-box.mjs",
+    "prepare:installer": "node scripts/prepare-windows-installer.mjs",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "pnpm run lint:ox && pnpm run lint:eslint && pnpm run lint:style",
@@ -26,7 +27,7 @@
     "ipc:generate": "node scripts/generate-ipc.mjs",
     "ipc:check": "node scripts/generate-ipc.mjs --check",
     "test:coverage": "vitest run --coverage --coverage.include=src/store/** --coverage.reporter=text --coverage.reporter=json-summary --coverage.reporter=lcov",
-    "test:tools": "node --test scripts/test-query-runtime-log.mjs scripts/test-project-version.mjs scripts/test-e2e-driver.mjs scripts/test-prepare-release.mjs",
+    "test:tools": "node --test scripts/test-windows-installer.mjs scripts/test-query-runtime-log.mjs scripts/test-project-version.mjs scripts/test-e2e-driver.mjs scripts/test-prepare-release.mjs",
     "icon:generate": "node scripts/generate-brand-icons.mjs"
   },
   "dependencies": {

@@ -134,3 +134,13 @@ Windows 已再次请求用户从托盘退出，以保存新一致快照并进行
 任务随后完成返回 0，已安装 exe 的 FileVersion、ProductVersion 均为 0.2.2，应用进程 10496 在控制台会话 1 持续运行。configuration、selected_mode 与升级前一致快照逐记录相同，configuration 1 行，实时库与快照完整性均通过。桌面及当前用户开始菜单链接目标正确，IconLocation 指向安装目录 brand-shield.ico,0。已清理临时安装任务，保留应用和升级前快照；用户对本轮窗口保持打开及原配置展示的确认尚待回复。
 
 结合 macOS 的非空配置实际 0.2.1→0.2.2 升级及恢复、Linux 真实旧 DEB 升级、先前各平台卸载配置保留证据，4.4 的当前候选升级与卸载保留检查已完成。首次 Windows 安装后配置缺失的历史异常仍未定因，不将上述通过记录作为该异常的根因修复证明；4.5 保留未完成。
+
+## 首次配置缺失的文件系统证据与保留加固
+
+2026-10-05 用户要求“继续排查后发布”。只读检查原始证据库：安装前 schema 5、configuration 1 行、runtime_diagnostics 68 行、configuration_commit revision 2；首次安装后 schema 6、configuration 0 行、runtime_diagnostics 10 行、revision 0。两个库完整性均通过，但 configuration/runtime_diagnostics/proxy_ownership 的建表 SQL 和 rootpage 排布不同，证明安装后为新建库，并非仅漏读 WAL 或迁移删除一行。
+
+读取 Windows C: NTFS USN 日志（未更改日志配置）：本地时间 11:48:34 创建安装前备份；11:50:15 原 config.sqlite3 及 Roaming、Local 下 com.socksproxy.desktop 两目录均出现 File delete | Close；11:50:26–27 创建新数据目录及数据库。通过 queryfilenamebyid 核验删除记录的父目录分别确为 AppData/Roaming 和 AppData/Local。该时段与首次交互安装一致，且两目录递归删除与 NSIS 的卸载数据清理路径一致。未记录 4688 进程审计事件，无法还原当时具体卸载进程及复选框状态；不推断用户勾选了删除选项。原始触发细节与已确认的文件删除机制分开记录。
+
+为消除该删除路径，安装器生成脚本固定使用 Tauri CLI 2.11.5 的官方模板（源码 9452ddee5ebefd9b678a94ff003521379df6c9ae，SHA256 20f4ecc730defb71f1342eaeaec4021df13be3d843abba0effe88ea5835fa079）。生成前校验模板哈希及 CLI 版本；仅对三个限定位置加固：旧 NSIS 卸载调用无条件追加 /UPDATE、新版卸载确认页明确保留配置并移除删除选项、移除整个应用数据删除分支。源模板结构改变或残留 APPDATA 递归删除代码均拒绝生成。生成文件和缓存留在 target/，不提交。
+
+三项回归测试已通过，覆盖旧卸载更新参数、独立卸载仍移除应用与快捷方式但保留数据，以及模板漂移/额外删除代码拒绝构建。隔离交付副本完整 pnpm check 通过（159 前端、22 工具测试）。根工作区检查被六份无关未提交文档的格式问题阻断，未修改这些文件。实际 Windows 编译和安装复测正在进行，4.5 暂不勾选；当前用户配置未修改。

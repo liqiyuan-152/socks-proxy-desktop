@@ -2,6 +2,8 @@
 
 ## 0.2.2（候选，未发布）
 
+- 加固 Windows 配置保留：覆盖安装调用旧 NSIS 卸载器时强制使用更新模式，新版卸载器移除应用数据删除选项和删除代码。
+
 - 新增原创蓝色盾牌与网络节点品牌图标，提供尺寸适配的 PNG、ICO、ICNS、favicon 及 macOS 菜单栏模板图标。
 - Windows 保持 NSIS EXE 发布格式，新增简体中文向导、品牌安装素材及中文第三方许可说明；项目许可保持现状。
 - macOS 新增中文 Retina DMG 背景与拖拽引导，提供 Apple Silicon、Intel 和 Universal 构建。

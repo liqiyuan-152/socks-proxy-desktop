@@ -17,6 +17,7 @@
     "windows": {
       "nsis": {
         "languages": ["SimpChinese"],
+        "template": "target/branding-installer.nsi",
         "headerImage": "installer/windows/header.bmp",
         "sidebarImage": "installer/windows/sidebar.bmp",
         "installerIcon": "icons/icon.ico",

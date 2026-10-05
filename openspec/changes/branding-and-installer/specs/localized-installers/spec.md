@@ -49,6 +49,8 @@ Linux 包 SHALL 提供中文应用名称、通用名称、描述、Network 和 S
 
 各平台安装包 MUST 保持应用身份和用户数据路径兼容。安装升级 SHALL 保留既有配置；卸载 SHALL 移除安装文件和对应快捷方式，同时保留用户配置。
 
+Windows 新版卸载器 MUST 不提供删除应用数据选项，也不得递归删除 Roaming/Local 应用数据目录；覆盖安装调用旧 NSIS 卸载器时 MUST 传入 `/UPDATE` 保护现有数据。
+
 #### Scenario: 已有配置升级
 
 - **WHEN** 用户在已有版本和配置的环境中安装新版本
