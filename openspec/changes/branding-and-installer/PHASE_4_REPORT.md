@@ -63,6 +63,8 @@
 
 针对配置缺失检查当前 store_migrations.rs：schema 5→6 仅新增 connection_count_samples 表，不删除或重建 configuration；store.rs 的配置写入采用 UPSERT，也未发现删除 configuration 的语句。这些静态证据无法解释首次安装后 0 行配置，不能据此排除安装器或数据路径问题，也不能作为升级保留配置通过的证据。
 
+进一步读取远端实际构建的 target/release/nsis/x64/installer.nsi：安装身份 BUNDLEID 仍为 com.socksproxy.desktop；847–860 行仅在 DeleteAppDataCheckboxState=1 且 UpdateMode<>1 时递归删除 Roaming/Local 数据目录。754–756 行解析 /UPDATE，交互重装卸载分支 350–355 行调用已有卸载入口。当前脚本没有无条件删除数据目录的代码；用户明确未勾选删除数据，而首次安装所调用的旧卸载器及当时数据目录状态尚无充分证据，因此根因仍未确定，不作已修复断言。
+
 后续重新查询，重装任务已结束并返回 0，应用进程 2604 在控制台会话 1 运行，路径为本次 NSIS 安装目录。桌面及开始菜单快捷方式均已创建，目标路径正确，IconLocation 均为本次安装目录的 brand-shield.ico,0；该结果证明交互安装完成页创建后的图标 hook 生效。由于桌面链接实际存在，需要用户确认是否选择了创建快捷方式，不能据此将“不创建桌面快捷方式”场景标记通过。
 
 运行中的重装应用数据库 configuration、selected_mode 与卸载前关闭后的快照逐记录一致，configuration 为 1 行，完整性检查通过。此轮卸载后重装已证明数据库内容保留；窗口展示和标签移除仍待用户确认，首次升级异常仍未定因。已移除重装临时任务，未停止应用进程。
