@@ -26,7 +26,8 @@
     "ipc:generate": "node scripts/generate-ipc.mjs",
     "ipc:check": "node scripts/generate-ipc.mjs --check",
     "test:coverage": "vitest run --coverage --coverage.include=src/store/** --coverage.reporter=text --coverage.reporter=json-summary --coverage.reporter=lcov",
-    "test:tools": "node --test scripts/test-query-runtime-log.mjs scripts/test-project-version.mjs scripts/test-e2e-driver.mjs"
+    "test:tools": "node --test scripts/test-query-runtime-log.mjs scripts/test-project-version.mjs scripts/test-e2e-driver.mjs scripts/test-prepare-release.mjs",
+    "icon:generate": "node scripts/generate-brand-icons.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",

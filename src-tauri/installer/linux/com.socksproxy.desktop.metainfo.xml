@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.socksproxy.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-Proprietary</project_license>
+  <name>Socks Proxy</name>
+  <name xml:lang="zh-CN">Socks Proxy 代理管理工具</name>
+  <summary>Manage desktop proxy configurations</summary>
+  <summary xml:lang="zh-CN">桌面代理配置管理工具</summary>
+  <description>
+    <p>Socks Proxy manages proxy configurations, rules and connection information. Linux currently supports the interface and some configuration management, without the proxy core or system proxy takeover.</p>
+    <p xml:lang="zh-CN">Socks Proxy 提供代理配置、规则及连接信息管理。Linux 当前支持界面及部分配置管理，暂不支持代理内核运行和系统代理接管。</p>
+  </description>
+  <launchable type="desktop-id">Socks Proxy.desktop</launchable>
+  <url type="homepage">https://github.com/liqiyuan-152/socks-proxy-desktop</url>
+  <url type="bugtracker">https://github.com/liqiyuan-152/socks-proxy-desktop/issues</url>
+  <provides><binary>socks-proxy</binary></provides>
+</component>

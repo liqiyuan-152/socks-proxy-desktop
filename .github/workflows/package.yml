@@ -25,17 +25,37 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust-targets: x86_64-pc-windows-msvc
             bundles: nsis
+          - platform: macos-arm64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            rust-targets: aarch64-apple-darwin
+            bundles: dmg
+          - platform: macos-intel
+            os: macos-latest
+            target: x86_64-apple-darwin
+            rust-targets: x86_64-apple-darwin
+            bundles: dmg
           - platform: macos-universal
             os: macos-latest
             target: universal-apple-darwin
             rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
             bundles: dmg
+          - platform: linux-x64
+            os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            rust-targets: x86_64-unknown-linux-gnu
+            bundles: appimage,deb,rpm
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
       RUST_TEST_THREADS: "2"
     steps:
       - uses: actions/checkout@v4
+      - name: Install Linux desktop build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libfuse2 desktop-file-utils appstream xvfb
       - uses: pnpm/action-setup@v4
         with:
           version: 10.33.0
@@ -74,14 +94,17 @@ jobs:
         env:
           SING_BOX_TEST_BIN: ${{ github.workspace }}\src-tauri\resources\sing-box\windows-amd64\sing-box.exe
       - name: Build desktop installer
-        run: pnpm tauri build --ci --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} -- --locked
+        run: node node_modules/@tauri-apps/cli/tauri.js build --ci --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} -- --locked
+      - name: Verify Linux metadata, installation and packaged startup
+        if: runner.os == 'Linux'
+        run: bash scripts/verify-linux-packages.sh src-tauri/target/${{ matrix.target }}/release/bundle
       - name: Stage packages, checksums and source revision
         shell: pwsh
         env:
           PACKAGE_TARGET: ${{ matrix.target }}
         run: |
           $bundleDir = "src-tauri/target/$env:PACKAGE_TARGET/release/bundle"
-          $packages = @(Get-ChildItem $bundleDir -Recurse -File | Where-Object { $_.Extension -in @('.exe', '.dmg') })
+          $packages = @(Get-ChildItem $bundleDir -Recurse -File | Where-Object { $_.Extension -in @('.exe', '.dmg', '.AppImage', '.deb', '.rpm') })
           if ($packages.Count -eq 0) { throw "No installer found in $bundleDir" }
           New-Item -ItemType Directory -Path package-artifacts | Out-Null
           $packages | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination package-artifacts }
@@ -128,9 +151,9 @@ jobs:
           set -euo pipefail
           if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             cat > release-notes.md <<'NOTES'
-          自动构建的内测版本，包含 Windows x64 安装包和 macOS Intel / Apple Silicon 通用 DMG。
+          自动构建的内测版本，包含 Windows x64 中文 EXE、macOS Apple Silicon / Intel / Universal DMG，以及 Linux x64 AppImage / DEB / RPM。
 
-          Windows 支持实际代理运行；macOS 仅支持界面及部分配置管理，不支持代理内核和系统代理接管。安装包未配置开发者签名及 macOS 公证，自动更新尚未启用。
+          Windows 支持实际代理运行；macOS 和 Linux 仅支持界面及部分配置管理，不支持代理内核和系统代理接管。安装包未配置开发者签名及 macOS 公证，自动更新尚未启用。
 
           SHA256SUMS.txt 为安装包校验清单，SOURCE_REVISION.txt 为对应源码提交。变更详情见本 tag 的 CHANGELOG.md。
 

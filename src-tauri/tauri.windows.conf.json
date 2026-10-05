@@ -10,6 +10,18 @@
       "resources/china-rules/LICENSE.domain-list-community": "china-rules/LICENSE.domain-list-community",
       "resources/china-rules/LICENSE.china-operator-ip": "china-rules/LICENSE.china-operator-ip",
       "resources/china-rules/manifest.json": "china-rules/manifest.json"
+    },
+    "targets": ["nsis"],
+    "licenseFile": "installer/windows/third-party-zh-CN.rtf",
+    "windows": {
+      "nsis": {
+        "languages": ["SimpChinese"],
+        "headerImage": "installer/windows/header.bmp",
+        "sidebarImage": "installer/windows/sidebar.bmp",
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico",
+        "displayLanguageSelector": false
+      }
     }
   }
 }

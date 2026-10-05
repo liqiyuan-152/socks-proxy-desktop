@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name={{name}}
+Name[zh_CN]=Socks Proxy 代理管理工具
+GenericName=Proxy Manager
+GenericName[zh_CN]=代理管理工具
+Comment=Desktop SOCKS proxy configuration manager
+Comment[zh_CN]=SOCKS 代理桌面配置管理工具
+Exec={{exec}}
+Icon={{icon}}
+Terminal=false
+Categories=Network;Settings;
+Keywords=proxy;socks;network;
+Keywords[zh_CN]=代理;网络;配置;
+StartupWMClass=socks-proxy

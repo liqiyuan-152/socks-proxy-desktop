@@ -31,11 +31,51 @@
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
+      "icons/512x512.png",
       "icons/icon.icns",
       "icons/icon.ico"
     ],
     "android": {
       "debugApplicationIdSuffix": ".debug"
+    },
+    "category": "Utility",
+    "shortDescription": "SOCKS 代理桌面管理工具",
+    "longDescription": "Socks Proxy 提供代理配置、规则及连接信息管理。Windows 支持代理内核运行；其他平台目前提供界面及部分配置管理。",
+    "macOS": {
+      "dmg": {
+        "background": "installer/macos/dmg-background@2x.png",
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        },
+        "appPosition": {
+          "x": 150,
+          "y": 150
+        },
+        "applicationFolderPosition": {
+          "x": 450,
+          "y": 150
+        }
+      }
+    },
+    "linux": {
+      "deb": {
+        "desktopTemplate": "installer/linux/socks-proxy.desktop",
+        "files": {
+          "/usr/share/metainfo/com.socksproxy.desktop.metainfo.xml": "installer/linux/com.socksproxy.desktop.metainfo.xml"
+        }
+      },
+      "rpm": {
+        "desktopTemplate": "installer/linux/socks-proxy.desktop",
+        "files": {
+          "/usr/share/metainfo/com.socksproxy.desktop.metainfo.xml": "installer/linux/com.socksproxy.desktop.metainfo.xml"
+        }
+      },
+      "appimage": {
+        "files": {
+          "/usr/share/metainfo/com.socksproxy.desktop.metainfo.xml": "installer/linux/com.socksproxy.desktop.metainfo.xml"
+        }
+      }
     }
   }
 }
