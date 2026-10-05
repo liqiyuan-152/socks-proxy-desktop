@@ -1,0 +1,21 @@
+Socks Proxy — 许可及第三方组件说明
+
+项目许可
+本项目保留现有许可状态（UNLICENSED）；本说明不授予新的项目许可，也不增加使用限制。第三方组件的权利和义务由各自的原始许可证规定，中文说明不替代原文。
+
+Windows 代理内核：sing-box
+版本：1.14.1；上游项目：https://github.com/SagerNet/sing-box
+许可证：GNU General Public License version 3（GPLv3）。安装包保留上游原始 LICENSE，位置为 sing-box/windows-amd64/LICENSE（相对于应用安装目录）。相关权利及义务请阅读许可证原文。
+对应源码提交：1ac1a339cb1223e9c70eae14c44411c75033c02d
+源码：https://github.com/SagerNet/sing-box/tree/1ac1a339cb1223e9c70eae14c44411c75033c02d
+源码归档：https://github.com/SagerNet/sing-box/archive/1ac1a339cb1223e9c70eae14c44411c75033c02d.tar.gz
+
+规则数据
+应用使用的 domain-list-community 与 china-operator-ip 数据保留各自的上游许可证和版权通知，安装目录的 china-rules 中分别提供 LICENSE.domain-list-community 与 LICENSE.china-operator-ip。具体来源及版本见项目资源清单。
+
+其他第三方依赖
+应用还使用 Tauri、React 等第三方库，其许可证由各自项目维护。本说明不是全部依赖的许可证汇编，也不修改这些依赖的原始授权。
+
+项目与问题反馈
+https://github.com/liqiyuan-152/socks-proxy-desktop
+https://github.com/liqiyuan-152/socks-proxy-desktop/issues
