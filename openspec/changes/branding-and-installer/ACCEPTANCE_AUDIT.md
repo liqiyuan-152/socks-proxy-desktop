@@ -26,7 +26,7 @@
 - 用户确认仅英文名称；实际 Windows 附件为 Socks-Proxy_v0.2.2_Windows_x64_setup.exe，label 为空，安装向导仍中文。
 - 公开后重新下载全部十个附件至 /tmp/socks-release-022-public-verified，七包精确名称、SHA256、GitHub digest、大小、VERSION、SOURCE_REVISION 全部一致；发布说明与版本文档一致，Release 为非草稿 prerelease。
 - v0.2.1 标签仍为 990504a7065bf43d9e00cc27a7579a531651158b；v0.2.2 为实际构建提交 b7e5dcfed0e8bfa6128dd9e0ce13dfb9cfe7fb98，公开后保持不变。文件名维护提交不改写二进制 SOURCE_REVISION。
-- 发布汇总脚本 9 项测试及 ESLint 通过；OpenSpec 严格校验通过。Phase 5 最终提交与任务关闭在取得上述证据后执行。
+- 发布汇总脚本 9 项测试及 ESLint 通过；OpenSpec 严格校验通过。Phase 5 最终提交 4b738b6 已完成；22 项任务均有对应证据，随后提交任务关闭记录。
 - 发布地址：https://github.com/liqiyuan-152/socks-proxy-desktop/releases/tag/v0.2.2 。
 
 ## 证据边界

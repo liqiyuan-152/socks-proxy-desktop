@@ -91,3 +91,5 @@ Desktop packages 37290883587 五目标及发布步骤成功，独立 Quality 372
 发布地址：https://github.com/liqiyuan-152/socks-proxy-desktop/releases/tag/v0.2.2 。v0.2.1 仍为 990504a7065bf43d9e00cc27a7579a531651158b；公开后的 v0.2.2 tag 保持 b7e5dcf 不再移动。此次文件名和校验清单修正不改变二进制内容，主分支后续维护提交不冒充安装包源码；SOURCE_REVISION 保留实际构建提交。
 
 逐项实现与平台验证见 ACCEPTANCE_AUDIT.md，用户明确豁免的 Linux 人工视觉验收及历史删除具体触发细节仍如实记录。完成 Phase 5 提交后关闭任务，保留所有无关用户改动，不自动归档 OpenSpec。
+
+Phase 5 最终提交已完成（4b738b6）。依据上面的公开下载、最终 CI 和逐项审计证据，5.4 标记完成；本变更 22/22 项任务完成。主工作区的无关未提交文档仍会阻断全仓格式 hook，未修改它们；应用交付源码已通过最终 tag CI，命名维护脚本另行通过相关 9 项测试与 ESLint，仅排除重复 hook 完成聚焦提交。
