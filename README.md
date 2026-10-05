@@ -1,5 +1,7 @@
 # Socks Proxy
 
+![Socks Proxy 品牌图标](src-tauri/icons/128x128.png)
+
 [![Quality](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/quality.yml/badge.svg)](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/quality.yml)
 
 用于管理 SOCKS5 / HTTP 代理的桌面应用，基于 Tauri 2、React、TypeScript 和 Rust，使用固定版本 sing-box 作为代理内核。
@@ -72,12 +74,24 @@ Windows 本地生成 NSIS 安装包：
 pnpm tauri build --bundles nsis
 ```
 
-GitHub Actions 的 [Desktop packages](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/package.yml) 工作流会在 `master` 更新、推送 `v*` tag 时自动构建，也支持手动运行。两个平台独立完成质量检查及 Rust 测试，Windows 还执行固定内核测试，然后生成 Windows x64 NSIS 安装包和 macOS 通用 DMG（Intel / Apple Silicon）。macOS 包的平台功能限制与上文一致。
+GitHub Actions 的 [Desktop packages](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/workflows/package.yml) 工作流会在 `master` 更新、推送 `v*` tag 时自动构建，也支持手动运行。五个构建目标独立完成质量检查及 Rust 测试，Windows 还执行固定内核测试。产物包括 Windows x64 中文 NSIS EXE、macOS Apple Silicon / Intel / Universal DMG，以及 Linux x64 AppImage / DEB / RPM。macOS 和 Linux 的平台功能限制与上文一致；Linux CI 会检查元数据、安装及应用启动。
 
-在对应 Actions 运行的 Artifacts 区域下载产物；每个压缩包包含安装包、`SHA256SUMS.txt`、`SOURCE_REVISION.txt` 和 `VERSION.txt`，保留 30 天。tag 必须与应用版本一致，例如 `v0.2.1`。推送 tag 后，两个平台全部构建成功才会自动创建对应的 GitHub 预发布 Release，上传安装包及校验清单。上传前验证两个平台的 SHA-256、版本号和源码提交一致；先创建草稿，全部附件上传成功后才公开。失败时不会公开不完整的新版本，重跑可补齐附件。主分支构建仅保存 Actions 产物。安装包仍是未签名、未公证的内测产物。
+在对应 Actions 运行的 Artifacts 区域下载产物；每个压缩包包含安装包、`SHA256SUMS.txt`、`SOURCE_REVISION.txt` 和 `VERSION.txt`，保留 30 天。tag 必须与应用版本一致，例如 `v0.2.1`。推送 tag 后，全部构建目标成功才会自动创建对应的 GitHub 预发布 Release，上传安装包及校验清单。上传前验证全部七个安装包的 SHA-256、版本号和源码提交一致，并拒绝缺包、重复格式或未核验文件；先创建草稿，全部附件上传成功后才公开。失败时不会公开不完整的新版本，重跑可补齐附件。主分支构建仅保存 Actions 产物。安装包仍是未签名、未公证的内测产物。
 
 当前使用 GitHub 预发布 Release 分发内测安装包，尚未配置应用签名和自动更新；“检查更新”不可用。正式发布前需提供签名凭据、确定发布与更新渠道，并完成真实 Windows 桌面验收，以及随包 sing-box 的 GPLv3 对应源代码提供方式、许可证通知和最终安装包内容复核。具体内核分发要求见 `scripts/sing-box-release-manifest.md`。
 
 测试框架与覆盖率命令见 [测试指南](docs/testing.md)。
 
 服务分工见 [架构指南](docs/architecture.md)，贡献者改动路径见 [迁移指南](docs/architecture-migration.md)，日志与性能工具见 [观测指南](docs/observability.md)。
+
+## 品牌与安装素材维护
+
+`pnpm icon:generate` 使用项目安装的官方 Tauri CLI，从 `src-tauri/icons/source` 的原创 SVG 重建 PNG，并按实际尺寸组装 ICO/ICNS；小尺寸使用简化版本。macOS 菜单栏使用单色模板图标，前端 favicon 使用同一品牌。
+
+安装图片由 `scripts/generate-installer-assets.py` 生成，需要 Pillow 及支持中文的系统字体：
+
+```sh
+python3 scripts/generate-installer-assets.py --font /path/to/chinese-font.ttf
+```
+
+Windows 安装向导使用简体中文，配有品牌侧栏与顶部图；中文第三方说明保留项目现有许可状态，不替代 GPLv3 原文。macOS DMG 使用中文拖拽提示及 Retina 背景。阶段验证记录与待完成的实际平台验收见 `openspec/changes/branding-and-installer/`。

@@ -16,9 +16,9 @@
 
 - [x] 3.1 配置 Tauri 2 中文 NSIS、品牌资源、许可说明和升级兼容；验证配置及实际 Windows EXE 构建成功。
 - [x] 3.2 配置 DMG 窗口及背景，支持 Apple Silicon、Intel 和 Universal；验证各架构构建产物。
-- [ ] 3.3 配置 Linux Desktop Entry、AppStream、中文 DEB/RPM 描述及图标；验证 desktop/appstream 元数据和 AppImage/DEB/RPM 构建。
+- [x] 3.3 配置 Linux Desktop Entry、AppStream、中文 DEB/RPM 描述及图标；验证 desktop/appstream 元数据和 AppImage/DEB/RPM 构建。
 - [x] 3.4 扩展 CI 和发布汇总脚本；用测试验证完整矩阵、缺包、格式错误、版本/源码不匹配及校验失败拒绝发布。
-- [ ] 3.5 运行 pnpm check 和打包检查并提交 Phase 3，保留无关未提交文件。
+- [x] 3.5 运行 pnpm check 和打包检查并提交 Phase 3，保留无关未提交文件。
 
 ## 4. Phase 4：跨平台测试与优化
 
@@ -30,7 +30,7 @@
 
 ## 5. Phase 5：发布准备
 
-- [ ] 5.1 更新 README 新图标、下载与平台说明及 CHANGELOG；检查内容与实际功能和产物一致。
-- [ ] 5.2 使用规范文件名及 SHA256、VERSION、SOURCE_REVISION 汇总全平台产物；验证每个文件与源码一致。
+- [x] 5.1 更新 README 新图标、下载与平台说明及 CHANGELOG；检查内容与实际功能和产物一致。
+- [x] 5.2 使用规范文件名及 SHA256、VERSION、SOURCE_REVISION 汇总全平台产物；验证每个文件与源码一致。
 - [ ] 5.3 确定未发布的新版本号，创建对应 GitHub Release，不覆盖 v0.2.1；核验全部下载及校验清单。
 - [ ] 5.4 提交 Phase 5，完成逐项验收报告，只有所有要求有实际证据才标记完成。

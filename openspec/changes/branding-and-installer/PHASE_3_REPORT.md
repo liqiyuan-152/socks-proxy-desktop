@@ -1,6 +1,6 @@
 # Phase 3 构建与质量检查记录
 
-日期：2026-10-05。阶段仍在进行：Linux 构建及完整安装验收尚待 CI 结果。
+日期：2026-10-05。阶段构建与质量检查完成。完整系统交互验收仍属于 Phase 4。
 
 ## 已实现
 
@@ -22,7 +22,7 @@ Tauri 2 Windows 覆盖配置仅发布 NSIS，使用 SimpChinese、品牌图标�
 
 ## 后续
 
-等待 Linux CI 构建、检查产物后完成 3.3/3.5。Windows 安装向导的实际中文和快捷方式交互、macOS 拖拽更新及系统图标、Linux 桌面菜单视觉、各平台配置保留仍属于 Phase 4，不能以构建成功替代。
+Linux CI 构建与包检查已通过，完成 3.3/3.5。Windows 安装向导的实际中文和快捷方式交互、macOS 拖拽更新及系统图标、Linux 桌面菜单视觉、各平台配置保留仍属于 Phase 4，不能以构建成功替代。
 
 ## 中文说明页补充
 
@@ -31,3 +31,9 @@ Tauri 2 Windows 覆盖配置仅发布 NSIS，使用 SimpChinese、品牌图标�
 ## 首轮 CI 结果
 
 GitHub Actions 37257930498 的五个目标均成功生成安装包。Linux AppImage、DEB、RPM 构建成功，Rust 测试为 231 通过/7 忽略、集成测试 10 通过/1 忽略，条件性核心测试不视为真实内核验收。Linux 后续验证因 runner 未安装 ripgrep 在脚本第 7 行退出 127；补齐依赖后重新运行，元数据及安装启动检查尚不能标记完成。
+
+## 重跑结果与实际产物核验
+
+GitHub Actions [37259003588](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37259003588) 全部五个构建任务成功，对应提交 ab81d4bd46ed6436408532c7a1350354ddfe820e。Linux desktop-file-validate 与 AppStream 校验通过；DEB 安装成功、原生前端就绪；卸载移除桌面入口且用户配置文件 SHA256 保持一致；AppImage 使用全新 XDG 目录启动并确认原生前端就绪。这些结果不代表真实桌面菜单视觉、旧版本升级或 RPM 安装已经验证。
+
+下载该运行的全部五个 artifact 目录，执行 prepare-release.mjs，七个真实安装包的 SHA256、VERSION、SOURCE_REVISION、平台及格式检查通过。输出采用中文 Windows EXE 文件名，未生成 MSI。验收版本为 0.2.1，仅保存在本地临时目录，未创建或覆盖已有版本标签，未发布 GitHub Release。
