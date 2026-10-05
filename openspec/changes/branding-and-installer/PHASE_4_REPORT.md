@@ -12,7 +12,7 @@
 
 ## 尚缺证据
 
-- 拖拽自动化调用未得到安装结果；复制安装成功不能记作拖拽安装通过。
+- 拖拽安装证据已在后续补充；Dock、系统应用列表和菜单栏明暗主题仍待验证，4.2 尚未全部完成。
 - Dock、SystemUIServer 和 macOS 26 的 App 系统应用列表无法由当前 CUA 获取，调用超时。Dock、系统应用列表及菜单栏明暗主题视觉仍待验证；本机系统已使用 App 替代旧 Launchpad。
 - Windows 官方中文 EXE 构建成功，生成模板使用 SimpChinese、品牌素材、可选桌面快捷方式和启动选项；安装与卸载页面、升级及配置保留的实际交互仍待 Windows 桌面连接。
 - 当前本机只有 Apple Remote Desktop（面向 Mac 的 ARD，不是 Windows RDP 客户端）。安装 Microsoft Windows App 的授权已通过异步问题请求，尚未收到答复；未擅自安装。
@@ -22,3 +22,9 @@
 ## 验证边界
 
 模板检查、资源预览、代码及构建成功不能替代实际界面交互。任务清单保留尚未证明的项目，不以静态检查标记全平台验收完成。
+
+## macOS 拖拽安装补充
+
+后续验收通过 Finder 图标视图，从已挂载 DMG 的 Socks Proxy 图标拖拽到 Applications 替身。Finder 实际显示“此位置已经存在名称为 Socks Proxy 的项目”的替换提示；选择替换后操作完成，已安装应用可以启动。读取 Applications 中的 Info.plist 确认版本为 0.2.1，界面显示相同版本。再次将用户数据库的 configuration、selected_mode 全部记录与最初备份逐记录比较，两表一致。此步骤证明当前 DMG 的拖拽替换和启动可用；其他系统图标与主题项目继续保留待验收。
+
+本机虽已有 RustDesk，但 Windows 目标的直连端口 21118 不可连接，不能作为无需安装客户端的替代验收通道。未更改远端服务或开放端口。Windows App 安装授权仍待用户答复。
