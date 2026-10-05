@@ -144,3 +144,9 @@ Windows 已再次请求用户从托盘退出，以保存新一致快照并进行
 为消除该删除路径，安装器生成脚本固定使用 Tauri CLI 2.11.5 的官方模板（源码 9452ddee5ebefd9b678a94ff003521379df6c9ae，SHA256 20f4ecc730defb71f1342eaeaec4021df13be3d843abba0effe88ea5835fa079）。生成前校验模板哈希及 CLI 版本；仅对三个限定位置加固：旧 NSIS 卸载调用无条件追加 /UPDATE、新版卸载确认页明确保留配置并移除删除选项、移除整个应用数据删除分支。源模板结构改变或残留 APPDATA 递归删除代码均拒绝生成。生成文件和缓存留在 target/，不提交。
 
 三项回归测试已通过，覆盖旧卸载更新参数、独立卸载仍移除应用与快捷方式但保留数据，以及模板漂移/额外删除代码拒绝构建。隔离交付副本完整 pnpm check 通过（159 前端、22 工具测试）。根工作区检查被六份无关未提交文档的格式问题阻断，未修改这些文件。实际 Windows 编译和安装复测正在进行，4.5 暂不勾选；当前用户配置未修改。
+
+### Windows 加固版构建通过，安装复测待退出
+
+源码修复已提交并推送为 5bc35c4c3cf6c8ee73e0e1545a441c7964721680。真实 Windows 官方 Tauri CLI/makensis 成功生成 0.2.2 加固包，SHA256 为 6de94b1adb6d1fd31490f7237a4ccc2990d221a3835267d847bbdadeda7123ea。再次检查实际编译使用的 target/release/nsis/x64/installer.nsi：旧卸载调用固定 /UPDATE，无 DeleteAppDataCheckbox 或 APPDATA 递归删除代码。远端不能直连 raw.githubusercontent.com，因此传入本机已下载的官方模板缓存，生成脚本仍实际核验固定 SHA256，未绕过校验。
+
+隔离副本 pnpm build 通过。Windows 当前进程 10496 仍运行；只读核验数据库完整性通过、configuration 1 行、configuration/selected_mode 与 version-022-upgrade/before.sqlite3 逐记录一致。已请求用户从托盘退出以保存退出后的一致快照并进行实际旧版升级和卸载复测，尚未收到本轮退出回复，不强杀应用或替换数据。该加固包尚未安装，不将编译或脚本检查记为实际安装验收。全平台候选构建 37279969996 和 Quality 37279970003 正在运行，0.2.2 未发布。
