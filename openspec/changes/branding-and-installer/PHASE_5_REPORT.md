@@ -57,3 +57,15 @@ node scripts/prepare-release.mjs /tmp/socks-brand-ci-37271908223 /tmp/socks-bran
 ```
 
 七个安装包的版本、源码、格式、数量和 SHA256 全部通过。Windows 实际升级已完成且原配置、模式保留，细节见 Phase 4 报告。已准备包含首次未定因配置缺失及完整备份建议的本地发布预览，等待用户决定继续排查或接受明确记录的已知异常后发布；未创建 v0.2.2 标签或 Release，不将未定因异常标记为已修复。
+
+## 配置保留加固后的候选与发布说明
+
+用户已决定“继续排查后发布”，首次数据目录删除的 NTFS 证据及安装器加固见 Phase 4 报告。源码 5bc35c4c3cf6c8ee73e0e1545a441c7964721680 的 Desktop packages [37279969996](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37279969996) 五个目标全部成功。已下载完整 artifact 并执行：
+
+```sh
+node scripts/prepare-release.mjs /tmp/socks-brand-ci-37279969996 /tmp/socks-brand-ci-verified-37279969996 v0.2.2 5bc35c4c3cf6c8ee73e0e1545a441c7964721680
+```
+
+七个安装包的版本、源码、格式、数量和 SHA256 全部通过。CI Windows EXE 已传至远端独立文件 data-retention-ci-setup.exe，本机与远端 SHA256 一致（edb429a56a830c1bf5953fe097290a98ab8df1b8da59b7f626ceb42ada3dcbc4），等待应用退出后实际复测，不替换运行中的程序或数据。该包不同于本机远端编译的加固包，后续实际验收以此已核验 CI 产物为准。
+
+新增 docs/releases/v0.2.2.md，说明实际品牌改动、Windows 保留加固、首次删除证据及未记录的触发细节、完整备份和平台限制、sing-box 许可与对应源码。发布工作流优先使用对应 tag 的版本专属说明，其他版本保持通用说明回退；YAML、bash 语法、格式检查通过，用隔离 gh 模拟同时验证专属说明原样使用、回退说明及先草稿上传后发布的调用路径，未写入 GitHub。v0.2.1 标签仍为 990504a7065bf43d9e00cc27a7579a531651158b，v0.2.2 Release 不存在。5.3/5.4 保持未完成，实际 Windows 加固复测仍待用户退出应用。

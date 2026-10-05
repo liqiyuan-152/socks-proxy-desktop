@@ -182,6 +182,9 @@ jobs:
         run: |
           set -euo pipefail
           if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            if [ -f "docs/releases/$RELEASE_TAG.md" ]; then
+              cp "docs/releases/$RELEASE_TAG.md" release-notes.md
+            else
             cat > release-notes.md <<'NOTES'
           自动构建的内测版本，包含 Windows x64 中文 EXE、macOS Apple Silicon / Intel / Universal DMG，以及 Linux x64 AppImage / DEB / RPM。
 
@@ -193,6 +196,7 @@ jobs:
           源码归档：https://github.com/SagerNet/sing-box/archive/1ac1a339cb1223e9c70eae14c44411c75033c02d.tar.gz
           内核来源和校验记录见本 tag 的 scripts/sing-box-release-manifest.md。
           NOTES
+            fi
             gh release create "$RELEASE_TAG" --verify-tag --draft --prerelease \
               --title "Socks Proxy $RELEASE_TAG" --notes-file release-notes.md
           fi
