@@ -78,3 +78,13 @@
 2026-10-05 用户确认“mac 和 windows 视觉都正常，linux 不用”：macOS/Windows 视觉验收通过；本次取消 Linux 桌面菜单、系统图标及桌面交互的人工视觉验收，保留 Linux 构建、元数据、DEB 安装和 AppImage 启动验证。该决定不豁免配置保留要求，不代表首次 Windows 升级配置缺失已定因或修复。
 
 结合前述安装、卸载、快捷方式勾选/取消两条路径的实际核验，以及用户本轮 macOS/Windows 视觉确认，4.1 和 4.2 标记完成。4.3 按修订范围由已有 Linux CI 的元数据、DEB 安装及 AppImage 启动证据完成；未宣称执行 Linux 桌面人工视觉验收。4.4、4.5 及发布任务仍待完成。
+
+## Windows 品牌前版本对照复测（进行中）
+
+用户确认从托盘退出并授权复测。通过 SQLite backup 保存测试前当前数据库 current-before-rehearsal.sqlite3，并保留原 DB/WAL/SHM 文件副本；旧版独立基线 schema 5、configuration 1 行且完整性通过。原始独立快照实际位于远端工作目录根部，定位正确文件后生成 legacy-baseline.sqlite3，未复用旧 WAL/SHM。
+
+从成功 CI 37214843646 下载品牌改动前源码 b933e99c4291feda1da2020ad034ed90bb15df9a 的 Windows 安装包，核验源码和 SHA256 c92e3fa89a2742087a1c63c0cab34f1ae0252893f20e9961fc3336dfa14e05cf。旧版安装以 /S /UPDATE 返回 0；恢复独立旧基线后在控制台启动，随后任务正常退出返回 0。数据库完整，configuration 与原旧基线逐记录一致。该源码本身支持 schema 6，因此旧版已迁移数据库至 6；selected_mode 与原旧基线不同，启动后的模式表有 1 行，保存 legacy-after-start.sqlite3 作为后续升级比较基线，不宣称该变化已完成根因分析。
+
+确认旧版进程不存在后，打开新版 290aec3 的交互安装包进行品牌前→品牌后覆盖复测；等待用户完成。两个包均为 0.2.1，此次检验安装器及品牌资源替换，不替代未来新版本号的升级验证。测试前当前数据快照仍完整保留，复测结束须恢复该快照并验证应用。
+
+新版安装临时任务随后结束返回 0，应用进程 8784 在控制台会话 1 运行。读取运行中数据库，与 legacy-after-start.sqlite3 比较：configuration、selected_mode 均逐记录一致，configuration 1 行，schema 6，完整性检查通过。本轮品牌前→品牌后交互覆盖安装未复现配置缺失；不将未复现等同于首次异常已定因。尚待应用退出，保留复测后的数据库证据并恢复 current-before-rehearsal.sqlite3。
