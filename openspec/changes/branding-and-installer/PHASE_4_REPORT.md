@@ -150,3 +150,31 @@ Windows 已再次请求用户从托盘退出，以保存新一致快照并进行
 源码修复已提交并推送为 5bc35c4c3cf6c8ee73e0e1545a441c7964721680。真实 Windows 官方 Tauri CLI/makensis 成功生成 0.2.2 加固包，SHA256 为 6de94b1adb6d1fd31490f7237a4ccc2990d221a3835267d847bbdadeda7123ea。再次检查实际编译使用的 target/release/nsis/x64/installer.nsi：旧卸载调用固定 /UPDATE，无 DeleteAppDataCheckbox 或 APPDATA 递归删除代码。远端不能直连 raw.githubusercontent.com，因此传入本机已下载的官方模板缓存，生成脚本仍实际核验固定 SHA256，未绕过校验。
 
 隔离副本 pnpm build 通过。Windows 当前进程 10496 仍运行；只读核验数据库完整性通过、configuration 1 行、configuration/selected_mode 与 version-022-upgrade/before.sqlite3 逐记录一致。已请求用户从托盘退出以保存退出后的一致快照并进行实际旧版升级和卸载复测，尚未收到本轮退出回复，不强杀应用或替换数据。该加固包尚未安装，不将编译或脚本检查记为实际安装验收。全平台候选构建 37279969996 和 Quality 37279970003 正在运行，0.2.2 未发布。
+
+### 加固升级复测启动
+
+后续只读进程检查确认 socks-proxy 已完全退出，依照已有复测授权继续；未依据等待时间推断退出。使用 SQLite backup 保存 data-retention-upgrade/before.sqlite3 一致快照，完整性通过、configuration 1 行。核验真实品牌前 0.2.1 安装包 SHA256 后以 /S /UPDATE 安装，退出码 0；实际 FileVersion/ProductVersion 均为 0.2.1，configuration/selected_mode 与新快照逐记录一致，未启动旧应用。
+
+随后再次核验 CI 加固包 edb429a56a830c1bf5953fe097290a98ab8df1b8da59b7f626ceb42ada3dcbc4，通过临时交互任务 SocksBrandingDataRetentionUpgrade 打开新版向导。已请求用户选择“卸载旧版本后安装”，并在完成页取消启动应用，以复测调用旧卸载器的 /UPDATE 保护路径。向导仍待交互完成，不标记加固升级通过。最新提交 324c1e6 的 Desktop packages 37281781145 和 Quality 37281781189 均全部成功；0.2.2 标签和 Release 仍未创建。
+
+### 加固升级结果与独立卸载前检查
+
+升级任务结束返回 0，实际安装版本为 0.2.2；数据库完整性通过，configuration 1 行，configuration、selected_mode 与 data-retention-upgrade/before.sqlite3 逐记录一致。已保存 after-upgrade.sqlite3 一致快照并清理升级临时任务。用户确认窗口和原配置正常，并明确此次选择“卸载旧版后安装”，因此实际覆盖了调用旧卸载器的升级路径。
+
+用户表示已退出后，独立卸载前检查仍发现新版安装目录的 socks-proxy.exe 进程（PID 21696）存在，启动卸载的命令在进程门禁处拒绝执行，尚未创建独立卸载任务。已请求用户再次从托盘退出；未强制终止应用，不将独立卸载或重装标记通过。
+
+用户再次确认已从托盘退出，实际进程检查通过。退出后 Node SQLite 只读连接报 attempt to write a readonly database，验收脚本改为普通连接以允许 SQLite 管理连接所需文件；没有执行配置写入 SQL。重新检查实时库及快照完整性均通过，configuration 1 行，configuration、selected_mode 逐记录一致。随后已启动 SocksBrandingDataRetentionUninstall 交互卸载任务，状态 Running；正在等待用户确认中文保留说明、无删除数据选项并完成卸载。尚未宣称卸载完成，0.2.2 尚未发布。
+
+### 加固版独立卸载完成，重装进行中
+
+SocksBrandingDataRetentionUninstall 实际终态 Ready、LastTaskResult=0；安装目录 socks-proxy.exe、uninstall.exe、brand-shield.ico 均不存在，当前用户桌面及开始菜单 Socks Proxy.lnk 均不存在。数据库仍在，实时库和升级前快照完整性通过，configuration 1 行，configuration、selected_mode 逐记录一致。已清理卸载临时任务。以上证明独立卸载移除了安装文件及本安装快捷方式并保留原配置；尚待用户补充新版卸载页的交互视觉确认。
+
+重新核验 data-retention-ci-setup.exe 的 SHA256 为 edb429a56a830c1bf5953fe097290a98ab8df1b8da59b7f626ceb42ada3dcbc4，启动 SocksBrandingDataRetentionReinstall 交互任务。已请用户完成安装、启动并确认窗口与原配置，以及上一卸载页的中文保留说明和无删除选项；重装仍待完成。
+
+用户确认卸载页面符合要求（中文、品牌图、保留数据说明及无删除选项）。用户同时表示重装与窗口正常，但即时系统检查显示 SocksBrandingDataRetentionReinstall 仍 Running、LastTaskResult=267009，data-retention-ci-setup.exe PID 12712 存在，未发现 socks-proxy.exe 进程或本安装注册项，原 D: 安装路径程序不存在。因此尚不能依据该回复标记重装通过；已请用户检查当前重装向导并完成。数据库完整及配置/模式一致检查仍通过。
+
+### 加固版重装与 Phase 4 完成
+
+同一重装任务随后实际结束，State=Ready、LastTaskResult=0；应用 PID 512 正在运行，FileVersion/ProductVersion 均为 0.2.2。实时库及快照完整性通过，configuration 1 行，configuration、selected_mode 与升级前快照逐记录相同。桌面和当前用户开始菜单快捷方式均指向新安装程序，IconLocation 为安装目录 brand-shield.ico,0；已清理重装临时任务，保留应用和数据快照。结合用户窗口及原配置确认，重装验收通过。
+
+受影响的真实 Windows 旧版卸载后升级、新版独立卸载及重装均通过；历史删除机制已有文件系统证据，未记录的具体触发细节在发布说明中如实保留。最新应用源码 324c1e6 的五目标打包 37281781145 和独立 Quality 37281781189 均成功，覆盖静态检查、前端/工具/Rust 测试及真实 Windows 内核测试；macOS DMG 实际挂载布局和 Linux 安装启动检查成功。后续仅改验收与发布文档，完成 OpenSpec 严格校验后提交 Phase 4。
