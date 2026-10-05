@@ -27,3 +27,7 @@ Tauri 2 Windows 覆盖配置仅发布 NSIS，使用 SimpChinese、品牌图标�
 ## 中文说明页补充
 
 官方 NSIS 模板支持 installerHooks 在页面声明前加载附加定义。新增 notice-page.nsh，仅修改许可说明页的按钮与提示为“下一步”和第三方说明，避免把现有许可说明误呈现为新增 EULA。Windows 官方 makensis 已重新构建成功；生成的 installer.nsi 在 MUI_PAGE_LICENSE 前加载该文件。完整 UI 显示仍待 Phase 4。
+
+## 首轮 CI 结果
+
+GitHub Actions 37257930498 的五个目标均成功生成安装包。Linux AppImage、DEB、RPM 构建成功，Rust 测试为 231 通过/7 忽略、集成测试 10 通过/1 忽略，条件性核心测试不视为真实内核验收。Linux 后续验证因 runner 未安装 ripgrep 在脚本第 7 行退出 127；补齐依赖后重新运行，元数据及安装启动检查尚不能标记完成。
