@@ -23,6 +23,8 @@
 
 模板检查、资源预览、代码及构建成功不能替代实际界面交互。任务清单保留尚未证明的项目，不以静态检查标记全平台验收完成。
 
+用户确认没有可用的 Linux 图形桌面。本机检查未找到 docker、podman、multipass、qemu-system-x86_64、limactl 命令或可检索的常见虚拟机应用 Info.plist；未新增宿主运行环境。Linux 桌面菜单与系统图标视觉仍缺实际环境，4.3 不标记完成，CI 的 Xvfb 启动结果不替代该要求。
+
 ## macOS 拖拽安装补充
 
 后续验收通过 Finder 图标视图，从已挂载 DMG 的 Socks Proxy 图标拖拽到 Applications 替身。Finder 实际显示“此位置已经存在名称为 Socks Proxy 的项目”的替换提示；选择替换后操作完成，已安装应用可以启动。读取 Applications 中的 Info.plist 确认版本为 0.2.1，界面显示相同版本。再次将用户数据库的 configuration、selected_mode 全部记录与最初备份逐记录比较，两表一致。此步骤证明当前 DMG 的拖拽替换和启动可用；其他系统图标与主题项目继续保留待验收。
