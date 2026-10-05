@@ -1,6 +1,7 @@
 {
   "bundle": {
     "resources": {
+      "icons/icon.ico": "brand-shield.ico",
       "resources/sing-box/windows-amd64/sing-box.exe": "sing-box/windows-amd64/sing-box.exe",
       "resources/sing-box/windows-amd64/libcronet.dll": "sing-box/windows-amd64/libcronet.dll",
       "resources/sing-box/windows-amd64/LICENSE": "sing-box/windows-amd64/LICENSE",
@@ -21,7 +22,7 @@
         "installerIcon": "icons/icon.ico",
         "uninstallerIcon": "icons/icon.ico",
         "displayLanguageSelector": false,
-        "installerHooks": "installer/windows/notice-page.nsh"
+        "installerHooks": "installer/windows/installer-hooks.nsh"
       }
     }
   }
