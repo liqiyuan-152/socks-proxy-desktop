@@ -102,3 +102,13 @@
 0.2.2 候选升级 CI 37266909074 的 Linux 升级步骤失败在旧版读取测试配置：夹具将 diagnostic_retention 写成 Days30，而真实 Rust 契约要求 days30。修正为共享 JSON 夹具，Node 种入数据库与 Rust 模型测试读取同一文件；Rust 实际反序列化、validate、非空代理及默认代理断言通过。此次失败是人工生成的验收数据错误，未涉及用户数据库；修复后仍须重新执行真实 Linux 升级 CI，不以本机模型测试代替。
 
 上述修复的准确暂存源码在隔离副本完整 pnpm check 通过（159 前端、19 工具测试及静态/Rust/IPC 检查），另行 cargo test --locked 通过：233 单元测试、10 集成测试、1 示例测试及 2 文档测试；保留正常的隔离子进程/手动测试忽略项。本机未设置 SING_BOX_TEST_BIN 的条件测试不作为真实内核证据，真实内核依据为前述远端 Windows 两项执行结果。
+
+## 发布包 DMG 布局缺失修正（进行中）
+
+直接挂载并由 Finder 查看 e94d261 的 CI Apple Silicon 0.2.2 DMG，发现背景未显示、图标未按设计布局；镜像包含背景文件，但缺少 .DS_Store。此前本机构建的 DMG 拖拽及用户视觉确认不能替代 CI 发布包的布局验收。核对 Tauri bundler：CI=true 时默认向 create-dmg 传入 --skip-jenkins，跳过 Finder 布局设置。工作流设置 TAURI_BUNDLER_DMG_IGNORE_CI=true，并新增每个 macOS 目标实际挂载镜像的检查，拒绝缺失 .DS_Store、icvp/Iloc 记录、Applications 链接及背景资源的包。旧候选包已被该检查实际拒绝，修正后的 CI 和 Finder 视觉复测仍待完成，不发布该缺少布局的候选包。
+
+本机升级前数据库实际为空，已保存完整一致快照 /tmp/socks-macos-022-upgrade/before.sqlite3；通过旧版 0.2.1 原生界面添加不含认证信息的临时代理档案并退出，保存 seeded.sqlite3（configuration 1 行、完整性通过）。等待修正后的 0.2.2 进行非空配置升级，结束后恢复测试前完整快照。
+
+DMG 挂载检查已实际拒绝缺少布局的 CI 候选包，并通过本地包含布局的 DMG；bash 语法检查通过。Quality 37267865601 的真实内核重试测试发现本地 CONNECT 确认先于上游收包，原夹具立即发送下一条连接，不能保证断言所依赖的顺序。将该测试拆至独立文件，完整读取上游 HTTP 头并切回阻塞读取；用有界通道确认上游已收包且写完响应后才发送下一条请求，不修改生产逻辑。真实 Windows 设置 SING_BOX_TEST_BIN 后该测试通过（10.13 秒）。准确暂存源码隔离 pnpm check 再次完整通过，等待全平台新候选 CI。
+
+运行 37267897783 的 Linux 非空配置真实 0.2.1→0.2.2 升级、DEB 卸载保留配置及 AppImage 启动步骤全部通过，五个打包目标亦成功；该运行的 macOS DMG 缺少布局，因此整套候选不用于发布。
