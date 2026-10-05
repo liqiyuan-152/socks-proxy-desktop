@@ -105,7 +105,7 @@ describe("backend-driven desktop UI", () => {
     await waitFor(() => expect(screen.getByLabelText("密码")).toHaveValue(""));
   });
 
-  it("distinguishes selected, enabled and disabled profile statuses on all screen sizes", async () => {
+  it("preserves accessible profile switches without duplicate status badges", async () => {
     fixture.profiles.push(
       { ...fixture.profiles[0], id: "secondary", name: "Secondary" },
       { ...fixture.profiles[0], id: "disabled", name: "Disabled", enabled: false },
@@ -114,15 +114,19 @@ describe("backend-driven desktop UI", () => {
     fireEvent.click(await screen.findByRole("link", { name: "代理" }));
     await screen.findByText("Secondary");
 
-    for (const [name, label, variant] of [
-      ["Primary", "默认代理", "success"],
-      ["Secondary", "已启用", "success"],
-      ["Disabled", "已停用", "secondary"],
-    ]) {
+    for (const [name, enabled] of [
+      ["Primary", true],
+      ["Secondary", true],
+      ["Disabled", false],
+    ] as const) {
       const row = within(screen.getByRole("table")).getByText(name).closest("tr")!;
-      const labels = within(row).getAllByText(label);
-      expect(labels).toHaveLength(2);
-      for (const item of labels) expect(item).toHaveAttribute("data-variant", variant);
+      const switches = within(row).getAllByRole("switch", { name: `${name}启用状态` });
+      expect(switches).toHaveLength(2);
+      for (const control of switches) {
+        expect(control).toHaveAttribute("aria-checked", String(enabled));
+      }
+      expect(within(row).queryByText("已启用")).not.toBeInTheDocument();
+      expect(within(row).queryByText("已停用")).not.toBeInTheDocument();
     }
   });
 

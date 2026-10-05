@@ -20,7 +20,6 @@ import { type ProxyProfile } from "@/lib/backend";
 import { useBackendStore } from "@/store/backend-store";
 import { useShallow } from "zustand/react/shallow";
 import { ProxyFormDialog } from "./ProxyFormDialog";
-import { ProxyStatus } from "./ProxyStatus";
 import { ProxyToolbar } from "./ProxyToolbar";
 import { useProxyLatency } from "./useProxyLatency";
 import { LatencyCell } from "./LatencyCell";
@@ -209,7 +208,6 @@ export default function ProxyList() {
                               onCheckedChange={(enabled) => void changeEnabled(proxy, enabled)}
                               aria-label={`${proxy.name}启用状态`}
                             />
-                            <ProxyStatus active={active} enabled={proxy.enabled} />
                           </div>
                         </div>
                       </TableCell>
@@ -236,7 +234,6 @@ export default function ProxyList() {
                             onCheckedChange={(enabled) => void changeEnabled(proxy, enabled)}
                             aria-label={`${proxy.name}启用状态`}
                           />
-                          <ProxyStatus active={active} enabled={proxy.enabled} />
                         </div>
                       </TableCell>
                       <TableCell className="px-2 py-4 sm:px-4">
