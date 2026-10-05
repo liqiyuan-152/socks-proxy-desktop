@@ -29,14 +29,16 @@
 
 - [x] 中文 Desktop Entry，保持实际可用的启动参数
 - [x] 中文 AppStream 元数据，使用真实项目 URL 和许可信息
-- [ ] DEB/RPM 中文描述及图标安装路径
+- [x] DEB/RPM 中文描述及图标安装路径
 
 ## 发布与验收证据
 
 - [ ] 各平台安装包及版本、源码提交号、SHA256 清单
 - [ ] Windows 中文安装、快捷方式、启动、更新和卸载验证
-- [ ] macOS DMG 拖拽安装、Dock、Launchpad 及应用信息验证
-- [ ] Linux AppImage 启动、DEB 安装、应用菜单及图标验证
+- [x] macOS 本地验收 DMG 拖拽安装、Dock、系统应用列表及应用信息验证（用户视觉确认；最终 CI 候选另行复测）
+- [x] Linux AppImage 启动、DEB 安装及中文元数据验证（用户取消桌面菜单及系统图标人工视觉验收）
 - [ ] README、CHANGELOG 和对应新版本 Release
 
 不得将静态配置检查记作实际安装测试，也不得覆盖已有发布标签。
+
+实际运行、源码和验证边界见 PHASE_4_REPORT.md、PHASE_5_REPORT.md；已核验的旧候选产物不替代最终 0.2.2 发布包。

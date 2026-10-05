@@ -35,3 +35,15 @@ node scripts/prepare-release.mjs /tmp/socks-brand-ci-37262569957 /tmp/socks-bran
 为进行真实的 0.2.1→0.2.2 升级检查，候选源码版本统一调整为 0.2.2，现有 v0.2.1 标签不变。Linux 工作流增加可选旧包 artifact 输入；先验证旧包源码和校验清单，再启动旧包、写入非空代理配置与模式、重新启动确认，然后安装严格更高版本并逐记录比较。每次启动清理本套件临时目录中的旧日志，防止复用旧就绪记录。未修改宿主用户的 XDG 数据。
 
 准确暂存的候选源码在隔离副本 /tmp/socks-brand-check.j1eUaC 完整 pnpm check 和 pnpm build 通过：159 个前端测试、19 个工具测试、format/lint/typecheck、Rust fmt/clippy、IPC 契约检查；版本一致性检查、升级状态脚本的未变化通过/模式变化拒绝及 bash 语法检查通过。真实 Linux 版本升级及候选全平台打包仍待 CI 执行；未创建标签或 Release。主工作区用户的窗口尺寸修改未暂存。
+
+## 修正后 0.2.2 全平台候选产物
+
+源码 8bc3b87deda47436e218df71d3b782aada65f893，成功运行 [37269117857](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37269117857)。已下载全部五个 artifact，执行：
+
+```sh
+node scripts/prepare-release.mjs /tmp/socks-brand-ci-37269117857 /tmp/socks-brand-ci-verified-37269117857 v0.2.2 8bc3b87deda47436e218df71d3b782aada65f893
+```
+
+七个安装包及 SHA256、VERSION、SOURCE_REVISION 全部核验通过。此次三个 macOS DMG 均通过实际挂载布局检查，Apple Silicon 包另已通过 Finder 中文背景、拖拽替换和应用启动/非空配置保留验证。Windows EXE 已传至远端，上传前后 SHA256 一致（8c83ab91b6084e7c2e8898c83d44e8b0d3117f6cfa6ebc7cfef6fe1cdd550df7），尚待用户退出应用后执行新版本升级。已有 v0.2.1 不变，未创建 v0.2.2 标签或 Release；首次 Windows 配置缺失未定因，不将后续未复现作为修复证明。
+
+同源码独立 Quality [37269103256](https://github.com/liqiyuan-152/socks-proxy-desktop/actions/runs/37269103256) 已全部成功。
