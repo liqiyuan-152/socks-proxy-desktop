@@ -5,9 +5,23 @@ on:
     branches: [master]
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      linux_upgrade_run:
+        description: "Linux 升级基线的成功 Actions run ID（留空仅验证当前包）"
+        required: false
+        type: string
+      linux_upgrade_artifact:
+        description: "该运行中的 Linux artifact 完整名称"
+        required: false
+        type: string
+      linux_upgrade_revision:
+        description: "升级基线的 40 位源码提交号"
+        required: false
+        type: string
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: desktop-packages-${{ github.ref }}
@@ -98,6 +112,19 @@ jobs:
       - name: Verify Linux metadata, installation and packaged startup
         if: runner.os == 'Linux'
         run: bash scripts/verify-linux-packages.sh src-tauri/target/${{ matrix.target }}/release/bundle
+      - name: Download previous Linux package for upgrade rehearsal
+        if: runner.os == 'Linux' && inputs.linux_upgrade_run != ''
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.linux_upgrade_run }}
+          name: ${{ inputs.linux_upgrade_artifact }}
+          path: previous-linux-packages
+      - name: Verify Linux upgrade preserves configuration
+        if: runner.os == 'Linux' && inputs.linux_upgrade_run != ''
+        env:
+          PREVIOUS_REVISION: ${{ inputs.linux_upgrade_revision }}
+        run: bash scripts/verify-linux-packages.sh src-tauri/target/${{ matrix.target }}/release/bundle previous-linux-packages "$PREVIOUS_REVISION"
       - name: Stage packages, checksums and source revision
         shell: pwsh
         env:

@@ -88,3 +88,9 @@
 确认旧版进程不存在后，打开新版 290aec3 的交互安装包进行品牌前→品牌后覆盖复测；等待用户完成。两个包均为 0.2.1，此次检验安装器及品牌资源替换，不替代未来新版本号的升级验证。测试前当前数据快照仍完整保留，复测结束须恢复该快照并验证应用。
 
 新版安装临时任务随后结束返回 0，应用进程 8784 在控制台会话 1 运行。读取运行中数据库，与 legacy-after-start.sqlite3 比较：configuration、selected_mode 均逐记录一致，configuration 1 行，schema 6，完整性检查通过。本轮品牌前→品牌后交互覆盖安装未复现配置缺失；不将未复现等同于首次异常已定因。尚待应用退出，保留复测后的数据库证据并恢复 current-before-rehearsal.sqlite3。
+
+随后实际确认进程已退出，使用 SQLite backup 保存 after-branded-rehearsal.sqlite3，并从 current-before-rehearsal.sqlite3 生成完整性通过的 restore-ready.sqlite3。将复测后的 DB/WAL/SHM 移到独立证据目录，恢复独立快照，不复用 WAL/SHM。启动前检查 7 张表（configuration、configuration_commit、configuration_recovery、connection_count_samples、proxy_ownership、runtime_diagnostics、selected_mode）均与测试前快照逐记录一致，表集合一致，完整性通过。移除升级临时任务并重新启动新版；等待用户确认恢复后的窗口与配置，本轮不再要求退出。
+
+恢复后再次查询，应用进程 23048 持续运行于控制台会话 1；configuration、selected_mode 与 current-before-rehearsal.sqlite3 一致，configuration 1 行，schema 6，完整性检查通过。已清理恢复启动临时任务，保留运行中的应用。用户窗口确认仍待回复。
+
+复查 Linux 验证脚本：现有 CI 覆盖 DEB 安装、原生前端就绪、卸载后数据库文件哈希一致和 AppImage 独立启动，但尚未安装实际旧版本后再升级；4.4 的 Linux 配置升级证据仍缺。用户取消的是桌面视觉验收，未将此静态或单次安装结果记作旧版升级通过。
