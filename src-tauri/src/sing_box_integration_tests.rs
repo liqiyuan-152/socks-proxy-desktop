@@ -228,7 +228,7 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
         &checksum,
         directory.path(),
         &config,
-        crate::models::TEST_RULES_MODE,
+        config.runtime_mode,
         &HashMap::new(),
     )
     .unwrap();

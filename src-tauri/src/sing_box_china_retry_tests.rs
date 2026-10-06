@@ -103,7 +103,7 @@ fn china_preset_keeps_domain_exit_on_retry_and_routes_literal_ipv6() {
         &checksum,
         directory.path(),
         &config,
-        crate::models::TEST_RULES_MODE,
+        config.runtime_mode,
         &HashMap::new(),
     )
     .unwrap();
