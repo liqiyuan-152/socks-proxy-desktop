@@ -6,7 +6,9 @@ fn failed_switch_keeps_monitoring_old_session_and_restores_after_its_exit() {
     let runtime = manager(backend.clone(), configuration());
     let before = runtime.request_mode(RuntimeMode::Global).unwrap();
     backend.fail_next.store(true, Ordering::SeqCst);
-    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    assert!(runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .is_err());
     let retained = runtime.snapshot();
     assert_eq!(retained.session_health, SessionHealth::Healthy);
     assert_eq!(retained.last_operation.outcome, OperationOutcome::Failed);
@@ -30,7 +32,9 @@ fn retained_session_recovery_failure_is_distinct_from_failed_operation() {
     let runtime = manager(backend.clone(), configuration());
     runtime.request_mode(RuntimeMode::Global).unwrap();
     backend.fail_next.store(true, Ordering::SeqCst);
-    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    assert!(runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .is_err());
     let operation = runtime.snapshot().last_operation;
     backend.fail_reconcile.store(true, Ordering::SeqCst);
     let failed = runtime.snapshot();
@@ -132,7 +136,9 @@ fn transition_events_include_short_lived_stages_and_rollback() {
     assert_eq!(events.try_recv().unwrap().phase, RuntimePhase::Starting);
     assert_eq!(events.try_recv().unwrap().phase, RuntimePhase::Running);
     backend.fail_next.store(true, Ordering::SeqCst);
-    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    assert!(runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .is_err());
     let switching = events.try_recv().unwrap();
     assert_eq!(switching.phase, RuntimePhase::Switching);
     assert_eq!(switching.applied_mode, Some(RuntimeMode::Global));

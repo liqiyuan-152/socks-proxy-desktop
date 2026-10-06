@@ -7,7 +7,7 @@ import { ErrorAlert } from "./ErrorAlert";
 import { useNavigate } from "react-router-dom";
 import { useBackendStore } from "@/store/backend-store";
 import { useShallow } from "zustand/react/shallow";
-import { proxyModes } from "@/lib/proxy-mode";
+import { modeKey, proxyModes } from "@/lib/proxy-mode";
 
 export function RuntimeFeedback() {
   const { snapshot, error, capabilities, pending, switchMode, refresh } = useBackendStore(
@@ -66,7 +66,7 @@ export function RuntimeFeedback() {
       </div>
       <p className="text-sm text-muted-foreground">
         当前仍生效的模式：
-        {snapshot?.applied_mode ? proxyModes[snapshot.applied_mode].label : "未应用"}
+        {snapshot?.applied_mode ? proxyModes[modeKey(snapshot.applied_mode)].label : "未应用"}
         {snapshot?.session_health === "healthy" && "，原内核仍在运行。"}
       </p>
       <div className="flex flex-wrap gap-2 pt-1">

@@ -28,7 +28,7 @@ fn start() -> RuntimeStateNode {
 fn switching() -> RuntimeStateNode {
     running()
         .transition(RuntimeEvent::ModeSwitchRequested {
-            mode: RuntimeMode::Rules,
+            mode: crate::models::TEST_RULES_MODE,
         })
         .expect("switch request")
 }
@@ -46,16 +46,19 @@ fn startup_and_switch_publish_only_committed_sessions() -> Result<(), RuntimeErr
     let committed = prepared.transition(RuntimeEvent::HealthCheckPassed)?;
     assert_eq!(committed.phase(), RuntimePhase::Running);
     let pending = committed.transition(RuntimeEvent::ModeSwitchRequested {
-        mode: RuntimeMode::Rules,
+        mode: crate::models::TEST_RULES_MODE,
     })?;
     let previous = pending.active().cloned();
     let prepared = pending.transition(RuntimeEvent::ProcessStarted {
-        active: active(2, RuntimeMode::Rules),
+        active: active(2, crate::models::TEST_RULES_MODE),
     })?;
     assert_eq!(prepared.active().cloned(), previous);
     assert_eq!(prepared.applied_mode(), Some(RuntimeMode::Global));
     let committed = prepared.transition(RuntimeEvent::HealthCheckPassed)?;
-    assert_eq!(committed.applied_mode(), Some(RuntimeMode::Rules));
+    assert_eq!(
+        committed.applied_mode(),
+        Some(crate::models::TEST_RULES_MODE)
+    );
     assert_eq!(
         committed
             .active()
@@ -81,7 +84,7 @@ fn failure_retains_healthy_session_and_supports_retry_and_metadata_commit(
     assert_eq!(
         failed
             .transition(RuntimeEvent::ModeSwitchRequested {
-                mode: RuntimeMode::Rules
+                mode: crate::models::TEST_RULES_MODE
             })?
             .phase(),
         RuntimePhase::Switching
@@ -184,10 +187,10 @@ fn rollback_restores_the_exact_prior_lifecycle_after_backend_reverts() -> Result
     let previous = running();
     let prepared = previous
         .transition(RuntimeEvent::ModeSwitchRequested {
-            mode: RuntimeMode::Rules,
+            mode: crate::models::TEST_RULES_MODE,
         })?
         .transition(RuntimeEvent::ProcessStarted {
-            active: active(2, RuntimeMode::Rules),
+            active: active(2, crate::models::TEST_RULES_MODE),
         })?;
     assert_eq!(
         prepared.transition(RuntimeEvent::Rollback {
@@ -268,7 +271,7 @@ fn invalid_events_are_rejected_without_losing_the_original_node() {
         .is_err());
     assert!(running()
         .transition(RuntimeEvent::ProcessStarted {
-            active: active(2, RuntimeMode::Rules)
+            active: active(2, crate::models::TEST_RULES_MODE)
         })
         .is_err());
 }
@@ -289,7 +292,7 @@ fn invariants_reject_invalid_identity_mode_and_health_before_or_after_transition
         RuntimeStateNode::Failed {
             error: "failed".into(),
             last_session: Some(active(1, RuntimeMode::Global)),
-            applied_mode: Some(RuntimeMode::Rules),
+            applied_mode: Some(crate::models::TEST_RULES_MODE),
             health: SessionHealth::Healthy,
         },
         RuntimeStateNode::Failed {
@@ -325,7 +328,7 @@ fn invariants_reject_invalid_identity_mode_and_health_before_or_after_transition
     let unchanged = node.clone();
     assert!(matches!(
         node.transition(RuntimeEvent::ProcessStarted {
-            active: active(2, RuntimeMode::Rules)
+            active: active(2, crate::models::TEST_RULES_MODE)
         }),
         Err(RuntimeError::InvariantViolated(_))
     ));

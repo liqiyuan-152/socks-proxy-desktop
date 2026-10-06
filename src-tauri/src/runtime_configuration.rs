@@ -16,10 +16,18 @@ impl ManagedRuntime {
         if state.pending.is_some() || state.pending_settings.is_some() {
             return Err(AppError::storage("上一候选修订仍在提交中"));
         }
-        let mode = state.node.applied_mode().unwrap_or(RuntimeMode::Direct);
+        let mode_changed = previous.runtime_mode != candidate.runtime_mode;
+        let old_mode = state.node.applied_mode().unwrap_or(RuntimeMode::Direct);
+        let mode = if !self.backend.supports_proxy_runtime() {
+            RuntimeMode::Direct
+        } else if mode_changed {
+            candidate.runtime_mode
+        } else {
+            old_mode
+        };
         let versions =
             candidate_versions(candidate, &state.credential_versions, changed_credentials);
-        let old_plan = RuntimePlan::build(previous, mode, &state.credential_versions)?;
+        let old_plan = RuntimePlan::build(previous, old_mode, &state.credential_versions)?;
         let new_plan = RuntimePlan::build(candidate, mode, &versions)?;
         if old_plan == new_plan {
             let mut state = self.state.lock().map_err(|_| runtime_error())?;
@@ -34,7 +42,7 @@ impl ManagedRuntime {
         self.transition_with_versions(
             candidate.clone(),
             mode,
-            state.node.applied_mode().is_none(),
+            !mode_changed && state.node.applied_mode().is_none(),
             true,
             versions,
         )

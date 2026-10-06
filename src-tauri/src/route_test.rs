@@ -40,6 +40,18 @@ pub fn evaluate(
     target: &str,
     port: u16,
 ) -> Result<RouteTestResult, AppError> {
+    evaluate_with_matcher(configuration, root, target, port, |sets, name, host| {
+        sets.matches(name, host)
+    })
+}
+
+fn evaluate_with_matcher(
+    configuration: &PersistedConfiguration,
+    root: Option<&Path>,
+    target: &str,
+    port: u16,
+    matcher: impl Fn(&ChinaRuleSets, &str, &str) -> Result<bool, AppError>,
+) -> Result<RouteTestResult, AppError> {
     configuration.validate_runtime_rules()?;
     let host = target.trim();
     let host = host
@@ -54,11 +66,16 @@ pub fn evaluate(
         }]));
     }
     let host = host.trim_end_matches('.').to_ascii_lowercase();
-    let sets = if configuration.china_direct_enabled {
-        let root = root.ok_or_else(|| AppError::unavailable("此平台未提供国内直连规则集"))?;
-        Some(ChinaRuleSets::verify(root)?)
+    let sets = if configuration.china_direct_enabled() {
+        root.map(ChinaRuleSets::verify).transpose()?
     } else {
         None
+    };
+    let mode = configuration.runtime_mode;
+    let default_action = match mode {
+        crate::models::RuntimeMode::Rules { default_action, .. } => default_action,
+        crate::models::RuntimeMode::Global => RuleAction::Proxy,
+        crate::models::RuntimeMode::Direct => RuleAction::Direct,
     };
     let rules = CompiledRules::compile(configuration)?;
     let decide = |stage,
@@ -82,7 +99,10 @@ pub fn evaluate(
             data_date: sets.as_ref().map(|set| set.data_date().to_owned()),
         }
     };
-    if let Some(rule) = rules.matching_rule(&host, port) {
+    if let Some(rule) = rules
+        .matching_rule(&host, port)
+        .filter(|_| matches!(mode, crate::models::RuntimeMode::Rules { .. }))
+    {
         return Ok(decide(
             RouteStage::UserRule,
             rule.action,
@@ -92,14 +112,21 @@ pub fn evaluate(
             "首条匹配的用户规则",
         ));
     }
+    if configuration.china_direct_enabled() && sets.is_none() {
+        return Err(AppError::unavailable(
+            "此平台无法验证国内直连匹配；用户规则未命中",
+        ));
+    }
     let Some(sets) = sets.as_ref() else {
         return Ok(decide(
             RouteStage::Final,
-            RuleAction::Direct,
+            default_action,
+            (default_action == RuleAction::Proxy)
+                .then_some(configuration.active_profile_id.as_deref())
+                .flatten(),
             None,
             None,
-            None,
-            "预设关闭，未命中规则时直连",
+            "未命中用户规则，应用默认动作",
         ));
     };
     if let Some(ip) = ip {
@@ -118,7 +145,7 @@ pub fn evaluate(
         } else {
             "china-ipv6.srs"
         };
-        if sets.matches(name, &host)? {
+        if matcher(sets, name, &host)? {
             return Ok(decide(
                 RouteStage::ChinaIp,
                 RuleAction::Direct,
@@ -128,7 +155,7 @@ pub fn evaluate(
                 "字面 IP 命中中国地址集",
             ));
         }
-    } else if sets.matches("china-domains.srs", &host)? {
+    } else if matcher(sets, "china-domains.srs", &host)? {
         return Ok(decide(
             RouteStage::ChinaDomain,
             RuleAction::Direct,
@@ -145,8 +172,10 @@ pub fn evaluate(
     };
     Ok(decide(
         RouteStage::Final,
-        RuleAction::Proxy,
-        configuration.active_profile_id.as_deref(),
+        default_action,
+        (default_action == RuleAction::Proxy)
+            .then_some(configuration.active_profile_id.as_deref())
+            .flatten(),
         None,
         None,
         reason,

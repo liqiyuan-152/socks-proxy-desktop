@@ -212,7 +212,7 @@ fn real_core_configuration_and_transport_soak() -> Result<(), Box<dyn Error>> {
     while started.elapsed() < Duration::from_secs(seconds) {
         if probes == 0 || last_maintenance.elapsed() >= Duration::from_secs(30) {
             let mode = if transitions % 2 == 0 {
-                RuntimeMode::Rules
+                crate::models::TEST_RULES_MODE
             } else {
                 RuntimeMode::Global
             };

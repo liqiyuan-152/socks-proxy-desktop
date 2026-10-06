@@ -6,6 +6,7 @@ mod china_rules;
 mod china_rules_tests;
 #[cfg(test)]
 mod configuration_crash_tests;
+mod configuration_document;
 mod configuration_recovery;
 mod configuration_startup_recovery;
 #[cfg(any(windows, test))]

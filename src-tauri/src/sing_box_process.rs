@@ -93,7 +93,13 @@ impl SingBoxProcess {
         let mut random = [0u8; 32];
         rand::rngs::OsRng.fill_bytes(&mut random);
         let control_secret = hex::encode(random);
-        let china_rules = if mode == RuntimeMode::Rules && configuration.china_direct_enabled {
+        let china_rules = if matches!(
+            mode,
+            RuntimeMode::Rules {
+                use_china_direct: true,
+                ..
+            }
+        ) {
             Some(ChinaRuleSets::verify(&resource_root(binary)?)?)
         } else {
             None

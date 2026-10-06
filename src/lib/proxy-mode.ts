@@ -17,3 +17,33 @@ export const proxyModes: Record<ProxyMode, { label: string; description: string;
     rule: "恢复系统代理",
   },
 };
+
+import type { RuntimeMode } from "./generated/ipc";
+
+export const defaultRulesMode: RuntimeMode = {
+  rules: { use_china_direct: false, default_action: "proxy" },
+};
+
+export function modeKey(mode: RuntimeMode): ProxyMode {
+  return typeof mode === "string" ? mode : "rules";
+}
+
+export function modeValue(key: ProxyMode, current?: RuntimeMode | null): RuntimeMode {
+  return key === "rules"
+    ? current && typeof current === "object"
+      ? current
+      : defaultRulesMode
+    : key;
+}
+
+export function sameMode(
+  left: RuntimeMode | null | undefined,
+  right: RuntimeMode | null | undefined,
+): boolean {
+  if (left === right) return true;
+  if (!left || !right || typeof left === "string" || typeof right === "string") return false;
+  return (
+    left.rules.use_china_direct === right.rules.use_china_direct &&
+    left.rules.default_action === right.rules.default_action
+  );
+}

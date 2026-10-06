@@ -1,3 +1,4 @@
+import { defaultRulesMode } from "@/lib/proxy-mode";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { fixture, mocks, runtime } from "./test/app-fixture";
 import App from "./App";
@@ -6,7 +7,7 @@ it("shows failed operation and retained healthy mode in status and sidebar", asy
   const original = mocks.invoke.getMockImplementation()!;
   const failed = {
     ...runtime(),
-    desired_mode: "rules",
+    desired_mode: defaultRulesMode,
     phase: "failed",
     session_health: "healthy",
     last_operation: { id: 2, outcome: "failed", error: "内核健康检查失败" },
@@ -23,7 +24,7 @@ it("shows failed operation and retained healthy mode in status and sidebar", asy
   expect(screen.getByRole("link", { name: /最近操作失败 · 全局代理/ })).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "重试模式切换" }));
   await waitFor(() =>
-    expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
+    expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: defaultRulesMode }),
   );
   expect(screen.queryByText(/stored-secret/)).not.toBeInTheDocument();
 });

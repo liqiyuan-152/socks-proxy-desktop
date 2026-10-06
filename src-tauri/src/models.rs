@@ -2,7 +2,7 @@ use crate::error::{AppError, FieldError};
 use serde::{Deserialize, Serialize};
 use std::net::IpAddr;
 
-pub const CONFIG_SCHEMA_VERSION: u32 = 2;
+pub const CONFIG_SCHEMA_VERSION: u32 = 3;
 pub const DEFAULT_LATENCY_TEST_URL: &str = "https://www.gstatic.com/generate_204";
 
 pub fn default_latency_test_url() -> String {
@@ -17,14 +17,26 @@ pub enum ProxyProtocol {
     Http,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(test, derive(ts_rs::TS))]
 pub enum RuntimeMode {
-    Rules,
+    Rules {
+        use_china_direct: bool,
+        default_action: RuleAction,
+    },
     Global,
+    #[default]
     Direct,
 }
+
+// Existing test scenarios use the legacy Rules defaults until parameter-specific
+// behavior is covered by the routing and migration tasks.
+#[cfg(test)]
+pub(crate) const TEST_RULES_MODE: RuntimeMode = RuntimeMode::Rules {
+    use_china_direct: false,
+    default_action: RuleAction::Direct,
+};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ProxyProfile {
@@ -108,7 +120,7 @@ pub struct PersistedConfiguration {
     #[serde(rename = "default_profile_id", alias = "active_profile_id")]
     pub active_profile_id: Option<String>,
     #[serde(default)]
-    pub china_direct_enabled: bool,
+    pub runtime_mode: RuntimeMode,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub legacy_unresolved_rule_ids: Vec<String>,
     pub settings: AppSettings,
@@ -121,7 +133,7 @@ impl Default for PersistedConfiguration {
             profiles: Vec::new(),
             rules: Vec::new(),
             active_profile_id: None,
-            china_direct_enabled: false,
+            runtime_mode: RuntimeMode::Direct,
             legacy_unresolved_rule_ids: Vec::new(),
             settings: AppSettings::default(),
         }
@@ -140,30 +152,6 @@ impl PersistedConfiguration {
             )]));
         }
         Ok(())
-    }
-
-    pub fn migrate_v1(&mut self) -> Result<(), AppError> {
-        if self.schema_version == 1 {
-            if self.active_profile_id.as_ref().is_some_and(|id| {
-                !self
-                    .profiles
-                    .iter()
-                    .any(|profile| profile.id == *id && profile.enabled)
-            }) {
-                self.active_profile_id = None;
-            }
-            for rule in &mut self.rules {
-                if rule.action == RuleAction::Proxy {
-                    rule.proxy_profile_id = self.active_profile_id.clone();
-                    if rule.proxy_profile_id.is_none() {
-                        self.legacy_unresolved_rule_ids.push(rule.id.clone());
-                    }
-                }
-            }
-            self.china_direct_enabled = false;
-            self.schema_version = CONFIG_SCHEMA_VERSION;
-        }
-        self.validate()
     }
 
     pub fn validate(&self) -> Result<(), AppError> {
@@ -294,10 +282,6 @@ impl PersistedConfiguration {
                 ));
             }
         }
-        if self.china_direct_enabled && self.active_profile_id.is_none() {
-            errors.push(field_error("default_profile_id", "国内直连需要默认代理"));
-        }
-
         if !valid_latency_test_url(&self.settings.latency_test_url) {
             errors.push(field_error(
                 "settings.latency_test_url",
@@ -379,3 +363,6 @@ fn valid_cidr(value: &str) -> bool {
 #[cfg(test)]
 #[path = "models_tests.rs"]
 mod tests;
+
+#[path = "models_configuration.rs"]
+mod configuration;

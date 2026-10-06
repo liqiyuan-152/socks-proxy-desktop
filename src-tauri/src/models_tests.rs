@@ -2,11 +2,11 @@ use super::*;
 
 #[test]
 fn linux_upgrade_fixture_matches_persisted_configuration_contract() {
-    let configuration: PersistedConfiguration = serde_json::from_str(include_str!(
+    let mut configuration: PersistedConfiguration = serde_json::from_str(include_str!(
         "../../scripts/fixtures/linux-upgrade-configuration.json"
     ))
     .unwrap();
-    configuration.validate().unwrap();
+    configuration.migrate_v1().unwrap();
     assert_eq!(configuration.schema_version, CONFIG_SCHEMA_VERSION);
     assert_eq!(configuration.profiles.len(), 1);
     assert_eq!(

@@ -9,7 +9,10 @@ fn add_start_stop_and_persist_profile() -> Result<(), Box<dyn std::error::Error>
     let app = TestApp::new()?;
     let profile = app.add_profile("first")?;
     app.service.select_profile(Some(profile.id.clone()))?;
-    let running = app.service.request_mode(RuntimeMode::Rules)?;
+    let running = app.service.request_mode(RuntimeMode::Rules {
+        use_china_direct: false,
+        default_action: socks_proxy_lib::services::RuleAction::Proxy,
+    })?;
     assert_eq!(running.phase, RuntimePhase::Running);
     assert_eq!(running.session_health, SessionHealth::Healthy);
     assert_eq!(running.active_profile_id, Some(profile.id.clone()));
@@ -23,7 +26,7 @@ fn add_start_stop_and_persist_profile() -> Result<(), Box<dyn std::error::Error>
             .lock()
             .map_err(|_| "backend poisoned")?
             .confirmations,
-        2
+        3
     );
     Ok(())
 }

@@ -87,8 +87,10 @@ fn global_unrelated_secret_commit_is_metadata_but_next_rules_plan_uses_new_versi
     assert_eq!(backend.modes.lock().unwrap().len(), 1);
     let new_versions = runtime.state.lock().unwrap().credential_versions.clone();
     assert_ne!(new_versions["unrelated"], old_versions["unrelated"]);
-    runtime.request_mode(RuntimeMode::Rules).unwrap();
-    let plan = RuntimePlan::build(&config, RuntimeMode::Rules, &new_versions).unwrap();
+    runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
+    let plan = RuntimePlan::build(&config, crate::models::TEST_RULES_MODE, &new_versions).unwrap();
     assert_eq!(
         plan.credential_versions["unrelated"],
         new_versions["unrelated"]

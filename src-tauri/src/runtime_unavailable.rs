@@ -9,6 +9,9 @@ use crate::{
 pub struct UnavailableRuntimeBackend;
 
 impl RuntimeBackend for UnavailableRuntimeBackend {
+    fn supports_proxy_runtime(&self) -> bool {
+        false
+    }
     fn transition(
         &self,
         _: Option<&BackendSession>,

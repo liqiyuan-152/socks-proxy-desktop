@@ -87,6 +87,9 @@ pub struct BackendSession {
 }
 
 pub trait RuntimeBackend: Send + Sync {
+    fn supports_proxy_runtime(&self) -> bool {
+        true
+    }
     // On failure, the previous session and system proxy must remain applied.
     // On success, retain the previous session until confirm or revert.
     fn transition(
@@ -227,6 +230,9 @@ impl RuntimeState {
 }
 
 pub trait RuntimeCoordinator: Send + Sync {
+    fn supports_proxy_runtime(&self) -> bool {
+        true
+    }
     /// 有界脱敏的转换历史；不支持历史的适配器返回空集合。
     fn transition_history(&self) -> Vec<TransitionRecord> {
         Vec::new()

@@ -79,7 +79,7 @@ impl RoutingServiceInterface for RoutingService {
             .as_deref()
             .and_then(|root| ChinaRuleSets::verify(root).ok());
         Ok(ChinaDirectStatus {
-            enabled: configuration.china_direct_enabled,
+            enabled: configuration.china_direct_enabled(),
             available: sets.is_some(),
             data_date: sets.map(|sets| sets.data_date().to_owned()),
         })
@@ -119,8 +119,19 @@ impl RoutingServiceInterface for RoutingService {
         let _guard = self.context.mutation_lock()?;
         let current = self.context.store.load()?;
         let mut candidate = current.clone();
-        candidate.china_direct_enabled = enabled;
+        candidate.runtime_mode = crate::models::RuntimeMode::Rules {
+            use_china_direct: enabled,
+            default_action: match current.runtime_mode {
+                crate::models::RuntimeMode::Rules { default_action, .. } => default_action,
+                _ => crate::models::RuleAction::Proxy,
+            },
+        };
         candidate.validate()?;
+        crate::runtime_plan::RuntimePlan::build(
+            &candidate,
+            candidate.runtime_mode,
+            &std::collections::HashMap::new(),
+        )?;
         if enabled {
             let root = self
                 .context

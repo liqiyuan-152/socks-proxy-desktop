@@ -1,5 +1,5 @@
 use crate::{
-    models::RuntimeMode,
+    models::{RuleAction, RuntimeMode},
     runtime::{RuntimeSnapshot, SessionHealth},
     services::ApplicationService,
 };
@@ -22,7 +22,7 @@ struct TrayPresentation {
 impl From<&RuntimeSnapshot> for TrayPresentation {
     fn from(snapshot: &RuntimeSnapshot) -> Self {
         let applied = match snapshot.applied_mode {
-            Some(RuntimeMode::Rules) => "规则代理",
+            Some(RuntimeMode::Rules { .. }) => "规则代理",
             Some(RuntimeMode::Global) => "全局代理",
             Some(RuntimeMode::Direct) => "全局直连",
             None => "未运行",
@@ -70,7 +70,7 @@ pub fn sync_snapshot<R: Runtime>(app: &AppHandle<R>, snapshot: &RuntimeSnapshot)
     let _ = state.title.set_text(display.title);
     let _ = state
         .rules
-        .set_checked(display.checked == Some(RuntimeMode::Rules));
+        .set_checked(matches!(display.checked, Some(RuntimeMode::Rules { .. })));
     let _ = state
         .global
         .set_checked(display.checked == Some(RuntimeMode::Global));
@@ -150,7 +150,23 @@ pub fn install<R: Runtime>(app: &tauri::App<R>) -> tauri::Result<()> {
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id().as_ref() {
-            "mode-rules" => request_mode(app, RuntimeMode::Rules),
+            "mode-rules" => {
+                let service = app.state::<Arc<ApplicationService>>();
+                let mode = match service.runtime_snapshot().selected_mode {
+                    mode @ RuntimeMode::Rules { .. } => mode,
+                    _ => {
+                        let Ok(status) = service.china_direct_status() else {
+                            show_main_window(app);
+                            return;
+                        };
+                        RuntimeMode::Rules {
+                            use_china_direct: status.enabled,
+                            default_action: RuleAction::Proxy,
+                        }
+                    }
+                };
+                request_mode(app, mode);
+            }
             "mode-global" => request_mode(app, RuntimeMode::Global),
             "mode-direct" => request_mode(app, RuntimeMode::Direct),
             "status" => show_main_window(app),
@@ -182,8 +198,8 @@ mod tests {
             configuration_revision: 0,
             runtime_plan_revision: 0,
             revision: 1,
-            selected_mode: RuntimeMode::Rules,
-            desired_mode: RuntimeMode::Rules,
+            selected_mode: crate::models::TEST_RULES_MODE,
+            desired_mode: crate::models::TEST_RULES_MODE,
             applied_mode: Some(RuntimeMode::Global),
             phase: RuntimePhase::Switching,
             active_profile_id: None,

@@ -79,7 +79,7 @@ fn slow_control_request_does_not_lock_switch_or_stop_and_old_success_is_discarde
         let mode = if stop {
             RuntimeMode::Direct
         } else {
-            RuntimeMode::Rules
+            crate::models::TEST_RULES_MODE
         };
         let (done_tx, done_rx) = mpsc::channel();
         let writer = backend.clone();
@@ -161,7 +161,7 @@ fn fixed_core_failed_switch_retains_old_process_then_recovers_after_exit() {
     let first_port = *proxy.port.lock().unwrap();
     proxy.reject_next.store(true, Ordering::SeqCst);
     assert!(backend
-        .transition(Some(&first), &config, RuntimeMode::Rules, 2)
+        .transition(Some(&first), &config, crate::models::TEST_RULES_MODE, 2)
         .is_err());
     assert_eq!(*proxy.port.lock().unwrap(), first_port);
     assert!(backend.reconcile_session(&first).unwrap());
@@ -215,7 +215,7 @@ fn global_core_starts_without_unrelated_exit_secret_but_rules_rejects_it() {
     };
     assert_eq!(rendered["outbounds"].as_array().unwrap().len(), 2);
     let error = backend
-        .transition(Some(&started), &config, RuntimeMode::Rules, 2)
+        .transition(Some(&started), &config, crate::models::TEST_RULES_MODE, 2)
         .unwrap_err();
     assert_eq!(error.fields[0].field, "profiles[1].credential");
     assert!(backend.reconcile_session(&started).unwrap());

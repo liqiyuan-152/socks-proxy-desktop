@@ -275,3 +275,42 @@ fn public_wire_values_match_generated_enums_numbers_and_error_shape() {
     assert_eq!(credential.as_object().unwrap().len(), 2);
     assert!(!public_contract().contains("synthetic-secret"));
 }
+
+#[test]
+fn runtime_mode_parameters_match_wire_and_generated_contract() {
+    for use_china_direct in [false, true] {
+        for default_action in [RuleAction::Proxy, RuleAction::Direct] {
+            let mode = RuntimeMode::Rules {
+                use_china_direct,
+                default_action,
+            };
+            let wire = serde_json::json!({"rules": {
+                "use_china_direct": use_china_direct,
+                "default_action": default_action,
+            }});
+            assert_eq!(serde_json::to_value(mode).unwrap(), wire);
+            assert_eq!(serde_json::from_value::<RuntimeMode>(wire).unwrap(), mode);
+        }
+    }
+    for (mode, wire) in [
+        (RuntimeMode::Global, "global"),
+        (RuntimeMode::Direct, "direct"),
+    ] {
+        assert_eq!(serde_json::to_value(mode).unwrap(), wire);
+        assert_eq!(
+            serde_json::from_value::<RuntimeMode>(wire.into()).unwrap(),
+            mode
+        );
+    }
+    for invalid in [
+        serde_json::json!("rules"),
+        serde_json::json!({"rules": {"use_china_direct": false}}),
+        serde_json::json!({"rules": {"use_china_direct": false, "default_action": "reject"}}),
+    ] {
+        assert!(serde_json::from_value::<RuntimeMode>(invalid).is_err());
+    }
+    let declaration = RuntimeMode::decl();
+    assert!(declaration.contains("use_china_direct: boolean"));
+    assert!(declaration.contains("default_action: RuleAction"));
+    assert!(public_contract().contains(&format!("export {declaration}")));
+}

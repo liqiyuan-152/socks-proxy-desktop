@@ -88,7 +88,7 @@ pub fn render_with_rules(
     }
     outbounds.push(json!({ "type": "direct", "tag": "direct" }));
 
-    let mut rules: Vec<Value> = if mode == RuntimeMode::Rules {
+    let mut rules: Vec<Value> = if matches!(mode, RuntimeMode::Rules { .. }) {
         plan.rules
             .iter()
             .filter(|rule| rule.enabled)
@@ -133,9 +133,13 @@ pub fn render_with_rules(
     let preset = plan.china_direct_enabled;
     if preset {
         china_rules.ok_or_else(|| AppError::unavailable("国内直连规则集未通过校验"))?;
-        let default = default_tag
-            .as_deref()
-            .ok_or_else(|| field_error("default_profile_id", "国内直连需要默认代理"))?;
+        let default = match mode {
+            RuntimeMode::Rules {
+                default_action: RuleAction::Direct,
+                ..
+            } => "direct",
+            _ => default_tag.as_deref().expect("validated default proxy"),
+        };
         rules.extend([
             json!({ "rule_set": ["cn-domain"], "action": "route", "outbound": "direct" }),
             // Lock all remaining domain targets to the default exit before IP rules.
@@ -148,7 +152,14 @@ pub fn render_with_rules(
             json!({ "rule_set": ["cn-v4", "cn-v6"], "action": "route", "outbound": "direct" }),
         ]);
     }
-    let final_outbound = if mode == RuntimeMode::Global || preset {
+    let final_outbound = if mode == RuntimeMode::Global
+        || matches!(
+            mode,
+            RuntimeMode::Rules {
+                default_action: RuleAction::Proxy,
+                ..
+            }
+        ) {
         default_tag.expect("validated global default")
     } else {
         "direct".into()
@@ -187,3 +198,7 @@ fn field_error(field: &str, message: &str) -> AppError {
 #[cfg(test)]
 #[path = "sing_box_config_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "sing_box_mode_tests.rs"]
+mod mode_tests;

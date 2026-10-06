@@ -100,13 +100,13 @@ fn real_core_retains_old_process_until_commit_and_can_revert_candidate() {
 
     proxy.reject_next.store(true, Ordering::SeqCst);
     assert!(backend
-        .transition(Some(&first), &config, RuntimeMode::Rules, 2)
+        .transition(Some(&first), &config, crate::models::TEST_RULES_MODE, 2)
         .is_err());
     assert_eq!(*proxy.port.lock().unwrap(), first_port);
     assert!(backend.slots.lock().unwrap().pending.is_none());
 
     let second = backend
-        .transition(Some(&first), &config, RuntimeMode::Rules, 2)
+        .transition(Some(&first), &config, crate::models::TEST_RULES_MODE, 2)
         .unwrap()
         .unwrap();
     assert_ne!(first.process_id, second.process_id);
@@ -141,7 +141,7 @@ fn real_core_retains_old_process_until_commit_and_can_revert_candidate() {
     assert!(backend.slots.lock().unwrap().pending.is_none());
 
     let third = backend
-        .transition(Some(&first), &config, RuntimeMode::Rules, 2)
+        .transition(Some(&first), &config, crate::models::TEST_RULES_MODE, 2)
         .unwrap()
         .unwrap();
     backend.confirm_transition(Some(&first));

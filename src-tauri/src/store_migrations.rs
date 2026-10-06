@@ -36,6 +36,7 @@ const STEPS: [&str; DATABASE_SCHEMA_VERSION as usize] = [
         minute INTEGER PRIMARY KEY CHECK (minute >= 0),
         active_count INTEGER NOT NULL CHECK (active_count >= 0)
      );",
+    "", // v7 uses a checked data migration, not only DDL.
 ];
 
 pub(super) fn migrate(connection: &Connection) -> Result<(), AppError> {
@@ -67,6 +68,9 @@ pub(crate) fn migrate_with_limit(
         transaction
             .execute_batch(STEPS[(next_version - 1) as usize])
             .map_err(storage_error)?;
+        if next_version == 7 {
+            super::mode_migration::upgrade(&transaction)?;
+        }
         after_ddl(next_version)?;
         transaction
             .pragma_update(None, "user_version", next_version)
@@ -151,6 +155,7 @@ mod tests {
                 "configuration_recovery",
                 "runtime_diagnostics_error_type",
                 "connection_count_samples",
+                "selected_mode_v7",
             ][(target - 1) as usize];
             let count: i64 = connection
                 .query_row(

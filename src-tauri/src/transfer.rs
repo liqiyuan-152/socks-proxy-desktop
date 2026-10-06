@@ -39,7 +39,7 @@ struct PortableConfiguration {
     #[serde(rename = "default_profile_id", alias = "active_profile_id")]
     active_profile_id: Option<String>,
     #[serde(default)]
-    china_direct_enabled: bool,
+    runtime_mode: crate::models::RuntimeMode,
     settings: PortableSettings,
 }
 
@@ -64,7 +64,7 @@ pub fn export_configuration_json(
             .collect(),
         rules: configuration.rules.clone(),
         active_profile_id: configuration.active_profile_id.clone(),
-        china_direct_enabled: configuration.china_direct_enabled,
+        runtime_mode: configuration.runtime_mode,
         settings: PortableSettings {
             launch_at_login: configuration.settings.launch_at_login,
             diagnostic_retention: configuration.settings.diagnostic_retention,
@@ -78,8 +78,9 @@ pub fn parse_import_configuration(
     json: &str,
     updates: &HashMap<String, CredentialUpdate>,
 ) -> Result<PersistedConfiguration, AppError> {
+    let json = crate::configuration_document::normalize(json, None)?;
     let portable: PortableConfiguration =
-        serde_json::from_str(json).map_err(|_| AppError::storage("导入配置格式无效"))?;
+        serde_json::from_str(&json).map_err(|_| AppError::storage("导入配置格式无效"))?;
     let mut configuration = PersistedConfiguration {
         schema_version: portable.schema_version,
         profiles: portable
@@ -98,7 +99,7 @@ pub fn parse_import_configuration(
             .collect(),
         rules: portable.rules,
         active_profile_id: portable.active_profile_id,
-        china_direct_enabled: portable.china_direct_enabled,
+        runtime_mode: portable.runtime_mode,
         legacy_unresolved_rule_ids: Vec::new(),
         settings: AppSettings {
             launch_at_login: portable.settings.launch_at_login,
@@ -162,7 +163,7 @@ mod tests {
             "\"profiles\": [], \"password\": \"secret\"",
         );
         assert!(parse_import_configuration(&altered, &HashMap::new()).is_err());
-        let altered = json.replace("\"schema_version\": 2", "\"schema_version\": 99");
+        let altered = json.replace("\"schema_version\": 3", "\"schema_version\": 99");
         assert!(parse_import_configuration(&altered, &HashMap::new()).is_err());
     }
 
@@ -224,7 +225,7 @@ mod tests {
         assert_eq!(imported, config);
         assert!(export_configuration_json(&imported)
             .unwrap()
-            .contains("\"schema_version\": 2"));
+            .contains("\"schema_version\": 3"));
         old["active_profile_id"] = serde_json::Value::Null;
         assert_eq!(
             parse_import_configuration(&old.to_string(), &HashMap::new())

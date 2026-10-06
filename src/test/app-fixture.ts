@@ -1,3 +1,4 @@
+import type { RuntimeMode } from "@/lib/generated/ipc";
 import { beforeEach, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ invoke: vi.fn(), listen: vi.fn(async () => () => {}) }));
@@ -30,7 +31,7 @@ export const fixture = {} as {
   profiles: Profile[];
   rules: Rule[];
   defaultProfileId: string | null;
-  mode: "global" | "rules" | "direct";
+  mode: RuntimeMode;
   settings: { launch_at_login: boolean; diagnostic_retention: string; latency_test_url: string };
   diagnostics: { id: string; created_at_ms: number; severity: string; summary: string }[];
   rejectMode: boolean;
@@ -205,7 +206,14 @@ beforeEach(() => {
       case "copy_active_connection_detail":
         return "目标: example.org:443\n出口链: selected-proxy";
       case "export_configuration":
-        return '{"schema_version":1,"profiles":[],"rules":[]}';
+        return JSON.stringify({
+          schema_version: 3,
+          profiles: [],
+          rules: [],
+          runtime_mode: fixture.mode,
+          default_profile_id: null,
+          settings: fixture.settings,
+        });
       case "import_configuration":
         return null;
       default:

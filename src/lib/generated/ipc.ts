@@ -59,7 +59,10 @@ export type AppError = {
 };
 export type FieldError = { field: string; message: string };
 export type ProxyProtocol = "socks5" | "http";
-export type RuntimeMode = "rules" | "global" | "direct";
+export type RuntimeMode =
+  | { rules: { use_china_direct: boolean; default_action: RuleAction } }
+  | "global"
+  | "direct";
 export type RuleMatcher = "domain" | "domain_suffix" | "ip_cidr";
 export type RuleAction = "proxy" | "direct";
 export type RoutingRule = {

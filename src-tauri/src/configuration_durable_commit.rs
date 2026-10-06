@@ -16,7 +16,7 @@ impl ConfigurationContext {
     ) -> Result<(), AppError> {
         crate::performance_metrics::measure("configuration_apply", || {
             candidate.validate()?;
-            if candidate.china_direct_enabled {
+            if candidate.china_direct_enabled() && self.runtime.supports_proxy_runtime() {
                 let root_guard = self
                     .china_rule_root
                     .lock()

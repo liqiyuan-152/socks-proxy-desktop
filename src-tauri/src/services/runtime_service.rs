@@ -36,13 +36,27 @@ impl RuntimeServiceInterface for RuntimeService {
     #[tracing::instrument(skip_all, level = "debug")]
     fn set_mode(&self, mode: RuntimeMode) -> Result<RuntimeSnapshot, RuntimeError> {
         let _guard = self.context.mutation_lock()?;
-        self.context.store.save_mode(mode)?;
-        self.context.runtime.request_mode(mode).map_err(Into::into)
+        let current = self.context.store.load()?;
+        let mut candidate = current.clone();
+        candidate.runtime_mode = mode;
+        self.context.commit(&current, &candidate)?;
+        let snapshot = self.context.runtime.snapshot();
+        if self.context.runtime.supports_proxy_runtime()
+            && mode != RuntimeMode::Direct
+            && snapshot.applied_mode != Some(mode)
+        {
+            self.context.runtime.request_mode(mode).map_err(Into::into)
+        } else {
+            Ok(snapshot)
+        }
     }
     #[tracing::instrument(skip_all, level = "debug")]
     fn stop(&self) -> Result<RuntimeSnapshot, RuntimeError> {
         let _guard = self.context.mutation_lock()?;
-        self.context.store.save_mode(RuntimeMode::Direct)?;
+        let current = self.context.store.load()?;
+        let mut candidate = current.clone();
+        candidate.runtime_mode = RuntimeMode::Direct;
+        self.context.commit(&current, &candidate)?;
         self.context.runtime.stop().map_err(Into::into)
     }
     #[tracing::instrument(skip_all, level = "debug")]
@@ -55,7 +69,10 @@ impl RuntimeServiceInterface for RuntimeService {
                 self.context.credentials.as_ref(),
                 self.context.startup.as_ref(),
             )?;
-            self.context.store.save_mode(RuntimeMode::Direct)?;
+            let current = self.context.store.load()?;
+            let mut candidate = current.clone();
+            candidate.runtime_mode = RuntimeMode::Direct;
+            self.context.commit(&current, &candidate)?;
             Ok(self.context.runtime.snapshot())
         })();
         match &recovery {

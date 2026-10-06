@@ -1,6 +1,6 @@
 use crate::{
     error::{AppError, FieldError},
-    models::{PersistedConfiguration, ProxyProfile, RoutingRule, RuntimeMode},
+    models::{PersistedConfiguration, ProxyProfile, RoutingRule, RuleAction, RuntimeMode},
 };
 use std::collections::{BTreeMap, HashMap};
 
@@ -23,17 +23,31 @@ impl RuntimePlan {
         versions: &HashMap<String, String>,
     ) -> Result<Self, AppError> {
         configuration.validate()?;
-        if mode == RuntimeMode::Rules {
+        if matches!(mode, RuntimeMode::Rules { .. }) {
             configuration.validate_runtime_rules()?;
         }
-        if mode == RuntimeMode::Global && configuration.active_profile_id.is_none() {
+        let needs_default = mode == RuntimeMode::Global
+            || matches!(
+                mode,
+                RuntimeMode::Rules {
+                    default_action: RuleAction::Proxy,
+                    ..
+                }
+            );
+        if needs_default && configuration.active_profile_id.is_none() {
             return Err(AppError::validation(vec![FieldError {
                 field: "default_profile_id".into(),
-                message: "全局代理需要默认代理".into(),
+                message: "默认走代理需要默认代理档案".into(),
             }]));
         }
-        let preset = mode == RuntimeMode::Rules && configuration.china_direct_enabled;
-        let default_profile_id = if mode == RuntimeMode::Global || preset {
+        let preset = matches!(
+            mode,
+            RuntimeMode::Rules {
+                use_china_direct: true,
+                ..
+            }
+        );
+        let default_profile_id = if needs_default {
             configuration.active_profile_id.clone()
         } else {
             None
@@ -45,7 +59,7 @@ impl RuntimePlan {
                 profile.enabled
                     && match mode {
                         RuntimeMode::Direct => false,
-                        RuntimeMode::Rules => true,
+                        RuntimeMode::Rules { .. } => true,
                         RuntimeMode::Global => {
                             configuration.active_profile_id.as_ref() == Some(&profile.id)
                         }
@@ -78,7 +92,7 @@ impl RuntimePlan {
         let rules = configuration
             .rules
             .iter()
-            .filter(|rule| mode == RuntimeMode::Rules && rule.enabled)
+            .filter(|rule| matches!(mode, RuntimeMode::Rules { .. }) && rule.enabled)
             .cloned()
             .map(|mut rule| {
                 rule.name = rule.id.clone();

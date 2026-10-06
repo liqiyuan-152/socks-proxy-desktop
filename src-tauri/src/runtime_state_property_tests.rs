@@ -28,7 +28,7 @@ proptest! {
             let event = match choice {
                 0 => RuntimeEvent::StartRequested { mode: RuntimeMode::Global },
                 1 => RuntimeEvent::StartRequested { mode: RuntimeMode::Direct },
-                2 => RuntimeEvent::ModeSwitchRequested { mode: RuntimeMode::Rules },
+                2 => RuntimeEvent::ModeSwitchRequested { mode: crate::models::TEST_RULES_MODE },
                 3 => RuntimeEvent::StopRequested,
                 4 => RuntimeEvent::ProcessStarted { active: session(mode, 42) },
                 5 => RuntimeEvent::HealthCheckPassed,
@@ -63,7 +63,7 @@ proptest! {
     #[test]
     fn rejected_candidate_keeps_committed_session(process_id in any::<u32>()) {
         let running = RuntimeStateNode::Running { active: session(RuntimeMode::Global, 42) };
-        let switching = running.transition(RuntimeEvent::ModeSwitchRequested { mode: RuntimeMode::Rules }).expect("valid switch request");
+        let switching = running.transition(RuntimeEvent::ModeSwitchRequested { mode: crate::models::TEST_RULES_MODE }).expect("valid switch request");
         let result = switching.transition(RuntimeEvent::ProcessStarted { active: session(RuntimeMode::Global, process_id) });
         prop_assert!(matches!(result, Err(RuntimeError::InvariantViolated(_))));
         prop_assert_eq!(switching.active(), running.active());

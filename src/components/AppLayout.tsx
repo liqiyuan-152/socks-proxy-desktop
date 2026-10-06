@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useBackendStore } from "@/store/backend-store";
 import { useShallow } from "zustand/react/shallow";
-import { proxyModes } from "@/lib/proxy-mode";
+import { modeKey, proxyModes } from "@/lib/proxy-mode";
 import { NavLink, Outlet, useMatch } from "react-router-dom";
 import {
   Sidebar,
@@ -87,7 +87,7 @@ export function AppLayout() {
   }, [ready]);
   const running = snapshot?.session_health === "healthy";
   const activeModeLabel = snapshot?.applied_mode
-    ? proxyModes[snapshot.applied_mode].label
+    ? proxyModes[modeKey(snapshot.applied_mode)].label
     : "未应用";
   const profileName =
     profiles.find((profile) => profile.id === snapshot?.active_profile_id)?.name ?? "未选择";

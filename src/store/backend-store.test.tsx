@@ -1,3 +1,4 @@
+import { modeKey } from "@/lib/proxy-mode";
 import { act, render, screen } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
@@ -99,7 +100,8 @@ it("survives StrictMode setup cleanup and only keeps the current subscription", 
   const stops = [vi.fn(), vi.fn()];
   mocks.listen.mockResolvedValueOnce(stops[0]).mockResolvedValueOnce(stops[1]);
   function Probe() {
-    return <p>{useBackendStore(selectSelectedMode)}</p>;
+    const mode = useBackendStore(selectSelectedMode);
+    return <p>{mode ? modeKey(mode) : ""}</p>;
   }
   const { unmount } = render(
     <StrictMode>

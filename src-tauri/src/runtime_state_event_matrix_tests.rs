@@ -120,7 +120,7 @@ fn every_event_is_checked_for_each_lifecycle_shape() -> Result<(), RuntimeError>
             ),
             (
                 RuntimeEvent::ModeSwitchRequested {
-                    mode: RuntimeMode::Rules,
+                    mode: crate::models::TEST_RULES_MODE,
                 },
                 stable && has_active,
             ),

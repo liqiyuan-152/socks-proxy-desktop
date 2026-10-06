@@ -27,7 +27,7 @@ fn configuration() -> PersistedConfiguration {
             enabled: true,
         }],
         active_profile_id: Some("profile-stable-id".into()),
-        china_direct_enabled: false,
+        runtime_mode: crate::models::RuntimeMode::Direct,
         legacy_unresolved_rule_ids: Vec::new(),
         settings: AppSettings {
             launch_at_login: true,
@@ -57,14 +57,17 @@ fn selected_mode_defaults_to_direct_and_survives_reopen() {
     let path = directory.path().join("config.sqlite3");
     let store = SqliteConfigurationStore::open(&path).unwrap();
     assert_eq!(store.load_mode().unwrap(), RuntimeMode::Direct);
-    store.save_mode(RuntimeMode::Global).unwrap();
     store.save(&configuration()).unwrap();
+    store.save_mode(RuntimeMode::Global).unwrap();
     drop(store);
 
     let reopened = SqliteConfigurationStore::open(&path).unwrap();
     assert_eq!(reopened.load_mode().unwrap(), RuntimeMode::Global);
-    reopened.save_mode(RuntimeMode::Rules).unwrap();
-    assert_eq!(reopened.load_mode().unwrap(), RuntimeMode::Rules);
+    reopened.save_mode(crate::models::TEST_RULES_MODE).unwrap();
+    assert_eq!(
+        reopened.load_mode().unwrap(),
+        crate::models::TEST_RULES_MODE
+    );
 }
 
 #[test]
@@ -122,7 +125,7 @@ fn reads_v1_document_and_binds_ordered_proxy_rules_to_old_active_profile() {
         .unwrap();
 
     let migrated = store.load().unwrap();
-    assert_eq!(migrated.schema_version, 2);
+    assert_eq!(migrated.schema_version, 3);
     assert_eq!(
         migrated.active_profile_id.as_deref(),
         Some("profile-stable-id")
@@ -139,7 +142,7 @@ fn reads_v1_document_and_binds_ordered_proxy_rules_to_old_active_profile() {
         migrated.rules[1].proxy_profile_id.as_deref(),
         Some("profile-stable-id")
     );
-    assert!(!migrated.china_direct_enabled);
+    assert!(!migrated.china_direct_enabled());
     store.save(&migrated).unwrap();
     assert_eq!(store.load().unwrap(), migrated);
 }

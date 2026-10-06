@@ -1,7 +1,7 @@
 use super::*;
 use crate::{
     credentials::{CredentialStore, ProxyCredential},
-    models::{PersistedConfiguration, RuntimeMode},
+    models::{PersistedConfiguration, RuntimeMode, TEST_RULES_MODE},
     runtime::{BackendSession, ManagedRuntime, RuntimeBackend},
     runtime_session::SessionLease,
     startup::StartupAdapter,
@@ -252,14 +252,14 @@ fn actual_tauri_commands_validate_and_persist_configuration() {
     assert_eq!(running["applied_mode"], "global");
     backend.reject_mode.store(true, Ordering::SeqCst);
     assert_eq!(
-        invoke("set_runtime_mode", json!({ "mode": "rules" })).unwrap_err()["code"],
+        invoke("set_runtime_mode", json!({ "mode": TEST_RULES_MODE })).unwrap_err()["code"],
         "unavailable"
     );
     let rolled_back = invoke("get_runtime_snapshot", json!({})).unwrap();
     assert_eq!(rolled_back["applied_mode"], "global");
-    assert_eq!(rolled_back["desired_mode"], "rules");
-    assert_eq!(rolled_back["selected_mode"], "rules");
-    assert_eq!(store.load_mode().unwrap(), RuntimeMode::Rules);
+    assert_eq!(rolled_back["desired_mode"], json!(TEST_RULES_MODE));
+    assert_eq!(rolled_back["selected_mode"], "global");
+    assert_eq!(store.load_mode().unwrap(), RuntimeMode::Global);
     let error_filter = json!({"from_ms": null, "until_ms": null, "severity": "error"});
     let failure = invoke(
         "get_runtime_diagnostics",

@@ -8,9 +8,15 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const DATABASE_SCHEMA_VERSION: i64 = 6;
+const DATABASE_SCHEMA_VERSION: i64 = 7;
 #[path = "store_connection_samples.rs"]
 mod connection_samples;
+#[path = "store_mode.rs"]
+mod mode;
+#[path = "store_mode_migration.rs"]
+mod mode_migration;
+#[path = "store_mode_schema.rs"]
+mod mode_schema;
 use diagnostics::{now_ms, prune_diagnostics};
 #[path = "store_diagnostic_report.rs"]
 mod diagnostic_report;
@@ -202,27 +208,10 @@ impl ConfigurationStore for SqliteConfigurationStore {
             .connection
             .lock()
             .map_err(|_| AppError::storage("配置存储锁不可用"))?;
-        let mode: Option<String> = connection
-            .query_row("SELECT mode FROM selected_mode WHERE id = 1", [], |row| {
-                row.get(0)
-            })
-            .optional()
-            .map_err(storage_error)?;
-        mode.map(|value| match value.as_str() {
-            "rules" => Ok(RuntimeMode::Rules),
-            "global" => Ok(RuntimeMode::Global),
-            "direct" => Ok(RuntimeMode::Direct),
-            _ => Err(AppError::storage("已保存的代理模式无效")),
-        })
-        .unwrap_or(Ok(RuntimeMode::Direct))
+        mode::read(&connection)
     }
 
     fn save_mode(&self, mode: RuntimeMode) -> Result<(), AppError> {
-        let value = match mode {
-            RuntimeMode::Rules => "rules",
-            RuntimeMode::Global => "global",
-            RuntimeMode::Direct => "direct",
-        };
         let connection = self
             .connection
             .lock()
@@ -230,14 +219,11 @@ impl ConfigurationStore for SqliteConfigurationStore {
         if recovery::read_record(&connection)?.is_some() {
             return Err(crate::configuration_recovery::recovery_error());
         }
-        connection
-            .execute(
-                "INSERT INTO selected_mode (id, mode) VALUES (1, ?1)
-                 ON CONFLICT(id) DO UPDATE SET mode = excluded.mode",
-                [value],
-            )
-            .map_err(storage_error)?;
-        Ok(())
+        let mut configuration = read_configuration(&connection)?;
+        configuration.runtime_mode = mode;
+        let transaction = connection.unchecked_transaction().map_err(storage_error)?;
+        write_configuration(&transaction, &configuration)?;
+        transaction.commit().map_err(storage_error)
     }
 }
 
@@ -323,6 +309,7 @@ fn write_configuration(
         "INSERT INTO configuration (id, document_json) VALUES (1, ?1) ON CONFLICT(id) DO UPDATE SET document_json = excluded.document_json",
         [json],
     ).map_err(storage_error)?;
+    mode::write(connection, configuration.runtime_mode)?;
     prune_diagnostics(
         connection,
         configuration.settings.diagnostic_retention,
@@ -346,9 +333,13 @@ fn read_configuration(connection: &Connection) -> Result<PersistedConfiguration,
     let Some(json) = json else {
         return Ok(PersistedConfiguration::default());
     };
+    let json = crate::configuration_document::normalize(&json, Some(mode::read(connection)?))?;
     let mut configuration: PersistedConfiguration =
         serde_json::from_str(&json).map_err(|_| AppError::storage("已保存的配置无法读取"))?;
     configuration.migrate_v1()?;
+    if configuration.runtime_mode != mode::read(connection)? {
+        return Err(AppError::storage("配置文档与已保存的模式参数不一致"));
+    }
     Ok(configuration)
 }
 

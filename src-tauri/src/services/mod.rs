@@ -34,7 +34,10 @@
 //! }
 //!
 //! fn change_mode(service: Arc<dyn RuntimeService>) -> Result<RuntimeSnapshot, RuntimeError> {
-//!     service.set_mode(RuntimeMode::Rules)
+//!     service.set_mode(RuntimeMode::Rules {
+//!         use_china_direct: false,
+//!         default_action: socks_proxy_lib::services::RuleAction::Proxy,
+//!     })
 //! }
 //! ```
 
@@ -57,7 +60,7 @@ mod settings_service;
 
 pub use crate::{
     error::AppError,
-    models::{RoutingRule, RuntimeMode},
+    models::{RoutingRule, RuleAction, RuntimeMode},
     route_test::RouteTestResult,
     runtime::RuntimeSnapshot,
 };

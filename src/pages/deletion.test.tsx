@@ -1,3 +1,4 @@
+import { MemoryRouter } from "react-router-dom";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
 import type { ProxyProfile } from "@/lib/backend";
@@ -103,11 +104,13 @@ it.each(cases)(
   "$resource cancellation never calls the mutation",
   async ({ Page, resource, name, command }) => {
     render(
-      <TooltipProvider>
-        <SidebarProvider>
-          <Page />
-        </SidebarProvider>
-      </TooltipProvider>,
+      <MemoryRouter>
+        <TooltipProvider>
+          <SidebarProvider>
+            <Page />
+          </SidebarProvider>
+        </TooltipProvider>
+      </MemoryRouter>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));
     const dialog = screen.getByRole("alertdialog", { name: `确认删除${resource}` });
@@ -123,11 +126,13 @@ it.each(cases)(
   "$resource confirmation calls the correct IPC command and closes",
   async ({ Page, resource, name, command, args }) => {
     render(
-      <TooltipProvider>
-        <SidebarProvider>
-          <Page />
-        </SidebarProvider>
-      </TooltipProvider>,
+      <MemoryRouter>
+        <TooltipProvider>
+          <SidebarProvider>
+            <Page />
+          </SidebarProvider>
+        </TooltipProvider>
+      </MemoryRouter>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));
     const dialog = screen.getByRole("alertdialog", { name: `确认删除${resource}` });
@@ -150,11 +155,13 @@ it("a referenced proxy stays in the dialog and can be retried after rejection", 
     return undefined;
   });
   render(
-    <TooltipProvider>
-      <SidebarProvider>
-        <ProxyList />
-      </SidebarProvider>
-    </TooltipProvider>,
+    <MemoryRouter>
+      <TooltipProvider>
+        <SidebarProvider>
+          <ProxyList />
+        </SidebarProvider>
+      </TooltipProvider>
+    </MemoryRouter>,
   );
   fireEvent.click(screen.getByRole("button", { name: `删除${profile.name}` }));
   let dialog = screen.getByRole("alertdialog");
@@ -193,11 +200,13 @@ it.each(cases)(
       return original(called, args);
     });
     render(
-      <TooltipProvider>
-        <SidebarProvider>
-          <Page />
-        </SidebarProvider>
-      </TooltipProvider>,
+      <MemoryRouter>
+        <TooltipProvider>
+          <SidebarProvider>
+            <Page />
+          </SidebarProvider>
+        </TooltipProvider>
+      </MemoryRouter>,
     );
     fireEvent.click(await screen.findByRole("button", { name: `删除${name}` }));
     const dialog = screen.getByRole("alertdialog");

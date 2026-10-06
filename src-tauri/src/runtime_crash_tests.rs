@@ -124,7 +124,7 @@ fn fixed_core_abrupt_exit_restores_isolated_network_and_explicit_retry(
         credential: None,
     })?;
     service.select_profile(Some(profile.id))?;
-    let running = service.request_mode(RuntimeMode::Rules)?;
+    let running = service.request_mode(crate::models::TEST_RULES_MODE)?;
     assert_eq!(running.session_health, SessionHealth::Healthy);
     let owned_pid = pid.load(Ordering::Acquire);
     assert_ne!(owned_pid, 0);
@@ -150,7 +150,7 @@ fn fixed_core_abrupt_exit_restores_isolated_network_and_explicit_retry(
     };
     let exit_detection_ms = started.elapsed().as_secs_f64() * 1000.;
     assert_eq!(recovered.phase, RuntimePhase::Failed);
-    assert_eq!(recovered.selected_mode, RuntimeMode::Rules);
+    assert_eq!(recovered.selected_mode, crate::models::TEST_RULES_MODE);
     assert_eq!(recovered.applied_mode, None);
     assert!(!recovered.system_proxy_enabled);
     assert!(proxy.port.lock().unwrap().is_none());
@@ -164,9 +164,9 @@ fn fixed_core_abrupt_exit_restores_isolated_network_and_explicit_retry(
         service.runtime_snapshot();
     }
     assert_eq!(proxy.restores.load(Ordering::Acquire), 1);
-    assert_eq!(store.load_mode()?, RuntimeMode::Rules);
+    assert_eq!(store.load_mode()?, crate::models::TEST_RULES_MODE);
     assert_eq!(recovered.configuration_revision, store.recovery_revision()?);
-    let retried = service.request_mode(RuntimeMode::Rules)?;
+    let retried = service.request_mode(crate::models::TEST_RULES_MODE)?;
     assert_eq!(retried.phase, RuntimePhase::Running);
     assert_eq!(retried.session_health, SessionHealth::Healthy);
     assert!(retried.revision > recovered.revision);

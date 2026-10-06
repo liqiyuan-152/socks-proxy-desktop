@@ -1,5 +1,7 @@
+import { sameMode } from "@/lib/proxy-mode";
 import type { RuntimeMode, RuntimeSnapshot } from "@/lib/generated/ipc";
 import { normalizeError } from "@/lib/error-handler";
+import { setRuntimeMode } from "@/lib/backend";
 import { ipc } from "@/lib/ipc";
 import type { BackendApi, RequestController } from "./backend-store-types";
 
@@ -26,7 +28,7 @@ export function modeActions(api: BackendApi, controller: RequestController) {
       !flight &&
       failedOperation === null &&
       selectedMode !== null &&
-      snapshot.desired_mode !== selectedMode
+      !sameMode(snapshot.desired_mode, selectedMode)
     )
       selectedMode = null;
     api.setState({
@@ -50,7 +52,7 @@ export function modeActions(api: BackendApi, controller: RequestController) {
   const reportFailure = (reason: unknown, snapshot?: RuntimeSnapshot) => {
     failedOperation = snapshot?.last_operation.id ?? Number.MAX_SAFE_INTEGER;
     const operationError = normalizeError(reason);
-    api.setState({ operationError, error: operationError });
+    api.setState({ selectedMode: queued, operationError, error: operationError });
   };
   const drain = async (token: number) => {
     const lifetime = controller.lifetime;
@@ -64,7 +66,7 @@ export function modeActions(api: BackendApi, controller: RequestController) {
         try {
           // 串行完成当前写操作，再应用最后一个排队选择。
           // oxlint-disable-next-line no-await-in-loop
-          const snapshot = await ipc("set_runtime_mode", { mode });
+          const snapshot = await setRuntimeMode(mode);
           if (current()) applySnapshot(snapshot);
           succeeded = true;
         } catch (reason) {

@@ -15,7 +15,7 @@ fn rejected_candidate_is_reverted_and_old_session_remains_healthy() -> Result<()
             revision: u64,
         ) -> Result<Option<BackendSession>, AppError> {
             let mut session = self.inner.transition(previous, candidate, mode, revision)?;
-            if mode == RuntimeMode::Rules {
+            if matches!(mode, RuntimeMode::Rules { .. }) {
                 if let Some(session) = session.as_mut() {
                     session.process_id = 0;
                 }
@@ -52,7 +52,7 @@ fn rejected_candidate_is_reverted_and_old_session_remains_healthy() -> Result<()
     let before = runtime.request_mode(RuntimeMode::Global)?;
     assert_eq!(
         runtime
-            .request_mode(RuntimeMode::Rules)
+            .request_mode(crate::models::TEST_RULES_MODE)
             .expect_err("invalid process identity")
             .code,
         "runtime_invariant_violated"
@@ -111,12 +111,14 @@ fn restoration_without_pending_candidate_reapplies_and_restores_snapshot() -> Re
         runtime.request_mode(RuntimeMode::Global)?;
         if phase == RuntimePhase::Failed {
             backend.fail_next.store(true, Ordering::SeqCst);
-            assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+            assert!(runtime
+                .request_mode(crate::models::TEST_RULES_MODE)
+                .is_err());
         } else if phase == RuntimePhase::Stopped {
             runtime.stop()?;
         }
         let before = runtime.snapshot();
-        runtime.request_mode(RuntimeMode::Rules)?;
+        runtime.request_mode(crate::models::TEST_RULES_MODE)?;
         let restored = runtime.restore_configuration(&configuration, &before)?;
         assert_eq!(restored.phase, before.phase);
         assert_eq!(restored.applied_mode, before.applied_mode);

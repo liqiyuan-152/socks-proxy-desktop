@@ -61,7 +61,7 @@ fn fixed_core_exposes_verified_active_connection_fields_on_loopback() {
         &checksum,
         directory.path(),
         &config,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
         &HashMap::new(),
     )
     .unwrap();
@@ -152,7 +152,10 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
         enabled: true,
     });
     config.active_profile_id = Some("upstream".into());
-    config.china_direct_enabled = true;
+    config.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     let rule_root = crate::china_rules::resource_root(binary).unwrap();
     for (target, action) in [
         ("unknown.invalid", RuleAction::Proxy),
@@ -225,7 +228,7 @@ fn china_preset_routes_unlisted_domains_to_proxy_and_literal_private_ip_direct()
         &checksum,
         directory.path(),
         &config,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
         &HashMap::new(),
     )
     .unwrap();

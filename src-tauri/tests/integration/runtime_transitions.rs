@@ -10,7 +10,14 @@ fn rules_global_direct_cycle_preserves_committed_modes() -> Result<(), Box<dyn s
     let app = TestApp::new()?;
     let profile = app.add_profile("proxy")?;
     app.service.select_profile(Some(profile.id))?;
-    for mode in [RuntimeMode::Rules, RuntimeMode::Global, RuntimeMode::Direct] {
+    for mode in [
+        RuntimeMode::Rules {
+            use_china_direct: false,
+            default_action: socks_proxy_lib::services::RuleAction::Proxy,
+        },
+        RuntimeMode::Global,
+        RuntimeMode::Direct,
+    ] {
         let snapshot = app.service.request_mode(mode)?;
         assert_eq!(snapshot.applied_mode, Some(mode));
         assert_eq!(snapshot.selected_mode, mode);
@@ -33,7 +40,10 @@ fn crash_restores_network_and_explicit_retry_starts_new_session(
     let app = TestApp::new()?;
     let profile = app.add_profile("proxy")?;
     app.service.select_profile(Some(profile.id))?;
-    let before = app.service.request_mode(RuntimeMode::Rules)?;
+    let before = app.service.request_mode(RuntimeMode::Rules {
+        use_china_direct: false,
+        default_action: socks_proxy_lib::services::RuleAction::Proxy,
+    })?;
     app.backend.0.lock().map_err(|_| "backend poisoned")?.exited = true;
     let failed = app.service.runtime_snapshot();
     assert_eq!(failed.session_health, SessionHealth::Exited);
@@ -49,7 +59,10 @@ fn crash_restores_network_and_explicit_retry_starts_new_session(
             .restorations,
         1
     );
-    let restored = app.service.request_mode(RuntimeMode::Rules)?;
+    let restored = app.service.request_mode(RuntimeMode::Rules {
+        use_china_direct: false,
+        default_action: socks_proxy_lib::services::RuleAction::Proxy,
+    })?;
     assert_eq!(restored.session_health, SessionHealth::Healthy);
     assert!(restored.revision > before.revision);
     Ok(())
@@ -61,7 +74,10 @@ fn plan_change_restarts_but_metadata_change_preserves_session(
     let app = TestApp::new()?;
     let profile = app.add_profile("proxy")?;
     app.service.select_profile(Some(profile.id.clone()))?;
-    let before = app.service.request_mode(RuntimeMode::Rules)?;
+    let before = app.service.request_mode(RuntimeMode::Rules {
+        use_china_direct: false,
+        default_action: socks_proxy_lib::services::RuleAction::Proxy,
+    })?;
     app.service.save_profile(TestApp::profile_input(
         Some(profile.id.clone()),
         "renamed",

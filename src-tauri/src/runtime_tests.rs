@@ -111,10 +111,13 @@ fn selected_mode_is_restored_without_starting_proxy_and_survives_configuration_c
         configuration.clone(),
         Box::new(backend.clone()),
         ownership,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
     )
     .unwrap();
-    assert_eq!(runtime.snapshot().selected_mode, RuntimeMode::Rules);
+    assert_eq!(
+        runtime.snapshot().selected_mode,
+        crate::models::TEST_RULES_MODE
+    );
     assert_eq!(runtime.snapshot().applied_mode, None);
     assert!(backend.modes.lock().unwrap().is_empty());
 
@@ -124,7 +127,10 @@ fn selected_mode_is_restored_without_starting_proxy_and_survives_configuration_c
         .apply_configuration(&configuration, &candidate)
         .unwrap();
     runtime.confirm_configuration();
-    assert_eq!(runtime.snapshot().selected_mode, RuntimeMode::Rules);
+    assert_eq!(
+        runtime.snapshot().selected_mode,
+        crate::models::TEST_RULES_MODE
+    );
 }
 
 #[test]
@@ -185,14 +191,18 @@ fn hot_switch_failure_keeps_previous_mode_and_uptime() {
     assert!(!running.tun_enabled);
     assert!(running.runtime_uptime_ms.is_some());
     backend.fail_next.store(true, Ordering::SeqCst);
-    assert!(runtime.request_mode(RuntimeMode::Rules).is_err());
+    assert!(runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .is_err());
     let failed = runtime.snapshot();
     assert_eq!(failed.applied_mode, Some(RuntimeMode::Global));
-    assert_eq!(failed.desired_mode, RuntimeMode::Rules);
+    assert_eq!(failed.desired_mode, crate::models::TEST_RULES_MODE);
     assert_eq!(failed.revision, running.revision);
     assert!(failed.runtime_uptime_ms.is_some());
-    let switched = runtime.request_mode(RuntimeMode::Rules).unwrap();
-    assert_eq!(switched.applied_mode, Some(RuntimeMode::Rules));
+    let switched = runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
+    assert_eq!(switched.applied_mode, Some(crate::models::TEST_RULES_MODE));
     assert_eq!(switched.revision, running.revision + 1);
     assert!(switched.runtime_uptime_ms.unwrap() >= running.runtime_uptime_ms.unwrap());
 }
@@ -201,7 +211,9 @@ fn hot_switch_failure_keeps_previous_mode_and_uptime() {
 fn direct_and_stop_clear_running_session_and_uptime() {
     let backend = Arc::new(FakeBackend::default());
     let runtime = manager(backend.clone(), configuration());
-    runtime.request_mode(RuntimeMode::Rules).unwrap();
+    runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
     let direct = runtime.request_mode(RuntimeMode::Direct).unwrap();
     assert_eq!(direct.phase, RuntimePhase::Stopped);
     assert_eq!(direct.applied_mode, Some(RuntimeMode::Direct));
@@ -260,21 +272,32 @@ fn rules_without_default_start_and_china_preset_change_restarts_candidate() {
         "default_profile_id"
     );
     assert!(backend.modes.lock().unwrap().is_empty());
-    runtime.request_mode(RuntimeMode::Rules).unwrap();
-    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Rules));
+    runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
+    assert_eq!(
+        runtime.snapshot().applied_mode,
+        Some(crate::models::TEST_RULES_MODE)
+    );
     let mut candidate = config.clone();
     candidate.active_profile_id = Some("stable-profile".into());
     runtime.apply_configuration(&config, &candidate).unwrap();
     runtime.confirm_configuration();
     let count = backend.modes.lock().unwrap().len();
     let mut preset = candidate.clone();
-    preset.china_direct_enabled = true;
+    preset.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     runtime.apply_configuration(&candidate, &preset).unwrap();
     assert_eq!(backend.modes.lock().unwrap().len(), count + 1);
     runtime
         .restore_configuration(&candidate, &runtime.snapshot())
         .unwrap();
-    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Rules));
+    assert_eq!(
+        runtime.snapshot().applied_mode,
+        Some(crate::models::TEST_RULES_MODE)
+    );
 }
 
 #[test]
@@ -282,7 +305,9 @@ fn candidate_failure_keeps_previous_configuration_and_mode() {
     let backend = Arc::new(FakeBackend::default());
     let config = configuration();
     let runtime = manager(backend.clone(), config.clone());
-    runtime.request_mode(RuntimeMode::Rules).unwrap();
+    runtime
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
     let mut candidate = config.clone();
     candidate.rules.push(crate::models::RoutingRule {
         id: "rule".into(),
@@ -297,7 +322,10 @@ fn candidate_failure_keeps_previous_configuration_and_mode() {
     });
     backend.fail_next.store(true, Ordering::SeqCst);
     assert!(runtime.apply_configuration(&config, &candidate).is_err());
-    assert_eq!(runtime.snapshot().applied_mode, Some(RuntimeMode::Rules));
+    assert_eq!(
+        runtime.snapshot().applied_mode,
+        Some(crate::models::TEST_RULES_MODE)
+    );
     assert_eq!(runtime.snapshot().revision, 1);
     assert!(runtime.apply_configuration(&config, &candidate).is_ok());
 }

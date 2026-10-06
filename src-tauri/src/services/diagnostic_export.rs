@@ -52,7 +52,7 @@ mod tests {
         let saved = std::fs::read_to_string(&path).expect("saved configuration");
         assert_eq!(saved, content);
         let parsed: serde_json::Value = serde_json::from_str(&saved).expect("JSON configuration");
-        assert_eq!(parsed["schema_version"], 2);
+        assert_eq!(parsed["schema_version"], 3);
         assert!(!saved.contains("password"));
         let error = fixture
             .service

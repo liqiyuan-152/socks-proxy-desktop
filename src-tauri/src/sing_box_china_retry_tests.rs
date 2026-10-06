@@ -26,7 +26,10 @@ fn china_preset_keeps_domain_exit_on_retry_and_routes_literal_ipv6() {
         enabled: true,
     });
     config.active_profile_id = Some("upstream".into());
-    config.china_direct_enabled = true;
+    config.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     let rule_root = crate::china_rules::resource_root(binary).unwrap();
     for (target, action) in [
         ("mixed.invalid", RuleAction::Proxy),
@@ -100,7 +103,7 @@ fn china_preset_keeps_domain_exit_on_retry_and_routes_literal_ipv6() {
         &checksum,
         directory.path(),
         &config,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
         &HashMap::new(),
     )
     .unwrap();

@@ -118,6 +118,9 @@ impl ManagedRuntime {
 }
 
 impl RuntimeCoordinator for ManagedRuntime {
+    fn supports_proxy_runtime(&self) -> bool {
+        self.backend.supports_proxy_runtime()
+    }
     fn transition_history(&self) -> Vec<TransitionRecord> {
         ManagedRuntime::transition_history(self)
     }
@@ -222,6 +225,9 @@ impl RuntimeCoordinator for ManagedRuntime {
             .lock()
             .unwrap_or_else(|poison| poison.into_inner());
         if let Some(configuration) = state.pending_settings.take() {
+            if state.configuration.runtime_mode != configuration.configuration.runtime_mode {
+                state.selected_mode = configuration.configuration.runtime_mode;
+            }
             state.configuration = configuration.configuration;
             state.credential_versions = configuration.credential_versions;
             state.configuration_revision += 1;
@@ -234,6 +240,9 @@ impl RuntimeCoordinator for ManagedRuntime {
         }
         if let Some(pending) = state.pending.take() {
             self.backend.confirm_transition(state.session());
+            if state.configuration.runtime_mode != pending.configuration.runtime_mode {
+                state.selected_mode = pending.configuration.runtime_mode;
+            }
             state.configuration = pending.configuration;
             state.credential_versions = pending.credential_versions;
             state.runtime_plan_revision = pending.runtime_plan_revision;

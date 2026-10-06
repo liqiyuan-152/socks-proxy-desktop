@@ -5,7 +5,7 @@ export function parseImportProfiles(data: unknown): ImportProfile[] {
     typeof data !== "object" ||
     data === null ||
     !("schema_version" in data) ||
-    (data.schema_version !== 1 && data.schema_version !== 2) ||
+    (data.schema_version !== 1 && data.schema_version !== 2 && data.schema_version !== 3) ||
     !("profiles" in data) ||
     !Array.isArray(data.profiles)
   ) {

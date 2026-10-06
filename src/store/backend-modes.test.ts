@@ -1,3 +1,4 @@
+import { defaultRulesMode } from "@/lib/proxy-mode";
 import { beforeEach, expect, it, vi } from "vitest";
 import type { RuntimeSnapshot } from "@/lib/backend";
 import { createBackendStore } from "@/store/backend-store";
@@ -40,7 +41,7 @@ it("coalesces queued modes and shares one completed drain", async () => {
   const pending = deferred<RuntimeSnapshot>();
   invoke.mockReturnValueOnce(pending.promise).mockResolvedValue(snapshot);
   const store = createBackendStore();
-  const first = store.getState().switchMode("rules");
+  const first = store.getState().switchMode(defaultRulesMode);
   void store.getState().switchMode("direct");
   const second = store.getState().switchMode("global");
   expect(first).toBe(second);
@@ -50,17 +51,17 @@ it("coalesces queued modes and shares one completed drain", async () => {
   await second;
   expect(
     invoke.mock.calls.filter(([name]) => name === "set_runtime_mode").map(([, args]) => args.mode),
-  ).toEqual(["rules", "global"]);
+  ).toEqual([defaultRulesMode, "global"]);
   expect(store.getState()).toMatchObject({ selectedMode: null, pending: false });
 });
 
-it("keeps failed selection and authoritative snapshot when recovery fails", async () => {
+it("rolls back selection and retains the authoritative snapshot when recovery fails", async () => {
   invoke.mockRejectedValue(new Error("backend unavailable"));
   const store = createBackendStore();
   store.getState().applySnapshot(snapshot);
-  await store.getState().switchMode("rules");
+  await store.getState().switchMode(defaultRulesMode);
   expect(store.getState()).toMatchObject({
-    selectedMode: "rules",
+    selectedMode: null,
     pending: false,
     snapshot,
     operationError: { message: "backend unavailable" },
@@ -83,19 +84,19 @@ it("preserves rich command error across recovery and clears it after retry", asy
   };
   invoke.mockRejectedValueOnce(error).mockResolvedValue(snapshot);
   const store = createBackendStore();
-  await store.getState().switchMode("rules");
+  await store.getState().switchMode(defaultRulesMode);
   expect(store.getState().snapshot).toEqual(snapshot);
   expect(store.getState().operationError).toMatchObject(error);
   store.getState().applySnapshot(snapshot);
   expect(store.getState().operationError).toMatchObject(error);
-  await store.getState().switchMode("rules");
+  await store.getState().switchMode(defaultRulesMode);
   expect(store.getState().operationError).toBeNull();
 });
 
 it("clears command failure after a newer successful backend operation", async () => {
   invoke.mockRejectedValueOnce({ message: "failed" }).mockResolvedValue(snapshot);
   const store = createBackendStore();
-  await store.getState().switchMode("rules");
+  await store.getState().switchMode(defaultRulesMode);
   store
     .getState()
     .applySnapshot({ ...snapshot, last_operation: { id: 2, outcome: "succeeded", error: null } });
@@ -106,7 +107,7 @@ it("ignores queued mutations and late snapshots after disposal", async () => {
   const pending = deferred<RuntimeSnapshot>();
   invoke.mockReturnValue(pending.promise);
   const store = createBackendStore();
-  const flight = store.getState().switchMode("rules");
+  const flight = store.getState().switchMode(defaultRulesMode);
   void store.getState().switchMode("global");
   store.getState().dispose();
   pending.resolve(snapshot);

@@ -117,7 +117,7 @@ impl ApplicationService {
 
     pub(crate) fn record_mode_failure(&self, mode: RuntimeMode, error: &AppError) {
         let label = match mode {
-            RuntimeMode::Rules => "规则代理",
+            RuntimeMode::Rules { .. } => "规则代理",
             RuntimeMode::Global => "全局代理",
             RuntimeMode::Direct => "全局直连",
         };

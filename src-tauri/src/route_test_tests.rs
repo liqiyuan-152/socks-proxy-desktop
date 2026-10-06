@@ -14,6 +14,7 @@ fn config() -> PersistedConfiguration {
         enabled: true,
     });
     config.active_profile_id = Some("primary".into());
+    config.runtime_mode = crate::models::TEST_RULES_MODE;
     config
 }
 
@@ -56,7 +57,10 @@ fn user_rule_takes_precedence_and_disabled_preset_keeps_direct_fallback() {
 fn bundled_rule_sets_explain_domains_and_literal_ipv4_ipv6() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/china-rules");
     let mut config = config();
-    config.china_direct_enabled = true;
+    config.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     for (target, stage, action) in [
         ("baidu.com", RouteStage::ChinaDomain, RuleAction::Direct),
         ("unknown.invalid", RouteStage::Final, RuleAction::Proxy),
@@ -89,4 +93,82 @@ fn bundled_rule_sets_explain_domains_and_literal_ipv4_ipv6() {
     );
     let missing = tempfile::tempdir().unwrap();
     assert!(evaluate(&config, Some(missing.path()), "baidu.com", 443).is_err());
+}
+
+#[test]
+fn parameter_combinations_preserve_user_china_and_default_priority() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/china-rules");
+    for enabled in [false, true] {
+        for action in [RuleAction::Proxy, RuleAction::Direct] {
+            let mut config = config();
+            config.runtime_mode = crate::models::RuntimeMode::Rules {
+                use_china_direct: enabled,
+                default_action: action,
+            };
+            config.rules.push(RoutingRule {
+                id: "override".into(),
+                name: "Override".into(),
+                matcher: RuleMatcher::Domain,
+                target: "override.cn".into(),
+                port_start: None,
+                port_end: None,
+                action: RuleAction::Proxy,
+                proxy_profile_id: Some("primary".into()),
+                enabled: true,
+            });
+            let eval = |host| {
+                evaluate_with_matcher(&config, Some(&root), host, 443, |_, _, host| {
+                    Ok(host.ends_with(".cn"))
+                })
+                .unwrap()
+            };
+            assert_eq!(eval("override.cn").stage, RouteStage::UserRule);
+            assert_eq!(eval("override.cn").action, RuleAction::Proxy);
+            let china = eval("other.cn");
+            assert_eq!(
+                china.stage,
+                if enabled {
+                    RouteStage::ChinaDomain
+                } else {
+                    RouteStage::Final
+                }
+            );
+            assert_eq!(
+                china.action,
+                if enabled { RuleAction::Direct } else { action }
+            );
+            let fallback = eval("outside.invalid");
+            assert_eq!(fallback.stage, RouteStage::Final);
+            assert_eq!(fallback.action, action);
+            assert_eq!(
+                fallback.proxy_profile_id.is_some(),
+                action == RuleAction::Proxy
+            );
+        }
+    }
+}
+
+#[test]
+fn macos_can_predict_user_rules_but_never_fakes_unavailable_china_matches() {
+    let mut config = config();
+    config.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: RuleAction::Proxy,
+    };
+    config.rules.push(RoutingRule {
+        id: "override".into(),
+        name: "Override".into(),
+        matcher: RuleMatcher::Domain,
+        target: "override.cn".into(),
+        port_start: None,
+        port_end: None,
+        action: RuleAction::Direct,
+        proxy_profile_id: None,
+        enabled: true,
+    });
+    assert_eq!(
+        evaluate(&config, None, "override.cn", 443).unwrap().stage,
+        RouteStage::UserRule
+    );
+    assert!(evaluate(&config, None, "outside.invalid", 443).is_err());
 }

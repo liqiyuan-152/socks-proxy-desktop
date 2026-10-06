@@ -55,6 +55,7 @@ impl ConfigurationStore for Arc<MemoryStore> {
         if record.intent.transaction_id != id {
             return Err(recovery_error());
         }
+        *self.mode.lock().unwrap() = record.intent.candidate.runtime_mode;
         *self.value.lock().unwrap() = record.intent.candidate.clone();
         record.committed = true;
         recovery.0 = record.intent.next_revision;

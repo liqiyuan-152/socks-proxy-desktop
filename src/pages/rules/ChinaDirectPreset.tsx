@@ -1,23 +1,13 @@
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { normalizeError } from "@/lib/error-handler";
-import type { AppError } from "@/lib/generated/ipc";
+import type { AppError, ChinaDirectStatus } from "@/lib/generated/ipc";
 import { ipc } from "@/lib/ipc";
 import { useEffect, useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { useBackendStore } from "@/store/backend-store";
-import { useShallow } from "zustand/react/shallow";
-
-import type { ChinaDirectStatus } from "@/lib/generated/ipc";
+import { Link } from "react-router-dom";
 
 export function ChinaDirectPreset() {
-  const { snapshot, refresh } = useBackendStore(
-    useShallow((state) => ({ snapshot: state.snapshot, refresh: state.refresh })),
-  );
   const [status, setStatus] = useState<ChinaDirectStatus | null>(null);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<AppError | null>(null);
-  const defaultAvailable = Boolean(snapshot?.active_profile_id);
-
   useEffect(() => {
     let active = true;
     void ipc("get_china_direct_status")
@@ -31,47 +21,22 @@ export function ChinaDirectPreset() {
       active = false;
     };
   }, []);
-
-  async function change(enabled: boolean) {
-    setBusy(true);
-    setError(null);
-    try {
-      setStatus(await ipc("set_china_direct_enabled", { enabled }));
-      await refresh();
-    } catch (reason) {
-      setError(normalizeError(reason));
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
-    <section className="border-b border-border pb-5" aria-labelledby="china-direct-title">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 id="china-direct-title" className="text-base font-semibold">
-            国内直连
-          </h2>
-          <p id="china-direct-description" className="mt-1 text-sm text-muted-foreground">
-            用户规则优先；命中中国域名集的域名、国内或私有的字面 IP 直连，其余走默认代理。
-          </p>
-        </div>
-        <Switch
-          aria-label="国内直连"
-          aria-describedby="china-direct-description"
-          checked={status?.enabled ?? false}
-          disabled={
-            !status || busy || (!status.enabled && (!status.available || !defaultAvailable))
-          }
-          onCheckedChange={(enabled) => void change(enabled)}
-        />
-      </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        域名集外的域名不按解析 IP 分流；仅覆盖进入本地代理的流量，IP 归属不等于 GFW 可达性。
+    <section className="space-y-2 border-b border-border pb-5" aria-labelledby="china-direct-title">
+      <h2 id="china-direct-title" className="text-base font-semibold">
+        国内直连
+      </h2>
+      <p className="text-sm text-muted-foreground">
+        国内直连属于规则代理参数；用户规则优先，其余流量按配置的默认动作处理。
+      </p>
+      <p className="text-xs text-muted-foreground">
+        域名集外的域名不按解析 IP 分流；路由预测不代表实际联网结果。
         {status?.data_date ? ` 数据版本：${status.data_date}。` : ""}
-        {!defaultAvailable ? " 请先设置默认代理。" : ""}
         {status && !status.available ? " 本地规则集不可用。" : ""}
       </p>
+      <Link to="/" className="text-sm text-primary underline underline-offset-4">
+        在状态页配置规则代理
+      </Link>
       {error && <ErrorAlert error={error} />}
     </section>
   );

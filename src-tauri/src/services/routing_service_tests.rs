@@ -24,7 +24,7 @@ fn routing_errors_identify_invalid_targets_rules_and_missing_assets() -> Result<
         routing.set_china_direct_enabled(true),
         Err(RoutingError::ChinaRulesUnavailable)
     ));
-    assert!(!fixture.store.load()?.china_direct_enabled);
+    assert!(!fixture.store.load()?.china_direct_enabled());
     fixture
         .service
         .context
@@ -58,6 +58,9 @@ fn rules_validate_references_and_reorder_without_partial_commits() -> Result<(),
     let first = make_rule("first", "example.com");
     let second = make_rule("second", "example.org");
     routing.replace_rules(vec![first.clone(), second.clone()])?;
+    let mut configuration = fixture.store.load()?;
+    configuration.runtime_mode = crate::models::TEST_RULES_MODE;
+    fixture.store.save(&configuration)?;
     let prediction = routing.test_route("EXAMPLE.COM.", 443)?;
     assert_eq!(prediction.proxy_profile_id, Some(profile.id.clone()));
     assert_eq!(prediction.matched_rule_id.as_deref(), Some("first"));
@@ -109,7 +112,7 @@ fn china_preset_requires_default_and_valid_bundled_rules_before_commit() {
     fixture.service.select_profile(Some(profile.id)).unwrap();
     let status = routing.set_china_direct_enabled(true).unwrap();
     assert!(status.enabled && status.available && status.data_date.is_some());
-    assert!(fixture.store.load().unwrap().china_direct_enabled);
+    assert!(fixture.store.load().unwrap().china_direct_enabled());
 }
 
 #[test]
@@ -123,5 +126,5 @@ fn invalid_china_rules_reject_revision_without_changing_stored_configuration() {
     fixture.service = fixture.service.with_china_rule_root(missing.path().into());
     let error = routing.set_china_direct_enabled(true).unwrap_err();
     assert!(error.to_string().contains("规则集"));
-    assert!(!fixture.store.load().unwrap().china_direct_enabled);
+    assert!(!fixture.store.load().unwrap().china_direct_enabled());
 }

@@ -39,7 +39,11 @@ fn configuration() -> PersistedConfiguration {
 
 #[test]
 fn ignores_presentation_settings_profile_order_and_disabled_rule_inputs() {
-    for mode in [RuntimeMode::Rules, RuntimeMode::Global, RuntimeMode::Direct] {
+    for mode in [
+        crate::models::TEST_RULES_MODE,
+        RuntimeMode::Global,
+        RuntimeMode::Direct,
+    ] {
         let configuration = configuration();
         let versions = candidate_versions(&configuration, &HashMap::new(), &[]);
         let original = RuntimePlan::build(&configuration, mode, &versions).unwrap();
@@ -103,7 +107,10 @@ fn global_isolates_unrelated_exits_rules_and_preset() {
     let mut candidate = configuration.clone();
     candidate.profiles[1].host = "new-secondary.example.com".into();
     candidate.rules.reverse();
-    candidate.china_direct_enabled = true;
+    candidate.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     let updated = candidate_versions(&candidate, &versions, &["secondary".into()]);
     assert_eq!(
         original,
@@ -111,7 +118,7 @@ fn global_isolates_unrelated_exits_rules_and_preset() {
     );
     assert_eq!(original.exits.len(), 1);
     assert_eq!(original.credential_versions.len(), 1);
-    let rules = RuntimePlan::build(&candidate, RuntimeMode::Rules, &updated).unwrap();
+    let rules = RuntimePlan::build(&candidate, candidate.runtime_mode, &updated).unwrap();
     assert_eq!(rules.exits.len(), 2);
     assert_eq!(rules.rules[0].id, "b");
     assert!(rules.china_direct_enabled);
@@ -122,7 +129,8 @@ fn global_isolates_unrelated_exits_rules_and_preset() {
 fn rule_order_matcher_ports_target_action_exit_enable_and_preset_change_plan() {
     let configuration = configuration();
     let versions = candidate_versions(&configuration, &HashMap::new(), &[]);
-    let original = RuntimePlan::build(&configuration, RuntimeMode::Rules, &versions).unwrap();
+    let original =
+        RuntimePlan::build(&configuration, crate::models::TEST_RULES_MODE, &versions).unwrap();
     let changes: [fn(&mut PersistedConfiguration); 9] = [
         |c| c.rules.reverse(),
         |c| c.rules[0].matcher = RuleMatcher::DomainSuffix,
@@ -135,21 +143,35 @@ fn rule_order_matcher_ports_target_action_exit_enable_and_preset_change_plan() {
         },
         |c| c.rules[0].proxy_profile_id = Some("primary".into()),
         |c| c.rules[0].enabled = false,
-        |c| c.china_direct_enabled = true,
+        |c| {
+            c.runtime_mode = crate::models::RuntimeMode::Rules {
+                use_china_direct: true,
+                default_action: crate::models::RuleAction::Proxy,
+            }
+        },
     ];
     for change in changes {
         let mut candidate = configuration.clone();
         change(&mut candidate);
         assert_ne!(
             original,
-            RuntimePlan::build(&candidate, RuntimeMode::Rules, &versions).unwrap()
+            RuntimePlan::build(
+                &candidate,
+                if matches!(candidate.runtime_mode, RuntimeMode::Rules { .. }) {
+                    candidate.runtime_mode
+                } else {
+                    crate::models::TEST_RULES_MODE
+                },
+                &versions
+            )
+            .unwrap()
         );
     }
     let mut candidate = configuration.clone();
     candidate.profiles[1].enabled = false;
     candidate.rules.clear();
     assert_eq!(
-        RuntimePlan::build(&candidate, RuntimeMode::Rules, &versions)
+        RuntimePlan::build(&candidate, crate::models::TEST_RULES_MODE, &versions)
             .unwrap()
             .exits
             .len(),

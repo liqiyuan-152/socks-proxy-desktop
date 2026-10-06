@@ -2,7 +2,7 @@ use super::*;
 use crate::models::{ProxyProfile, RoutingRule};
 use std::collections::HashMap;
 
-fn configuration() -> PersistedConfiguration {
+pub(super) fn configuration() -> PersistedConfiguration {
     let mut config = PersistedConfiguration::default();
     config.profiles.push(ProxyProfile {
         id: "proxy-1".into(),
@@ -61,7 +61,7 @@ fn rendered(config: &PersistedConfiguration, mode: RuntimeMode) -> Value {
 
 #[test]
 fn rules_preserve_first_match_and_default_to_direct() {
-    let config = rendered(&configuration(), RuntimeMode::Rules);
+    let config = rendered(&configuration(), crate::models::TEST_RULES_MODE);
     assert_eq!(config["route"]["final"], "direct");
     assert_eq!(
         config["route"]["rules"][0]["domain_suffix"][0],
@@ -123,7 +123,7 @@ fn enabled_exits_keep_stable_distinct_tags_and_per_profile_secrets() {
     )]);
     let raw = render(
         &config,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
         SingBoxPorts {
             proxy: 18080,
             control: 19090,
@@ -145,7 +145,7 @@ fn enabled_exits_keep_stable_distinct_tags_and_per_profile_secrets() {
     );
     assert_eq!(value["route"]["final"], "direct");
     assert_eq!(
-        rendered(&config_with_no_default(), RuntimeMode::Rules)["route"]["final"],
+        rendered(&config_with_no_default(), crate::models::TEST_RULES_MODE)["route"]["final"],
         "direct"
     );
     assert_eq!(
@@ -191,7 +191,7 @@ fn missing_credential_for_any_enabled_exit_rejects_config() {
     });
     let error = render(
         &config,
-        RuntimeMode::Rules,
+        crate::models::TEST_RULES_MODE,
         SingBoxPorts {
             proxy: 18080,
             control: 19090,
@@ -242,7 +242,7 @@ fn missing_profile_or_credentials_never_produces_config() {
     assert_eq!(
         render(
             &config,
-            RuntimeMode::Rules,
+            crate::models::TEST_RULES_MODE,
             SingBoxPorts {
                 proxy: 18080,
                 control: 19090
@@ -261,7 +261,7 @@ fn missing_profile_or_credentials_never_produces_config() {
     assert_eq!(
         render(
             &config,
-            RuntimeMode::Rules,
+            crate::models::TEST_RULES_MODE,
             SingBoxPorts {
                 proxy: 18080,
                 control: 19090
@@ -303,7 +303,7 @@ fn fixed_sing_box_accepts_rendered_rule_and_global_configs_when_available() {
         proxy_profile_id: Some("proxy-2".into()),
         enabled: true,
     });
-    for mode in [RuntimeMode::Rules, RuntimeMode::Global] {
+    for mode in [crate::models::TEST_RULES_MODE, RuntimeMode::Global] {
         let mut file = tempfile::NamedTempFile::new().unwrap();
         let contents = render(
             &config,
@@ -334,12 +334,15 @@ fn fixed_sing_box_accepts_rendered_rule_and_global_configs_when_available() {
 #[test]
 fn china_preset_keeps_domains_before_literal_ip_rules() {
     let mut configuration = configuration();
-    configuration.china_direct_enabled = true;
+    configuration.runtime_mode = crate::models::RuntimeMode::Rules {
+        use_china_direct: true,
+        default_action: crate::models::RuleAction::Proxy,
+    };
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/china-rules");
     let sets = ChinaRuleSets::verify(&root).unwrap();
     let raw = render_with_rules(
         &configuration,
-        RuntimeMode::Rules,
+        configuration.runtime_mode,
         SingBoxPorts {
             proxy: 18080,
             control: 19090,
@@ -361,7 +364,7 @@ fn china_preset_keeps_domains_before_literal_ip_rules() {
     assert_eq!(value["route"]["final"], proxy_tag("proxy-1"));
     assert!(render(
         &configuration,
-        RuntimeMode::Rules,
+        configuration.runtime_mode,
         SingBoxPorts {
             proxy: 18080,
             control: 19090

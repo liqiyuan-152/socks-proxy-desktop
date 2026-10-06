@@ -90,7 +90,9 @@ fn persistence_failure_restores_runtime_revision_and_previous_rules() {
         Box::new(Startup),
         Box::new(runtime),
     );
-    let before = service.request_mode(RuntimeMode::Rules).unwrap();
+    let before = service
+        .request_mode(crate::models::TEST_RULES_MODE)
+        .unwrap();
     let rule = crate::models::RoutingRule {
         id: "new-rule".into(),
         name: "New".into(),
@@ -109,7 +111,7 @@ fn persistence_failure_restores_runtime_revision_and_previous_rules() {
     );
     let restored = service.runtime_snapshot();
     assert_eq!(restored.revision, before.revision);
-    assert_eq!(restored.applied_mode, Some(RuntimeMode::Rules));
+    assert_eq!(restored.applied_mode, Some(crate::models::TEST_RULES_MODE));
     assert_eq!(restored.active_profile_id, before.active_profile_id);
     assert!(restored.runtime_uptime_ms.is_some());
     assert!(store.load().unwrap().rules.is_empty());
@@ -187,12 +189,12 @@ fn in_flight_switch_exposes_stage_without_prematurely_committing_mode() {
     assert_eq!(committed.applied_mode, Some(RuntimeMode::Global));
 
     let switching = Arc::clone(&runtime);
-    let second = std::thread::spawn(move || switching.request_mode(RuntimeMode::Rules));
+    let second = std::thread::spawn(move || switching.request_mode(crate::models::TEST_RULES_MODE));
     assert_eq!(
         entered_rx
             .recv_timeout(std::time::Duration::from_secs(2))
             .unwrap(),
-        RuntimeMode::Rules
+        crate::models::TEST_RULES_MODE
     );
     let snapshot = runtime.snapshot();
     assert_eq!(snapshot.phase, RuntimePhase::Switching);
@@ -201,6 +203,6 @@ fn in_flight_switch_exposes_stage_without_prematurely_committing_mode() {
     assert!(snapshot.runtime_uptime_ms.is_some());
     resume_tx.send(()).unwrap();
     let switched = second.join().unwrap().unwrap();
-    assert_eq!(switched.applied_mode, Some(RuntimeMode::Rules));
+    assert_eq!(switched.applied_mode, Some(crate::models::TEST_RULES_MODE));
     assert!(switched.runtime_uptime_ms.unwrap() >= committed.runtime_uptime_ms.unwrap());
 }

@@ -1,9 +1,10 @@
+import { defaultRulesMode } from "@/lib/proxy-mode";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { fixture, mocks, runtime } from "./test/app-fixture";
 import App from "./App";
 
 describe("backend-driven desktop UI", () => {
-  it("allows rules without a default but requires one for global mode", async () => {
+  it("requires a default for rules with proxy fallback and for global mode", async () => {
     fixture.profiles = [];
     fixture.mode = "direct";
     render(<App />);
@@ -13,10 +14,8 @@ describe("backend-driven desktop UI", () => {
       button: 0,
       ctrlKey: false,
     });
-    await waitFor(() =>
-      expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
-    );
-    await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
+    expect(await screen.findByText(/尚未添加代理，请先添加代理/)).toBeInTheDocument();
+    expect(mocks.invoke).not.toHaveBeenCalledWith("set_runtime_mode", { mode: defaultRulesMode });
     fireEvent.click(screen.getByRole("radio", { name: "全局代理" }), {
       button: 0,
       ctrlKey: false,
@@ -28,7 +27,7 @@ describe("backend-driven desktop UI", () => {
     expect(await screen.findByRole("button", { name: "添加代理" })).toBeInTheDocument();
   });
 
-  it.each(["direct", "rules"] as const)(
+  it.each(["direct", defaultRulesMode] as const)(
     "selects the persisted %s mode while the runtime is stopped",
     async (selectedMode) => {
       const original = mocks.invoke.getMockImplementation()!;
@@ -64,7 +63,7 @@ describe("backend-driven desktop UI", () => {
     expect(screen.getAllByText("不可用").length).toBeGreaterThan(0);
   });
 
-  it("selects immediately and keeps the target selected after a logged failure", async () => {
+  it("selects immediately and rolls back to the applied mode after failure", async () => {
     render(<App />);
     await screen.findByText("example.org");
     await waitFor(() => expect(screen.getByRole("radio", { name: "规则代理" })).not.toBeDisabled());
@@ -78,11 +77,11 @@ describe("backend-driven desktop UI", () => {
       "checked",
     );
     await waitFor(() =>
-      expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: "rules" }),
+      expect(mocks.invoke).toHaveBeenCalledWith("set_runtime_mode", { mode: defaultRulesMode }),
     );
     await waitFor(() => expect(screen.queryByText("正在切换代理模式…")).not.toBeInTheDocument());
     expect(screen.getByRole("alert")).toHaveTextContent("内核启动失败");
-    expect(screen.getByRole("radio", { name: "规则代理" })).toHaveAttribute(
+    expect(screen.getByRole("radio", { name: "全局代理" })).toHaveAttribute(
       "data-state",
       "checked",
     );
@@ -136,7 +135,7 @@ describe("backend-driven desktop UI", () => {
       "checked",
     );
     expect(screen.getAllByText("正在切换代理模式…")).toHaveLength(1);
-    fixture.mode = "rules";
+    fixture.mode = defaultRulesMode;
     finish?.(runtime());
     await waitFor(() =>
       expect(

@@ -1,3 +1,4 @@
+import { RulesModeSettings } from "./RulesModeSettings";
 import { DailyConnectionTrend } from "./DailyConnectionTrend";
 import { ConnectionStatistic } from "./ConnectionStatistic";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useBackendStore } from "@/store/backend-store";
 import { useShallow } from "zustand/react/shallow";
 import { RuntimeFeedback } from "@/components/RuntimeFeedback";
-import { proxyModes, type ProxyMode } from "@/lib/proxy-mode";
+import { modeKey, modeValue, sameMode, proxyModes, type ProxyMode } from "@/lib/proxy-mode";
 
 const phaseLabels = {
   stopped: "未运行",
@@ -55,6 +56,7 @@ export default function StatusDashboard() {
       switchMode: state.switchMode,
     })),
   );
+  const configuredMode = selectedMode ?? snapshot?.selected_mode;
   const navigate = useNavigate();
   const profile = profiles.find((item) => item.id === snapshot?.active_profile_id);
 
@@ -67,7 +69,11 @@ export default function StatusDashboard() {
   }, [pending]);
 
   function selectMode(mode: ProxyMode) {
-    if (mode === "global" && !profile) {
+    const target = modeValue(mode, selectedMode ?? snapshot?.selected_mode);
+    const requiresProxy =
+      target === "global" ||
+      (typeof target === "object" && target.rules.default_action === "proxy");
+    if (capabilities?.proxy_runtime && requiresProxy && !profile) {
       const noProfiles = profiles.length === 0;
       toast.error(
         noProfiles
@@ -84,7 +90,7 @@ export default function StatusDashboard() {
       return;
     }
     toast.dismiss("missing-active-proxy");
-    void switchMode(mode);
+    void switchMode(target);
   }
 
   return (
@@ -103,7 +109,9 @@ export default function StatusDashboard() {
             aria-label="代理模式"
             orientation="horizontal"
             className="grid h-14 w-full grid-cols-3 rounded-xl border-2 border-border bg-gradient-to-b from-muted/30 to-muted/60 p-1.5 sm:mx-auto sm:max-w-2xl"
-            value={selectedMode ?? snapshot?.selected_mode ?? ""}
+            value={
+              selectedMode ? modeKey(selectedMode) : snapshot ? modeKey(snapshot.selected_mode) : ""
+            }
             onValueChange={(mode) => selectMode(mode as ProxyMode)}
           >
             {(Object.keys(proxyModes) as ProxyMode[]).map((mode) => (
@@ -111,9 +119,17 @@ export default function StatusDashboard() {
                 key={mode}
                 value={mode}
                 className="h-full w-full aspect-auto rounded-lg border-0 bg-transparent text-xs font-semibold text-muted-foreground transition-[background-color,box-shadow,scale] duration-200 hover:bg-accent hover:text-foreground data-[state=checked]:!bg-[image:var(--gradient-primary)] data-[state=checked]:!text-primary-foreground data-[state=checked]:shadow-md data-[state=checked]:shadow-primary/25 motion-reduce:transition-none sm:text-sm"
-                disabled={loading || !snapshot || !capabilities?.proxy_runtime}
+                disabled={loading || !snapshot}
                 onClick={() => {
-                  if (mode === selectedMode && !pending && snapshot?.applied_mode !== mode) {
+                  if (
+                    snapshot &&
+                    mode === modeKey(selectedMode ?? snapshot.selected_mode) &&
+                    !pending &&
+                    !sameMode(
+                      snapshot.applied_mode,
+                      modeValue(mode, selectedMode ?? snapshot.selected_mode),
+                    )
+                  ) {
                     selectMode(mode);
                   }
                 }}
@@ -122,6 +138,14 @@ export default function StatusDashboard() {
               </RadioGroupItem>
             ))}
           </RadioGroup>
+          {!capabilities?.proxy_runtime && snapshot && (
+            <p className="text-sm text-muted-foreground">
+              此平台仅保存模式配置，不运行代理内核或接管系统代理。
+            </p>
+          )}
+          {configuredMode && typeof configuredMode === "object" && (
+            <RulesModeSettings mode={configuredMode} />
+          )}
           <div className="stagger-children grid gap-5 lg:grid-cols-2">
             <Card variant="elevated" className="gap-0 py-0">
               <CardHeader className="border-b border-border py-5">
@@ -181,7 +205,9 @@ export default function StatusDashboard() {
                 </span>
                 <span className="text-muted-foreground">已应用模式</span>
                 <span>
-                  {snapshot?.applied_mode ? proxyModes[snapshot.applied_mode].label : "未应用"}
+                  {snapshot?.applied_mode
+                    ? proxyModes[modeKey(snapshot.applied_mode)].label
+                    : "未应用"}
                 </span>
                 <span className="text-muted-foreground">运行时长</span>
                 <span>
