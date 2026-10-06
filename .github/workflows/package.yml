@@ -186,7 +186,7 @@ jobs:
               cp "docs/releases/$RELEASE_TAG.md" release-notes.md
             else
             cat > release-notes.md <<'NOTES'
-          自动构建的内测版本，包含 Windows x64 中文 EXE、macOS Apple Silicon / Intel / Universal DMG，以及 Linux x64 AppImage / DEB / RPM。
+          自动构建的正式版本，包含 Windows x64 中文 EXE、macOS Apple Silicon / Intel / Universal DMG，以及 Linux x64 AppImage / DEB / RPM。
 
           Windows 支持实际代理运行；macOS 和 Linux 仅支持界面及部分配置管理，不支持代理内核和系统代理接管。安装包未配置开发者签名及 macOS 公证，自动更新尚未启用。
 
@@ -197,10 +197,8 @@ jobs:
           内核来源和校验记录见本 tag 的 scripts/sing-box-release-manifest.md。
           NOTES
             fi
-            gh release create "$RELEASE_TAG" --verify-tag --draft --prerelease \
+            gh release create "$RELEASE_TAG" --verify-tag --draft \
               --title "Socks Proxy $RELEASE_TAG" --notes-file release-notes.md
           fi
           gh release upload "$RELEASE_TAG" release-assets/* --clobber
-          if [ "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = true ]; then
-            gh release edit "$RELEASE_TAG" --draft=false
-          fi
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease=false
