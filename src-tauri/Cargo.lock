@@ -4142,7 +4142,7 @@ dependencies = [
 
 [[package]]
 name = "socks-proxy"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "hex",
  "inferno",

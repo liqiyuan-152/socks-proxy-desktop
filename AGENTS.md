@@ -13,7 +13,7 @@
 
 以下为 2026-10-05 的仓库快照；后续工作以实际源码、配置、测试和最新 OpenSpec 状态为准。
 
-- 当前应用版本为 `0.3.1`；版本相关配置见 `package.json`、`src-tauri/Cargo.toml` 和 `src-tauri/tauri.conf.json`。
+- 当前应用版本为 `0.3.2`；版本相关配置见 `package.json`、`src-tauri/Cargo.toml` 和 `src-tauri/tauri.conf.json`。
 - 已有代理档案、认证、默认代理、链接导入、单个及批量延迟测试、分流规则、国内直连预设、路由预测、配置导入导出、运行时诊断及网络恢复功能。
 - 实际代理运行仅支持 Windows x64，内核固定为 sing-box `1.14.1`。macOS / Linux 支持配置管理、模式参数保存和用户规则预测，不支持代理内核、系统代理接管、国内规则集匹配和开机启动；配置保存不得声明已应用代理，浏览器模式不提供原生后端。
 - 代理模式包括参数化的规则代理 `Rules { use_china_direct, default_action }`、全局代理和全局直连。规则代理优先级为用户规则 > 可选国内直连 > 默认动作；新建 Rules 默认关闭国内直连、默认代理。目前未启用 TUN，只覆盖遵循 Windows 系统代理设置的应用流量。
